@@ -22,6 +22,7 @@ namespace Comercial.Formularios.Proveedores
         Clases.ClassProveedores instProv = new Clases.ClassProveedores();
         int cantDec = Clases.ClassProductos.cantDecimales();
         int cantStock = Clases.ClassProductos.cantDecimalesStock();
+        bool recalculando = false;
 
         private List<string> resgProducto = new List<string>();
 
@@ -221,17 +222,23 @@ namespace Comercial.Formularios.Proveedores
         private void procesoTotales()
         {
             decimal total = 0;
-
-            
-
-            foreach (DataGridViewRow fila in dgvOrden .Rows )
+            if (recalculando) return;
+            recalculando = true;
+            try
             {
-                fila.Cells["Precio_CIVA"].Value = Math .Round (decimal.Parse(fila.Cells["Precio_SIVA"].Value.ToString()) * (1 + Decimal.Parse(cboIVA.Text) / 100),cantDec );
-                fila.Cells["Subtotal"].Value = Math.Round ( decimal.Parse(fila.Cells["Precio_CIVA"].Value.ToString()) * decimal.Parse(fila.Cells["Cantidad"].Value.ToString()),cantDec );
-                total +=  decimal.Parse(fila.Cells["Subtotal"].Value.ToString());
-            }
+                foreach (DataGridViewRow fila in dgvOrden.Rows)
+                {
+                    fila.Cells["Precio_CIVA"].Value = Math.Round(decimal.Parse(fila.Cells["Precio_SIVA"].Value.ToString()) * (1 + Decimal.Parse(cboIVA.Text) / 100), cantDec);
+                    fila.Cells["Subtotal"].Value = Math.Round(decimal.Parse(fila.Cells["Precio_CIVA"].Value.ToString()) * decimal.Parse(fila.Cells["Cantidad"].Value.ToString()), cantDec);
+                    total += decimal.Parse(fila.Cells["Subtotal"].Value.ToString());
+                }
 
-            txtTotal.Text = Math.Round ( total,2).ToString ();
+                txtTotal.Text = Math.Round(total, 2).ToString();
+            }
+            finally
+            {
+                recalculando = false;
+            }
         } 
         private void nudCantidad_KeyDown(object sender, KeyEventArgs e)
         {
