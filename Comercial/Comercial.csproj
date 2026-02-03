@@ -14,7 +14,7 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -202,6 +202,12 @@
     <Compile Include="Formularios\Configuracion\frmABMclientesZonas.Designer.cs">
       <DependentUpon>frmABMclientesZonas.cs</DependentUpon>
     </Compile>
+    <Compile Include="Formularios\Configuracion\frmABMConceptosCaja.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Configuracion\frmABMConceptosCaja.Designer.cs">
+      <DependentUpon>frmABMConceptosCaja.cs</DependentUpon>
+    </Compile>
     <Compile Include="Formularios\Configuracion\frmABMCondIva.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -214,11 +220,29 @@
     <Compile Include="Formularios\Configuracion\frmABMivaProcentajes.Designer.cs">
       <DependentUpon>frmABMivaProcentajes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Formularios\Configuracion\frmABMMediosPago.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Configuracion\frmABMMediosPago.Designer.cs">
+      <DependentUpon>frmABMMediosPago.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Configuracion\frmABMPlanesPagos.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Configuracion\frmABMPlanesPagos.Designer.cs">
+      <DependentUpon>frmABMPlanesPagos.cs</DependentUpon>
+    </Compile>
     <Compile Include="Formularios\Configuracion\frmABMrubros.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Formularios\Configuracion\frmABMrubros.Designer.cs">
       <DependentUpon>frmABMrubros.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Configuracion\frmABMTipoGastos.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Configuracion\frmABMTipoGastos.Designer.cs">
+      <DependentUpon>frmABMTipoGastos.cs</DependentUpon>
     </Compile>
     <Compile Include="Formularios\Configuracion\frmABMTipoPrecios.cs">
       <SubType>Form</SubType>
@@ -464,14 +488,26 @@
     <EmbeddedResource Include="Formularios\Configuracion\frmABMclientesZonas.resx">
       <DependentUpon>frmABMclientesZonas.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Configuracion\frmABMConceptosCaja.resx">
+      <DependentUpon>frmABMConceptosCaja.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Configuracion\frmABMCondIva.resx">
       <DependentUpon>frmABMCondIva.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Configuracion\frmABMivaProcentajes.resx">
       <DependentUpon>frmABMivaProcentajes.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Configuracion\frmABMMediosPago.resx">
+      <DependentUpon>frmABMMediosPago.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Configuracion\frmABMPlanesPagos.resx">
+      <DependentUpon>frmABMPlanesPagos.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Configuracion\frmABMrubros.resx">
       <DependentUpon>frmABMrubros.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Configuracion\frmABMTipoGastos.resx">
+      <DependentUpon>frmABMTipoGastos.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Configuracion\frmABMTipoPrecios.resx">
       <DependentUpon>frmABMTipoPrecios.cs</DependentUpon>

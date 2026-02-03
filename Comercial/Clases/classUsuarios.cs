@@ -20,7 +20,7 @@ namespace Comercial.Clases
 
         public DataTable traerUsuariosActivos()
         {
-            MySqlDataAdapter rows = new MySqlDataAdapter("select 0 as id ,'TODOS' as nombre,null,null,null union (select * from usuarios where baja = 0 order by nombre)", instDatos.abrirConexion());
+            MySqlDataAdapter rows = new MySqlDataAdapter("select 0 as id ,'TODOS' as nombre,null,null,null union (select id, nombre, password, tipo, baja from usuarios where baja = 0 order by nombre)", instDatos.abrirConexion());
             DataTable dt = new DataTable();
             rows.Fill(dt);
             instDatos.cerrarConexion();

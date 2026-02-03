@@ -38,6 +38,8 @@
             this.localidadesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.zonasClientesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.configurarLogoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.conceptosDeCajaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mediosDePagoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.usuariosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,6 +60,7 @@
             this.cambioDePreciosMasivosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.movimientosDeProductosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ajustarStockToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cambioDePreciosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.proveedoresToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aBMProveedoresToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.notasDePedidoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -67,7 +70,6 @@
             this.ventasToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.rankingDeVentasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.cambioDePreciosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -82,7 +84,9 @@
             this.tipoUsuariosToolStripMenuItem,
             this.localidadesToolStripMenuItem,
             this.zonasClientesToolStripMenuItem,
-            this.configurarLogoToolStripMenuItem});
+            this.configurarLogoToolStripMenuItem,
+            this.conceptosDeCajaToolStripMenuItem,
+            this.mediosDePagoToolStripMenuItem});
             this.configuracionToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.configuracionToolStripMenuItem.Image = global::Comercial.Properties.Resources.settings;
             this.configuracionToolStripMenuItem.Name = "configuracionToolStripMenuItem";
@@ -144,6 +148,20 @@
             this.configurarLogoToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.configurarLogoToolStripMenuItem.Text = "Logo";
             this.configurarLogoToolStripMenuItem.Click += new System.EventHandler(this.configurarLogoToolStripMenuItem_Click);
+            // 
+            // conceptosDeCajaToolStripMenuItem
+            // 
+            this.conceptosDeCajaToolStripMenuItem.Name = "conceptosDeCajaToolStripMenuItem";
+            this.conceptosDeCajaToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.conceptosDeCajaToolStripMenuItem.Text = "Conceptos de Caja";
+            this.conceptosDeCajaToolStripMenuItem.Click += new System.EventHandler(this.conceptosDeCajaToolStripMenuItem_Click);
+            // 
+            // mediosDePagoToolStripMenuItem
+            // 
+            this.mediosDePagoToolStripMenuItem.Name = "mediosDePagoToolStripMenuItem";
+            this.mediosDePagoToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.mediosDePagoToolStripMenuItem.Text = "Medios de Pago";
+            this.mediosDePagoToolStripMenuItem.Click += new System.EventHandler(this.mediosDePagoToolStripMenuItem_Click);
             // 
             // menuStrip1
             // 
@@ -317,6 +335,13 @@
             this.ajustarStockToolStripMenuItem.Text = "Ajustar Stock";
             this.ajustarStockToolStripMenuItem.Click += new System.EventHandler(this.ajustarStockToolStripMenuItem_Click);
             // 
+            // cambioDePreciosToolStripMenuItem
+            // 
+            this.cambioDePreciosToolStripMenuItem.Name = "cambioDePreciosToolStripMenuItem";
+            this.cambioDePreciosToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
+            this.cambioDePreciosToolStripMenuItem.Text = "Cambio de Precios";
+            this.cambioDePreciosToolStripMenuItem.Click += new System.EventHandler(this.cambioDePreciosToolStripMenuItem_Click);
+            // 
             // proveedoresToolStripMenuItem
             // 
             this.proveedoresToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -395,13 +420,6 @@
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
             // 
-            // cambioDePreciosToolStripMenuItem
-            // 
-            this.cambioDePreciosToolStripMenuItem.Name = "cambioDePreciosToolStripMenuItem";
-            this.cambioDePreciosToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
-            this.cambioDePreciosToolStripMenuItem.Text = "Cambio de Precios";
-            this.cambioDePreciosToolStripMenuItem.Click += new System.EventHandler(this.cambioDePreciosToolStripMenuItem_Click);
-            // 
             // frmPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -470,5 +488,7 @@
         private System.Windows.Forms.ToolStripMenuItem ajustarStockToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem reportesDevolucionesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cambioDePreciosToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem conceptosDeCajaToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mediosDePagoToolStripMenuItem;
     }
 }

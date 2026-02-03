@@ -5,31 +5,31 @@
     <Setting Name="sistemaConnectionString" Type="(Connection string)" Scope="Application">
       <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;ConnectionString&gt;Server=72.61.47.240;Database=pañalera;Uid=remoto;Pwd=0315061;SslMode=None;
+  &lt;ConnectionString&gt;Server=72.61.47.240;Database=ale;Uid=remoto;Pwd=0315061;SslMode=None;
 &lt;/ConnectionString&gt;
   &lt;ProviderName&gt;MySql.Data.MySqlClient&lt;/ProviderName&gt;
 &lt;/SerializableConnectionString&gt;</DesignTimeValue>
-      <Value Profile="(Default)">Server=72.61.47.240;Database=pañalera;Uid=remoto;Pwd=0315061;SslMode=None;
+      <Value Profile="(Default)">Server=72.61.47.240;Database=ale;Uid=remoto;Pwd=0315061;SslMode=None;
 </Value>
     </Setting>
     <Setting Name="sistemaConnectionString1" Type="(Connection string)" Scope="Application">
       <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;ConnectionString&gt;Server=72.61.47.240;Database=pañalera;Uid=remoto;Pwd=0315061;SslMode=None;
+  &lt;ConnectionString&gt;Server=72.61.47.240;Database=ale;Uid=remoto;Pwd=0315061;SslMode=None;
 &lt;/ConnectionString&gt;
   &lt;ProviderName&gt;MySql.Data.MySqlClient&lt;/ProviderName&gt;
 &lt;/SerializableConnectionString&gt;</DesignTimeValue>
-      <Value Profile="(Default)">Server=72.61.47.240;Database=pañalera;Uid=remoto;Pwd=0315061;SslMode=None;
+      <Value Profile="(Default)">Server=72.61.47.240;Database=ale;Uid=remoto;Pwd=0315061;SslMode=None;
 </Value>
     </Setting>
     <Setting Name="pañaleraConnectionString" Type="(Connection string)" Scope="Application">
       <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;ConnectionString&gt;Server=72.61.47.240;Database=pañalera;Uid=remoto;Pwd=0315061;SslMode=None;
+  &lt;ConnectionString&gt;Server=72.61.47.240;Database=ale;Uid=remoto;Pwd=0315061;SslMode=None;
 &lt;/ConnectionString&gt;
   &lt;ProviderName&gt;MySql.Data.MySqlClient&lt;/ProviderName&gt;
 &lt;/SerializableConnectionString&gt;</DesignTimeValue>
-      <Value Profile="(Default)">Server=72.61.47.240;Database=pañalera;Uid=remoto;Pwd=0315061;SslMode=None;
+      <Value Profile="(Default)">Server=72.61.47.240;Database=ale;Uid=remoto;Pwd=0315061;SslMode=None;
 </Value>
     </Setting>
   </Settings>

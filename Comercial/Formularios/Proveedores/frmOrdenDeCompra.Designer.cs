@@ -239,7 +239,7 @@
             // 
             this.lbDesc.FormattingEnabled = true;
             this.lbDesc.ItemHeight = 15;
-            this.lbDesc.Location = new System.Drawing.Point(153, 137);
+            this.lbDesc.Location = new System.Drawing.Point(153, 142);
             this.lbDesc.Name = "lbDesc";
             this.lbDesc.Size = new System.Drawing.Size(472, 169);
             this.lbDesc.TabIndex = 4;

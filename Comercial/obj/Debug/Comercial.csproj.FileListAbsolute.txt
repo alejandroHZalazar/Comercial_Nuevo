@@ -1,4 +1,3 @@
-C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.csproj.AssemblyReference.cache
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Clientes.frmABMClientes.resources
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Clientes.frmAltaModifClientes.resources
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Configuracion.frmABMclientesZonas.resources
@@ -209,3 +208,8 @@ C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\bin\Debug\MySqlConne
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\bin\Debug\MySql.Data.dll
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\bin\Debug\ZstdSharp.dll
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\bin\Debug\MySql.Data.xml
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.csproj.AssemblyReference.cache
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Configuracion.frmABMConceptosCaja.resources
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Configuracion.frmABMMediosPago.resources
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Configuracion.frmABMPlanesPagos.resources
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Configuracion.frmABMTipoGastos.resources

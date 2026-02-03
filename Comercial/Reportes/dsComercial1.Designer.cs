@@ -5272,7 +5272,7 @@ namespace Comercial.Reportes.dsComercial1TableAdapters {
             this._commandCollection = new global::MySql.Data.MySqlClient.MySqlCommand[1];
             this._commandCollection[0] = new global::MySql.Data.MySqlClient.MySqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = "`pañalera`.`sp_VentasPrint`";
+            this._commandCollection[0].CommandText = "`sp_VentasPrint`";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.StoredProcedure;
             global::MySql.Data.MySqlClient.MySqlParameter param = new global::MySql.Data.MySqlClient.MySqlParameter();
             param.ParameterName = "unaVenta";
@@ -5474,7 +5474,7 @@ namespace Comercial.Reportes.dsComercial1TableAdapters {
             this._commandCollection = new global::MySql.Data.MySqlClient.MySqlCommand[1];
             this._commandCollection[0] = new global::MySql.Data.MySqlClient.MySqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = "`pañalera`.`sp_DevolucionPrint`";
+            this._commandCollection[0].CommandText = "`sp_DevolucionPrint`";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.StoredProcedure;
             global::MySql.Data.MySqlClient.MySqlParameter param = new global::MySql.Data.MySqlClient.MySqlParameter();
             param.ParameterName = "unaDevolucion";
@@ -5679,7 +5679,7 @@ namespace Comercial.Reportes.dsComercial1TableAdapters {
             this._commandCollection = new global::MySql.Data.MySqlClient.MySqlCommand[1];
             this._commandCollection[0] = new global::MySql.Data.MySqlClient.MySqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = "`pañalera`.`sp_PedidosPrintPedido`";
+            this._commandCollection[0].CommandText = "`sp_PedidosPrintPedido`";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.StoredProcedure;
             global::MySql.Data.MySqlClient.MySqlParameter param = new global::MySql.Data.MySqlClient.MySqlParameter();
             param.ParameterName = "unPedido";
@@ -5875,7 +5875,7 @@ namespace Comercial.Reportes.dsComercial1TableAdapters {
             this._commandCollection = new global::MySql.Data.MySqlClient.MySqlCommand[1];
             this._commandCollection[0] = new global::MySql.Data.MySqlClient.MySqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = "`pañalera`.`sp_VentasBuscarEntreFechayFiltro`";
+            this._commandCollection[0].CommandText = "`sp_VentasBuscarEntreFechayFiltro`";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.StoredProcedure;
             global::MySql.Data.MySqlClient.MySqlParameter param = new global::MySql.Data.MySqlClient.MySqlParameter();
             param.ParameterName = "unFiltro";
@@ -6105,7 +6105,7 @@ namespace Comercial.Reportes.dsComercial1TableAdapters {
             this._commandCollection = new global::MySql.Data.MySqlClient.MySqlCommand[1];
             this._commandCollection[0] = new global::MySql.Data.MySqlClient.MySqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = "`pañalera`.`sp_ProductosTraerStock`";
+            this._commandCollection[0].CommandText = "`sp_ProductosTraerStock`";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.StoredProcedure;
             global::MySql.Data.MySqlClient.MySqlParameter param = new global::MySql.Data.MySqlClient.MySqlParameter();
             param.ParameterName = "unFiltro";

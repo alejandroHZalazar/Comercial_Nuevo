@@ -166,7 +166,7 @@
             this.nudCosto.Enabled = false;
             this.nudCosto.Location = new System.Drawing.Point(86, 525);
             this.nudCosto.Maximum = new decimal(new int[] {
-            10000000,
+            999999999,
             0,
             0,
             0});
@@ -182,7 +182,7 @@
             this.nudVenta.Enabled = false;
             this.nudVenta.Location = new System.Drawing.Point(271, 525);
             this.nudVenta.Maximum = new decimal(new int[] {
-            10000000,
+            999999999,
             0,
             0,
             0});

@@ -54,6 +54,7 @@ namespace Comercial.Formularios.Ventas
             if (dgvVentasCabecera .Rows .Count > 0)
             {
                 dgvVentasCabecera.Columns["id"].Visible = false;
+                dgvVentasCabecera.Rows[0].Selected = true;
             }
 
             redondearEncabezado();
@@ -90,6 +91,12 @@ namespace Comercial.Formularios.Ventas
 
         private void btnImprimir_Click(object sender, EventArgs e)
         {
+            if (dgvVentasCabecera.CurrentRow == null)
+            {
+                MessageBox.Show("Debe seleccionar una venta para imprimir.", "Aviso",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             if (dgvVentasCabecera .Rows .Count > 0)
             {
                 Reportes.frmReport unFrmReport = new Reportes.frmReport();

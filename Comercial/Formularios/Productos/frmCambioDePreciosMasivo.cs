@@ -67,7 +67,7 @@ namespace Comercial.Formularios.Productos
                 OleDbDataAdapter dataAdapter = null;
                 string consultaHojaExcel = "select * from [" + hoja + "$]";
 
-                string cadenaConexionArchivoExcel = "provider=Microsoft.ACE.OLEDB.12.0;Data Source='" + archivo + "';Extended Properties=Excel 12.0;";
+                string cadenaConexionArchivoExcel ="Provider=Microsoft.ACE.OLEDB.12.0;" + "Data Source=" + archivo + ";" + "Extended Properties=\"Excel 12.0 Xml;HDR=YES;IMEX=1\";";
 
                 if (string.IsNullOrEmpty(hoja))
                 {
@@ -174,5 +174,7 @@ namespace Comercial.Formularios.Productos
         {
             pbProceso.Value = (e.ProgressPercentage);
         }
+
+        
     }
 }

@@ -203,5 +203,17 @@ namespace Comercial.Formularios
             Productos.frmCambioPrecios unFrmCambioPrecios = new Productos.frmCambioPrecios();
             unFrmCambioPrecios.ShowDialog();
         }
+
+        private void conceptosDeCajaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Configuracion.frmABMConceptosCaja unFrmConceptosCaja = new Configuracion.frmABMConceptosCaja();
+            unFrmConceptosCaja.ShowDialog();
+        }
+
+        private void mediosDePagoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Configuracion.frmABMMediosPago unFrmABMMediosPago = new Configuracion.frmABMMediosPago();
+            unFrmABMMediosPago.ShowDialog();
+        }
     }
 }

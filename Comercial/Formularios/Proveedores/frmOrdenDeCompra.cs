@@ -390,7 +390,7 @@ namespace Comercial.Formularios.Proveedores
             {
                 foreach (DataGridViewRow fila in dgvOrden.Rows)
                 {
-                    fila.Cells["Costo_SIVA"].Value = Math.Round (( (100 + nudRecargo .Value) * decimal.Parse(fila.Cells["costoOrig"].Value.ToString()) / 100),cantDec );
+                    fila.Cells["Precio_SIVA"].Value = Math.Round (( (100 + nudRecargo .Value) * decimal.Parse(fila.Cells["costoOrig"].Value.ToString()) / 100),cantDec );
                 }
 
                 procesoTotales();
