@@ -215,5 +215,46 @@ namespace Comercial.Formularios
             Configuracion.frmABMMediosPago unFrmABMMediosPago = new Configuracion.frmABMMediosPago();
             unFrmABMMediosPago.ShowDialog();
         }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void gestionDeCajaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string haceCaja = Clases.ClassParametros.buscarParametro("caja", "haceCaja");
+
+            if (!string.IsNullOrWhiteSpace(haceCaja) && haceCaja == "1")
+            {
+                Formularios.Contable.frmGestionCaja unFrmGestionCaja = new Contable.frmGestionCaja();
+                unFrmGestionCaja.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show(this, "Debe habilitar el modulo de Caja o parametrizar su valor", "Gestion de Caja", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void auditoriaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string haceCaja = Clases.ClassParametros.buscarParametro("caja", "haceCaja");
+
+            if (!string.IsNullOrWhiteSpace(haceCaja) && haceCaja == "1")
+            {
+                Formularios.Contable.frmAuditoriaCaja unFrmAuditoriaCaja = new Contable.frmAuditoriaCaja();
+                unFrmAuditoriaCaja.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show(this, "Debe habilitar el modulo de Caja o parametrizar su valor", "Gestion de Caja", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void tiposDocumentosToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Formularios.Configuracion.frmABMDocumentosTipos unFrmTiposDoc = new Configuracion.frmABMDocumentosTipos();
+            unFrmTiposDoc.ShowDialog();
+        }
     }
 }

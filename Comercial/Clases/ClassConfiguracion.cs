@@ -1,10 +1,6 @@
 ﻿using MySqlConnector;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Comercial.Clases
 {
@@ -206,7 +202,7 @@ namespace Comercial.Clases
 
         public DataTable traerMediosDePago()
         {
-            MySqlDataAdapter rows = new MySqlDataAdapter("select medio_pago_id id, nombre Nombre from medios_pago", instDatos.abrirConexion());
+            MySqlDataAdapter rows = new MySqlDataAdapter("select medio_pago_id id, nombre Nombre, conDatos `Necesita Datos` from medios_pago", instDatos.abrirConexion());
             DataTable dt = new DataTable();
             rows.Fill(dt);
             instDatos.cerrarConexion();
@@ -224,7 +220,7 @@ namespace Comercial.Clases
 
         public DataTable traerMediosDePagoPorId(int unId)
         {
-            MySqlDataAdapter rows = new MySqlDataAdapter("select medio_pago_id id, nombre Nombre from medios_pago where medio_pago_id = " + unId, instDatos.abrirConexion());
+            MySqlDataAdapter rows = new MySqlDataAdapter("select medio_pago_id id, nombre Nombre, conDatos from medios_pago where medio_pago_id = " + unId, instDatos.abrirConexion());
             DataTable dt = new DataTable();
             rows.Fill(dt);
             instDatos.cerrarConexion();
@@ -234,6 +230,24 @@ namespace Comercial.Clases
         public DataTable traerPlanesPagoPorMedio(int unMedio)
         {
             MySqlDataAdapter rows = new MySqlDataAdapter("select id Nro, nombre Nombre, recargo Recargo from planes_pago where fk_medioPago = " + unMedio, instDatos.abrirConexion());
+            DataTable dt = new DataTable();
+            rows.Fill(dt);
+            instDatos.cerrarConexion();
+            return dt;
+        }
+
+        public DataTable traerPlanesPagoPorId(int unId)
+        {
+            MySqlDataAdapter rows = new MySqlDataAdapter("select * from planes_pago where id = " + unId, instDatos.abrirConexion());
+            DataTable dt = new DataTable();
+            rows.Fill(dt);
+            instDatos.cerrarConexion();
+            return dt;
+        }
+
+        public DataTable traerPlanesPago()
+        {
+            MySqlDataAdapter rows = new MySqlDataAdapter("select * from planes_pago", instDatos.abrirConexion());
             DataTable dt = new DataTable();
             rows.Fill(dt);
             instDatos.cerrarConexion();
@@ -384,7 +398,7 @@ namespace Comercial.Clases
             }
         }
 
-        public string ABMMediosPago(string unNombre, int unTipo, int unId)
+        public string ABMMediosPago(string unNombre, int unTipo, int unId, bool unConDatos)
         {
             try
             {
@@ -394,8 +408,9 @@ namespace Comercial.Clases
                 cmd.CommandText = "sp_ConfiguracionABMmediosPago";
 
                 cmd.Parameters.AddWithValue("unNombre", unNombre);                
-                cmd.Parameters.AddWithValue("unId", unId);
+                cmd.Parameters.AddWithValue("unConDatos", unConDatos);
                 cmd.Parameters.AddWithValue("tipo", unTipo);
+                cmd.Parameters.AddWithValue("unId", unId);
 
                 MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.VarChar);
                 salida.Direction = ParameterDirection.Output;
@@ -458,6 +473,47 @@ namespace Comercial.Clases
                 cmd.CommandText = "sp_ConfiguracionABMTiposGastos";
 
                 cmd.Parameters.AddWithValue("unNombre", unNombre);
+                cmd.Parameters.AddWithValue("unId", unId);
+                cmd.Parameters.AddWithValue("tipo", unTipo);
+
+                MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.VarChar);
+                salida.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(salida);
+
+                cmd.ExecuteScalar();
+                string valor = cmd.Parameters["salida"].Value.ToString();
+                return valor;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                instDatos.cerrarConexion();
+            }
+        }
+
+        public DataTable traerTiposDocumentos()
+        {
+            MySqlDataAdapter rows = new MySqlDataAdapter("select id as Nro, Abreviatura Abrev, descripcion as Nombre from Documentos_Tipo order by descripcion", instDatos.abrirConexion());
+            DataTable dt = new DataTable();
+            rows.Fill(dt);
+            instDatos.cerrarConexion();
+            return dt;
+        }
+
+        public string ABMTiposDocumentos(int unId, string unNombre, string unAbrev, int unTipo)
+        {
+            try
+            {
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Connection = instDatos.abrirConexion();
+                cmd.CommandText = "sp_ConfiguracionABMTiposDocumentos";
+
+                cmd.Parameters.AddWithValue("unNombre", unNombre);
+                cmd.Parameters.AddWithValue("unAbrev", unAbrev);                
                 cmd.Parameters.AddWithValue("unId", unId);
                 cmd.Parameters.AddWithValue("tipo", unTipo);
 

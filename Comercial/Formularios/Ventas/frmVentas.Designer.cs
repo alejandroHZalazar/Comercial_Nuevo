@@ -104,6 +104,8 @@
             this.txtIVA = new System.Windows.Forms.TextBox();
             this.txtIB = new System.Windows.Forms.TextBox();
             this.label20 = new System.Windows.Forms.Label();
+            this.lblMedioPago = new System.Windows.Forms.Label();
+            this.cboMedioPago = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecargo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDescuento)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvProductos)).BeginInit();
@@ -120,10 +122,10 @@
             this.btnGrabar.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnGrabar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnGrabar.Image = global::Comercial.Properties.Resources.save__1_;
-            this.btnGrabar.Location = new System.Drawing.Point(981, 658);
+            this.btnGrabar.Location = new System.Drawing.Point(988, 658);
             this.btnGrabar.Name = "btnGrabar";
             this.btnGrabar.Size = new System.Drawing.Size(116, 34);
-            this.btnGrabar.TabIndex = 10;
+            this.btnGrabar.TabIndex = 18;
             this.btnGrabar.Text = "  Grabar [F5]";
             this.btnGrabar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnGrabar.UseVisualStyleBackColor = false;
@@ -141,7 +143,7 @@
             0});
             this.nudRecargo.Name = "nudRecargo";
             this.nudRecargo.Size = new System.Drawing.Size(83, 23);
-            this.nudRecargo.TabIndex = 7;
+            this.nudRecargo.TabIndex = 8;
             this.nudRecargo.ValueChanged += new System.EventHandler(this.nudRecargo_ValueChanged);
             this.nudRecargo.Enter += new System.EventHandler(this.nudRecargo_Enter);
             this.nudRecargo.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nudRecargo_KeyPress);
@@ -208,7 +210,7 @@
             0});
             this.nudDescuento.Name = "nudDescuento";
             this.nudDescuento.Size = new System.Drawing.Size(83, 23);
-            this.nudDescuento.TabIndex = 6;
+            this.nudDescuento.TabIndex = 7;
             this.nudDescuento.ValueChanged += new System.EventHandler(this.nudDescuento_ValueChanged);
             this.nudDescuento.Enter += new System.EventHandler(this.nudDescuento_Enter);
             this.nudDescuento.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nudDescuento_KeyPress);
@@ -233,7 +235,7 @@
             this.dgvProductos.Location = new System.Drawing.Point(13, 203);
             this.dgvProductos.Name = "dgvProductos";
             this.dgvProductos.Size = new System.Drawing.Size(1095, 384);
-            this.dgvProductos.TabIndex = 5;
+            this.dgvProductos.TabIndex = 6;
             this.dgvProductos.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.dgvProductos_CellParsing);
             this.dgvProductos.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvProductos_CellValueChanged);
             this.dgvProductos.RowsRemoved += new System.Windows.Forms.DataGridViewRowsRemovedEventHandler(this.dgvProductos_RowsRemoved);
@@ -418,7 +420,7 @@
             this.lblCliente.Location = new System.Drawing.Point(67, 35);
             this.lblCliente.Name = "lblCliente";
             this.lblCliente.Size = new System.Drawing.Size(436, 169);
-            this.lblCliente.TabIndex = 39;
+            this.lblCliente.TabIndex = 5;
             this.lblCliente.SelectedIndexChanged += new System.EventHandler(this.lblCliente_SelectedIndexChanged);
             this.lblCliente.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lblCliente_KeyDown);
             this.lblCliente.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lblCliente_MouseDoubleClick);
@@ -448,10 +450,10 @@
             this.btnCambioPrecio.BackColor = System.Drawing.Color.Silver;
             this.btnCambioPrecio.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCambioPrecio.Image = global::Comercial.Properties.Resources.peso;
-            this.btnCambioPrecio.Location = new System.Drawing.Point(729, 13);
+            this.btnCambioPrecio.Location = new System.Drawing.Point(928, 14);
             this.btnCambioPrecio.Name = "btnCambioPrecio";
             this.btnCambioPrecio.Size = new System.Drawing.Size(151, 35);
-            this.btnCambioPrecio.TabIndex = 60;
+            this.btnCambioPrecio.TabIndex = 5;
             this.btnCambioPrecio.Text = "Precios Actualizados";
             this.btnCambioPrecio.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnCambioPrecio.UseVisualStyleBackColor = false;
@@ -528,7 +530,7 @@
             this.txtSubSinIVA.Name = "txtSubSinIVA";
             this.txtSubSinIVA.ReadOnly = true;
             this.txtSubSinIVA.Size = new System.Drawing.Size(84, 23);
-            this.txtSubSinIVA.TabIndex = 49;
+            this.txtSubSinIVA.TabIndex = 13;
             // 
             // label10
             // 
@@ -536,9 +538,9 @@
             this.label10.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label10.Location = new System.Drawing.Point(289, 630);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(97, 15);
+            this.label10.Size = new System.Drawing.Size(101, 15);
             this.label10.TabIndex = 50;
-            this.label10.Text = "Total Descuento";
+            this.label10.Text = "Total Desc/Recar";
             // 
             // txtDescuento
             // 
@@ -547,7 +549,7 @@
             this.txtDescuento.Name = "txtDescuento";
             this.txtDescuento.ReadOnly = true;
             this.txtDescuento.Size = new System.Drawing.Size(72, 23);
-            this.txtDescuento.TabIndex = 51;
+            this.txtDescuento.TabIndex = 14;
             // 
             // btnAltaCliente
             // 
@@ -712,7 +714,7 @@
             this.btnLimpiar.Location = new System.Drawing.Point(16, 620);
             this.btnLimpiar.Name = "btnLimpiar";
             this.btnLimpiar.Size = new System.Drawing.Size(98, 35);
-            this.btnLimpiar.TabIndex = 11;
+            this.btnLimpiar.TabIndex = 12;
             this.btnLimpiar.Text = "Limpiar";
             this.btnLimpiar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnLimpiar.UseVisualStyleBackColor = false;
@@ -724,7 +726,7 @@
             this.cboVendedores.Location = new System.Drawing.Point(401, 592);
             this.cboVendedores.Name = "cboVendedores";
             this.cboVendedores.Size = new System.Drawing.Size(150, 23);
-            this.cboVendedores.TabIndex = 8;
+            this.cboVendedores.TabIndex = 9;
             // 
             // label16
             // 
@@ -747,7 +749,7 @@
             this.txtTotalSinIva.Name = "txtTotalSinIva";
             this.txtTotalSinIva.ReadOnly = true;
             this.txtTotalSinIva.Size = new System.Drawing.Size(84, 23);
-            this.txtTotalSinIva.TabIndex = 63;
+            this.txtTotalSinIva.TabIndex = 15;
             // 
             // label17
             // 
@@ -781,7 +783,7 @@
             -2147483648});
             this.nudComision.Name = "nudComision";
             this.nudComision.Size = new System.Drawing.Size(83, 23);
-            this.nudComision.TabIndex = 9;
+            this.nudComision.TabIndex = 10;
             this.nudComision.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nudComision_KeyPress);
             // 
             // label18
@@ -820,7 +822,7 @@
             this.txtIVA.Name = "txtIVA";
             this.txtIVA.ReadOnly = true;
             this.txtIVA.Size = new System.Drawing.Size(84, 23);
-            this.txtIVA.TabIndex = 68;
+            this.txtIVA.TabIndex = 16;
             // 
             // txtIB
             // 
@@ -829,7 +831,7 @@
             this.txtIB.Name = "txtIB";
             this.txtIB.ReadOnly = true;
             this.txtIB.Size = new System.Drawing.Size(84, 23);
-            this.txtIB.TabIndex = 70;
+            this.txtIB.TabIndex = 17;
             // 
             // label20
             // 
@@ -841,12 +843,36 @@
             this.label20.TabIndex = 69;
             this.label20.Text = "Ing. Brutos";
             // 
+            // lblMedioPago
+            // 
+            this.lblMedioPago.AutoSize = true;
+            this.lblMedioPago.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMedioPago.Location = new System.Drawing.Point(744, 595);
+            this.lblMedioPago.Name = "lblMedioPago";
+            this.lblMedioPago.Size = new System.Drawing.Size(86, 17);
+            this.lblMedioPago.TabIndex = 72;
+            this.lblMedioPago.Text = "Medio Pago:";
+            // 
+            // cboMedioPago
+            // 
+            this.cboMedioPago.FormattingEnabled = true;
+            this.cboMedioPago.Items.AddRange(new object[] {
+            "Nota de Venta",
+            "Facturacion"});
+            this.cboMedioPago.Location = new System.Drawing.Point(836, 592);
+            this.cboMedioPago.Name = "cboMedioPago";
+            this.cboMedioPago.Size = new System.Drawing.Size(203, 23);
+            this.cboMedioPago.TabIndex = 11;
+            this.cboMedioPago.SelectedIndexChanged += new System.EventHandler(this.cboMedioPago_SelectedIndexChanged);
+            // 
             // frmVentas
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ClientSize = new System.Drawing.Size(1116, 697);
+            this.Controls.Add(this.cboMedioPago);
+            this.Controls.Add(this.lblMedioPago);
             this.Controls.Add(this.txtIB);
             this.Controls.Add(this.label20);
             this.Controls.Add(this.txtIVA);
@@ -894,6 +920,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Ventas";
             this.Load += new System.EventHandler(this.frmVentas_Load);
+            this.Shown += new System.EventHandler(this.frmVentas_Shown);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmVentas_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.nudRecargo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDescuento)).EndInit();
@@ -980,5 +1007,7 @@
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Label lblCondIVA;
         private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.Label lblMedioPago;
+        private System.Windows.Forms.ComboBox cboMedioPago;
     }
 }

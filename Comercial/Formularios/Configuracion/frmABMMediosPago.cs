@@ -96,7 +96,8 @@ namespace Comercial.Formularios.Configuracion
             estadoAM();
             accion = 1;
             dgvMediosPago.Enabled = false;
-            txtNombre.Text = string.Empty;            
+            txtNombre.Text = string.Empty;
+            cbSi.Checked = false;
             txtNombre.Focus();
         }
 
@@ -123,11 +124,11 @@ namespace Comercial.Formularios.Configuracion
                 Clases.ClassConfiguracion instConfig = new Clases.ClassConfiguracion();
                 if (accion == 1)
                 {
-                    salida = instConfig.ABMMediosPago(txtNombre.Text.Trim(), 1, 0);
+                    salida = instConfig.ABMMediosPago(txtNombre.Text.Trim(), 1, 0, cbSi.Checked);
                 }
                 else
                 {
-                    salida = instConfig.ABMMediosPago(txtNombre.Text.Trim(), 2, medioId);
+                    salida = instConfig.ABMMediosPago(txtNombre.Text.Trim(), 2, medioId, cbSi.Checked);
                 }
 
                 if (salida == "1")
@@ -162,7 +163,7 @@ namespace Comercial.Formularios.Configuracion
             DataTable medioPago = instConfig.traerMediosDePagoPorId(int.Parse(dgvMediosPago.CurrentRow.Cells["id"].Value.ToString()));
 
             txtNombre.Text = medioPago.Rows[0]["Nombre"].ToString();            
-
+            cbSi.Checked = bool.Parse(medioPago.Rows[0]["conDatos"].ToString());
             medioId = int.Parse(medioPago.Rows[0]["id"].ToString());
             txtNombre.Focus();
         }
@@ -170,7 +171,7 @@ namespace Comercial.Formularios.Configuracion
         private void btnEliminar_Click(object sender, EventArgs e)
         {
             Clases.ClassConfiguracion instConfig = new Clases.ClassConfiguracion();
-            string salida = instConfig.ABMMediosPago("", 3, int.Parse(dgvMediosPago.CurrentRow.Cells["id"].Value.ToString()));
+            string salida = instConfig.ABMMediosPago("", 3, int.Parse(dgvMediosPago.CurrentRow.Cells["id"].Value.ToString()),false);
             if (salida == "1")
             {
                 estadoInicial();

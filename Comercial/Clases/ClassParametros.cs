@@ -39,9 +39,37 @@ namespace Comercial.Clases
         {
             classDatos datos = new classDatos();
             MySqlCommand nComando = new MySqlCommand("select valor from parametros where modulo = 'notaPedido' and parametro = 'indiceBusqueda'", datos.abrirConexion());
-            int valor = int.Parse (nComando.ExecuteScalar().ToString ());
+            int valor = int.Parse(nComando.ExecuteScalar().ToString());
             datos.cerrarConexion();
             return valor;
         }
+
+        public static string buscarParametro(string unModulo, string unParametro)
+        {
+            try
+            {
+                classDatos datos = new classDatos();
+                using (MySqlCommand nComando = new MySqlCommand(
+                    "SELECT valor FROM parametros WHERE modulo = @modulo AND parametro = @parametro",
+                    datos.abrirConexion()))
+                {
+                    nComando.Parameters.AddWithValue("@modulo", unModulo);
+                    nComando.Parameters.AddWithValue("@parametro", unParametro);
+
+                    object resultado = nComando.ExecuteScalar();
+
+                    if (resultado != null && resultado != DBNull.Value)
+                        return resultado.ToString();
+                    else
+                        return ""; // no encontró valor
+                }
+            }
+            catch (Exception ex)
+            {
+                // Ideal loguearlo
+                return "";
+            }
+        }
     }
 }
+

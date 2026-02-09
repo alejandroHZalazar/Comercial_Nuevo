@@ -13,7 +13,7 @@ namespace Comercial.Formularios.Clientes
     public partial class frmABMClientes : Form
     {
         Clases.ClassClientes instClie = new Clases.ClassClientes();
-
+        int llevaCC = Clases.ClassParametros.buscarParametro("clientes", "llevaCC") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("clientes", "llevaCC"));
         public frmABMClientes()
         {
             InitializeComponent();
@@ -29,6 +29,7 @@ namespace Comercial.Formularios.Clientes
             limpiarLabels();
             txtBuscar.Text = string.Empty;
             dgvClientes .DataSource = instClie.traeClientesPpal("");
+            btnVerCC.Enabled = llevaCC == 1; 
             verificarBotones();
             cboBusqueda.SelectedIndex  = instClie.traerFiltroDefecto();
 
@@ -175,8 +176,21 @@ namespace Comercial.Formularios.Clientes
             {
                 btnEliminar_Click(null, null);
             }
+
+            if (e.KeyData == Keys.F5 & btnVerCC.Enabled)
+            {
+                btnVerCC_Click(null, null);
+            }
         }
 
-       
+        private void btnVerCC_Click(object sender, EventArgs e)
+        {
+            if (dgvClientes.RowCount > 0)
+            {
+                frmClientesCC unFrmCC = new frmClientesCC(int.Parse(dgvClientes.CurrentRow.Cells["ID"].Value.ToString()));
+                unFrmCC.ShowDialog();
+
+            }
+        }
     }
 }

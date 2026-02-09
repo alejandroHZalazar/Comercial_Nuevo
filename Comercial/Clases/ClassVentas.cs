@@ -1,13 +1,11 @@
 ﻿using MySqlConnector;
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
-using System.Linq;
-using System.Text;
 
 namespace Comercial.Clases
 {
-    class ClassVentas
+    public class ClassVentas
     {
         classDatos instDatos = new classDatos();
 
@@ -258,6 +256,141 @@ namespace Comercial.Clases
             return valor;
         }
 
+        public long grabarVenta(decimal unTotal, decimal unCosto, int unCliente, int unCajero, decimal unIva, decimal unDescuento, decimal unRecargo, int unVendedor, decimal comision, decimal unImpuesto, string unDetalle, int llevaCC, int imputaEnVenta, int tieneMediosPagos, decimal ImporteCobro, string DetallePlanPago)
+        {
+            try
+            {
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Connection = instDatos.abrirConexion();
+                cmd.CommandText = "sp_VentasAddVenta ";
+
+                cmd.Parameters.AddWithValue("unTotal", unTotal);
+                cmd.Parameters.AddWithValue("unCosto", unCosto);
+                cmd.Parameters.AddWithValue("unCliente", unCliente);
+                cmd.Parameters.AddWithValue("unCajero", unCajero);
+                cmd.Parameters.AddWithValue("unIva", unIva);
+                cmd.Parameters.AddWithValue("unDescuento", unDescuento);
+                cmd.Parameters.AddWithValue("unRecargo", unRecargo);
+                cmd.Parameters.AddWithValue("unVendedor", unVendedor);
+                cmd.Parameters.AddWithValue("unaComision", comision);
+                cmd.Parameters.AddWithValue("unImpuesto", unImpuesto);
+                cmd.Parameters.AddWithValue("llevaCC", llevaCC);
+                cmd.Parameters.AddWithValue("detalle", unDetalle);
+                cmd.Parameters.AddWithValue("detallePlanPago", DetallePlanPago);
+                cmd.Parameters.AddWithValue("imputaEnVenta", imputaEnVenta);
+                cmd.Parameters.AddWithValue("tieneMediosPagos", tieneMediosPagos);
+                cmd.Parameters.AddWithValue("ImporteCobro", ImporteCobro);
+
+                MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int64);
+                salida.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(salida);
+
+                cmd.ExecuteScalar();
+                long valor = long.Parse(cmd.Parameters["salida"].Value.ToString());
+                return valor;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                instDatos.cerrarConexion();
+            }
+        }
+
+        public DataTable traerPlanesPago()
+        {
+            MySqlDataAdapter rows = new MySqlDataAdapter("select id Nro, nombre Nombre, recargo Recargo from planes_pago", instDatos.abrirConexion());
+            DataTable dt = new DataTable();
+            rows.Fill(dt);
+            instDatos.cerrarConexion();
+            return dt;
+        }
+
+        public int traerIdPlanPagoporNombre(string unPlanPago)
+        {
+            MySqlCommand nComando = new MySqlCommand("select id from planes_pago where nombre = '" + unPlanPago + "'", instDatos.abrirConexion());
+            int valor = int.Parse(nComando.ExecuteScalar().ToString());
+            instDatos.cerrarConexion();
+            return valor;
+        }
+
+        public class CobroFormasPago
+        {
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            private int _idMetodo;
+            public int idMedio
+            {
+                get => _idMetodo;
+                set { _idMetodo = value; OnPropertyChanged(nameof(idMedio)); }
+            }
+
+            private string _Metodo;
+            public string Medio
+            {
+                get => _Metodo;
+                set { _Metodo = value; OnPropertyChanged(nameof(Medio)); }
+            }
+
+            private int _idPlan;
+            public int idPlan
+            {
+                get => _idPlan;
+                set { _idPlan = value; OnPropertyChanged(nameof(idPlan)); }
+            }
+
+            private string _Plan;
+            public string Plan
+            {
+                get => _Plan;
+                set { _Plan = value; OnPropertyChanged(nameof(Plan)); }
+            }
+
+            private decimal _Importe;
+            public decimal Importe
+            {
+                get => _Importe;
+                set { _Importe = value; OnPropertyChanged(nameof(Importe)); }
+            }
+
+            private string _Referencia1;
+            public string Referencia1
+            {
+                get => _Referencia1;
+                set { _Referencia1 = value; OnPropertyChanged(nameof(Referencia1)); }
+            }
+
+            private string _Referencia2;
+            public string Referencia2
+            {
+                get => _Referencia2;
+                set { _Referencia2 = value; OnPropertyChanged(nameof(Referencia2)); }
+            }
+
+            private string _Referencia3;
+            public string Referencia3
+            {
+                get => _Referencia3;
+                set { _Referencia3 = value; OnPropertyChanged(nameof(Referencia3)); }
+            }
+
+            private bool _necesitaDatos;
+
+            public bool necesitaDatos
+            {
+                get => _necesitaDatos;
+                set { _necesitaDatos = value; OnPropertyChanged(nameof(necesitaDatos)); }
+            }
+
+            private void OnPropertyChanged(string nombre)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nombre));
+            }
+
+        }
 
     }
 }

@@ -35,6 +35,7 @@
             this.btnBuscar = new System.Windows.Forms.Button();
             this.dgvClientes = new System.Windows.Forms.DataGridView();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnVerCC = new System.Windows.Forms.Button();
             this.lblProvincia = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.lblZona = new System.Windows.Forms.Label();
@@ -131,6 +132,7 @@
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.Color.Silver;
+            this.groupBox1.Controls.Add(this.btnVerCC);
             this.groupBox1.Controls.Add(this.lblProvincia);
             this.groupBox1.Controls.Add(this.label15);
             this.groupBox1.Controls.Add(this.lblZona);
@@ -165,6 +167,20 @@
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Datos Proveedores";
+            // 
+            // btnVerCC
+            // 
+            this.btnVerCC.BackColor = System.Drawing.Color.Silver;
+            this.btnVerCC.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnVerCC.Image = ((System.Drawing.Image)(resources.GetObject("btnVerCC.Image")));
+            this.btnVerCC.Location = new System.Drawing.Point(195, 394);
+            this.btnVerCC.Name = "btnVerCC";
+            this.btnVerCC.Size = new System.Drawing.Size(127, 34);
+            this.btnVerCC.TabIndex = 13;
+            this.btnVerCC.Text = "Ver CC [F5]";
+            this.btnVerCC.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.btnVerCC.UseVisualStyleBackColor = false;
+            this.btnVerCC.Click += new System.EventHandler(this.btnVerCC_Click);
             // 
             // lblProvincia
             // 
@@ -547,5 +563,6 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label lblProvincia;
         private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Button btnVerCC;
     }
 }

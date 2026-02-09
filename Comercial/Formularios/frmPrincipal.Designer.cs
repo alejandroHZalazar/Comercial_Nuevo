@@ -69,7 +69,11 @@
             this.estadisticasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ventasToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.rankingDeVentasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gestionDeCajaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.auditoriaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.tiposDocumentosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -86,7 +90,8 @@
             this.zonasClientesToolStripMenuItem,
             this.configurarLogoToolStripMenuItem,
             this.conceptosDeCajaToolStripMenuItem,
-            this.mediosDePagoToolStripMenuItem});
+            this.mediosDePagoToolStripMenuItem,
+            this.tiposDocumentosToolStripMenuItem});
             this.configuracionToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.configuracionToolStripMenuItem.Image = global::Comercial.Properties.Resources.settings;
             this.configuracionToolStripMenuItem.Name = "configuracionToolStripMenuItem";
@@ -172,12 +177,14 @@
             this.proveedoresToolStripMenuItem,
             this.clientesToolStripMenuItem,
             this.estadisticasToolStripMenuItem,
+            this.contableToolStripMenuItem,
             this.configuracionToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(720, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(747, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
+            this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
             // 
             // usuariosToolStripMenuItem
             // 
@@ -409,16 +416,48 @@
             this.rankingDeVentasToolStripMenuItem.Text = "Ranking de Ventas";
             this.rankingDeVentasToolStripMenuItem.Click += new System.EventHandler(this.rankingDeVentasToolStripMenuItem_Click);
             // 
+            // contableToolStripMenuItem
+            // 
+            this.contableToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.gestionDeCajaToolStripMenuItem,
+            this.auditoriaToolStripMenuItem});
+            this.contableToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.contableToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("contableToolStripMenuItem.Image")));
+            this.contableToolStripMenuItem.Name = "contableToolStripMenuItem";
+            this.contableToolStripMenuItem.Size = new System.Drawing.Size(84, 20);
+            this.contableToolStripMenuItem.Text = "Contable";
+            // 
+            // gestionDeCajaToolStripMenuItem
+            // 
+            this.gestionDeCajaToolStripMenuItem.Name = "gestionDeCajaToolStripMenuItem";
+            this.gestionDeCajaToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.gestionDeCajaToolStripMenuItem.Text = "Gestion de Caja";
+            this.gestionDeCajaToolStripMenuItem.Click += new System.EventHandler(this.gestionDeCajaToolStripMenuItem_Click);
+            // 
+            // auditoriaToolStripMenuItem
+            // 
+            this.auditoriaToolStripMenuItem.Name = "auditoriaToolStripMenuItem";
+            this.auditoriaToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.auditoriaToolStripMenuItem.Text = "Auditoria";
+            this.auditoriaToolStripMenuItem.Click += new System.EventHandler(this.auditoriaToolStripMenuItem_Click);
+            // 
             // pictureBox1
             // 
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox1.Image = global::Comercial.Properties.Resources.house_sale_agreement__2_;
             this.pictureBox1.Location = new System.Drawing.Point(0, 24);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(720, 399);
+            this.pictureBox1.Size = new System.Drawing.Size(747, 399);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
+            // 
+            // tiposDocumentosToolStripMenuItem
+            // 
+            this.tiposDocumentosToolStripMenuItem.Name = "tiposDocumentosToolStripMenuItem";
+            this.tiposDocumentosToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.tiposDocumentosToolStripMenuItem.Text = "Tipos Documentos";
+            this.tiposDocumentosToolStripMenuItem.Click += new System.EventHandler(this.tiposDocumentosToolStripMenuItem_Click);
             // 
             // frmPrincipal
             // 
@@ -426,7 +465,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(720, 423);
+            this.ClientSize = new System.Drawing.Size(747, 423);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.menuStrip1);
             this.DoubleBuffered = true;
@@ -490,5 +529,9 @@
         private System.Windows.Forms.ToolStripMenuItem cambioDePreciosToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem conceptosDeCajaToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mediosDePagoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem contableToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem gestionDeCajaToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem auditoriaToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tiposDocumentosToolStripMenuItem;
     }
 }

@@ -170,6 +170,111 @@ namespace Comercial.Clases
                 instDatos.cerrarConexion();
             }
         }
+        public DataTable traerCC(int unCliente)
+        {
+            MySqlDataAdapter a1 = new MySqlDataAdapter("sp_Cientes_VerCC", instDatos.abrirConexion());
+            a1.SelectCommand.CommandType = CommandType.StoredProcedure;
+            a1.SelectCommand.Parameters.AddWithValue("unCliente", unCliente);
+
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            return t2;
+        }
+
+        public int CobrarCliente(int unCliente, decimal importeCobrar)
+        {
+            try
+            {
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Connection = instDatos.abrirConexion();
+                cmd.CommandText = "sp_clientes_Cobrar";
+
+                cmd.Parameters.AddWithValue("unCliente", unCliente);
+                cmd.Parameters.AddWithValue("ImporteCobro", importeCobrar);               
+
+
+                MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int32);
+                salida.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(salida);
+
+                cmd.ExecuteScalar();
+                int valor = Int32.Parse(cmd.Parameters["salida"].Value.ToString());
+                return valor;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                instDatos.cerrarConexion();
+            }
+        }
+
+        public int NC_Cliente(int unCliente, decimal importeCobrar, string unaObserv)
+        {
+            try
+            {
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Connection = instDatos.abrirConexion();
+                cmd.CommandText = "sp_clientes_ADD_NC";
+
+                cmd.Parameters.AddWithValue("unCliente", unCliente);
+                cmd.Parameters.AddWithValue("ImporteCobro", importeCobrar);
+                cmd.Parameters.AddWithValue("observ", unaObserv);
+
+
+                MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int32);
+                salida.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(salida);
+
+                cmd.ExecuteScalar();
+                int valor = Int32.Parse(cmd.Parameters["salida"].Value.ToString());
+                return valor;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                instDatos.cerrarConexion();
+            }
+        }
+
+        public int Add_ND_Cliente(int unCliente, decimal importeDebito, string unaObserv)
+        {
+            try
+            {
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Connection = instDatos.abrirConexion();
+                cmd.CommandText = "sp_clientes_AddND";
+
+                cmd.Parameters.AddWithValue("ClienteId", unCliente);
+                cmd.Parameters.AddWithValue("Importe", importeDebito);
+                cmd.Parameters.AddWithValue("observ", unaObserv);
+
+
+                MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int32);
+                salida.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(salida);
+
+                cmd.ExecuteScalar();
+                int valor = Int32.Parse(cmd.Parameters["salida"].Value.ToString());
+                return valor;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                instDatos.cerrarConexion();
+            }
+        }
 
     }
 }

@@ -33,6 +33,8 @@ namespace Comercial.Formularios.Configuracion
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmABMMediosPago));
             this.dgvMediosPago = new System.Windows.Forms.DataGridView();
             this.gbDatos = new System.Windows.Forms.GroupBox();
+            this.cbSi = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.txtNombre = new System.Windows.Forms.TextBox();
             this.btnCancelar = new System.Windows.Forms.Button();
@@ -64,6 +66,8 @@ namespace Comercial.Formularios.Configuracion
             // gbDatos
             // 
             this.gbDatos.BackColor = System.Drawing.Color.Silver;
+            this.gbDatos.Controls.Add(this.cbSi);
+            this.gbDatos.Controls.Add(this.label2);
             this.gbDatos.Controls.Add(this.label1);
             this.gbDatos.Controls.Add(this.txtNombre);
             this.gbDatos.Controls.Add(this.btnCancelar);
@@ -71,8 +75,27 @@ namespace Comercial.Formularios.Configuracion
             this.gbDatos.Location = new System.Drawing.Point(357, 12);
             this.gbDatos.Name = "gbDatos";
             this.gbDatos.Size = new System.Drawing.Size(314, 130);
-            this.gbDatos.TabIndex = 4;
+            this.gbDatos.TabIndex = 5;
             this.gbDatos.TabStop = false;
+            // 
+            // cbSi
+            // 
+            this.cbSi.AutoSize = true;
+            this.cbSi.Location = new System.Drawing.Point(110, 55);
+            this.cbSi.Name = "cbSi";
+            this.cbSi.Size = new System.Drawing.Size(37, 19);
+            this.cbSi.TabIndex = 1;
+            this.cbSi.Text = "Sí";
+            this.cbSi.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 57);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(93, 15);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Necesita Datos:";
             // 
             // label1
             // 
@@ -98,7 +121,7 @@ namespace Comercial.Formularios.Configuracion
             this.btnCancelar.Location = new System.Drawing.Point(181, 84);
             this.btnCancelar.Name = "btnCancelar";
             this.btnCancelar.Size = new System.Drawing.Size(111, 35);
-            this.btnCancelar.TabIndex = 2;
+            this.btnCancelar.TabIndex = 3;
             this.btnCancelar.Text = "Cancelar [F6]";
             this.btnCancelar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnCancelar.UseVisualStyleBackColor = false;
@@ -112,7 +135,7 @@ namespace Comercial.Formularios.Configuracion
             this.btnGrabar.Location = new System.Drawing.Point(9, 84);
             this.btnGrabar.Name = "btnGrabar";
             this.btnGrabar.Size = new System.Drawing.Size(111, 35);
-            this.btnGrabar.TabIndex = 1;
+            this.btnGrabar.TabIndex = 2;
             this.btnGrabar.Text = "Grabar [F5]";
             this.btnGrabar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnGrabar.UseVisualStyleBackColor = false;
@@ -172,7 +195,7 @@ namespace Comercial.Formularios.Configuracion
             this.btnAgregarPlan.Location = new System.Drawing.Point(366, 272);
             this.btnAgregarPlan.Name = "btnAgregarPlan";
             this.btnAgregarPlan.Size = new System.Drawing.Size(151, 35);
-            this.btnAgregarPlan.TabIndex = 5;
+            this.btnAgregarPlan.TabIndex = 4;
             this.btnAgregarPlan.Text = "Agregar Planes [F7]";
             this.btnAgregarPlan.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnAgregarPlan.UseVisualStyleBackColor = false;
@@ -222,5 +245,7 @@ namespace Comercial.Formularios.Configuracion
         private System.Windows.Forms.Button btnAgregar;
         private System.Windows.Forms.ErrorProvider errorProvider1;
         private System.Windows.Forms.Button btnAgregarPlan;
+        private System.Windows.Forms.CheckBox cbSi;
+        private System.Windows.Forms.Label label2;
     }
 }

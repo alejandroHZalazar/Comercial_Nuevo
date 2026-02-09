@@ -44,7 +44,7 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\producto.ico</ApplicationIcon>
+    <ApplicationIcon>house-sale-agreement.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BouncyCastle.Crypto, Version=1.9.0.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
@@ -171,6 +171,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clases\ClassCaja.cs" />
     <Compile Include="Clases\ClassClientes.cs" />
     <Compile Include="Clases\ClassColores.cs" />
     <Compile Include="Clases\ClassConfiguracion.cs" />
@@ -190,11 +191,29 @@
     <Compile Include="Formularios\Clientes\frmABMClientes.Designer.cs">
       <DependentUpon>frmABMClientes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Formularios\Clientes\frmAddND.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Clientes\frmAddND.Designer.cs">
+      <DependentUpon>frmAddND.cs</DependentUpon>
+    </Compile>
     <Compile Include="Formularios\Clientes\frmAltaModifClientes.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Formularios\Clientes\frmAltaModifClientes.Designer.cs">
       <DependentUpon>frmAltaModifClientes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Clientes\frmClientesCC.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Clientes\frmClientesCC.Designer.cs">
+      <DependentUpon>frmClientesCC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Clientes\frmNC.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Clientes\frmNC.Designer.cs">
+      <DependentUpon>frmNC.cs</DependentUpon>
     </Compile>
     <Compile Include="Formularios\Configuracion\frmABMclientesZonas.cs">
       <SubType>Form</SubType>
@@ -213,6 +232,12 @@
     </Compile>
     <Compile Include="Formularios\Configuracion\frmABMCondIva.Designer.cs">
       <DependentUpon>frmABMCondIva.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Configuracion\frmABMDocumentosTipos.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Configuracion\frmABMDocumentosTipos.Designer.cs">
+      <DependentUpon>frmABMDocumentosTipos.cs</DependentUpon>
     </Compile>
     <Compile Include="Formularios\Configuracion\frmABMivaProcentajes.cs">
       <SubType>Form</SubType>
@@ -279,6 +304,54 @@
     </Compile>
     <Compile Include="Formularios\Configuracion\frmLogo.Designer.cs">
       <DependentUpon>frmLogo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Contable\frmAuditoriaCaja.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Contable\frmAuditoriaCaja.Designer.cs">
+      <DependentUpon>frmAuditoriaCaja.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Contable\frmCierreCaja.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Contable\frmCierreCaja.Designer.cs">
+      <DependentUpon>frmCierreCaja.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Contable\frmAperturaCaja.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Contable\frmAperturaCaja.Designer.cs">
+      <DependentUpon>frmAperturaCaja.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Contable\frmArqueoCaja.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Contable\frmArqueoCaja.Designer.cs">
+      <DependentUpon>frmArqueoCaja.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Contable\frmEgresoDinero.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Contable\frmEgresoDinero.Designer.cs">
+      <DependentUpon>frmEgresoDinero.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Contable\frmGestionCaja.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Contable\frmGestionCaja.Designer.cs">
+      <DependentUpon>frmGestionCaja.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Contable\frmIngresoDinero.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Contable\frmIngresoDinero.Designer.cs">
+      <DependentUpon>frmIngresoDinero.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Contable\frmIngresoGastos.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Contable\frmIngresoGastos.Designer.cs">
+      <DependentUpon>frmIngresoGastos.cs</DependentUpon>
     </Compile>
     <Compile Include="Formularios\Estadisticas\frmRankingVentas.cs">
       <SubType>Form</SubType>
@@ -418,6 +491,18 @@
     <Compile Include="Formularios\Ventas\frmDevolucionReport.Designer.cs">
       <DependentUpon>frmDevolucionReport.cs</DependentUpon>
     </Compile>
+    <Compile Include="Formularios\Ventas\frmImputacionFormasPagos.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Ventas\frmImputacionFormasPagos.Designer.cs">
+      <DependentUpon>frmImputacionFormasPagos.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Ventas\frmImputacionVenta.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Ventas\frmImputacionVenta.Designer.cs">
+      <DependentUpon>frmImputacionVenta.cs</DependentUpon>
+    </Compile>
     <Compile Include="Formularios\Ventas\frmPedidos.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -482,8 +567,17 @@
     <EmbeddedResource Include="Formularios\Clientes\frmABMClientes.resx">
       <DependentUpon>frmABMClientes.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Clientes\frmAddND.resx">
+      <DependentUpon>frmAddND.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Clientes\frmAltaModifClientes.resx">
       <DependentUpon>frmAltaModifClientes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Clientes\frmClientesCC.resx">
+      <DependentUpon>frmClientesCC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Clientes\frmNC.resx">
+      <DependentUpon>frmNC.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Configuracion\frmABMclientesZonas.resx">
       <DependentUpon>frmABMclientesZonas.cs</DependentUpon>
@@ -493,6 +587,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Configuracion\frmABMCondIva.resx">
       <DependentUpon>frmABMCondIva.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Configuracion\frmABMDocumentosTipos.resx">
+      <DependentUpon>frmABMDocumentosTipos.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Configuracion\frmABMivaProcentajes.resx">
       <DependentUpon>frmABMivaProcentajes.cs</DependentUpon>
@@ -526,6 +623,30 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Configuracion\frmLogo.resx">
       <DependentUpon>frmLogo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Contable\frmAuditoriaCaja.resx">
+      <DependentUpon>frmAuditoriaCaja.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Contable\frmCierreCaja.resx">
+      <DependentUpon>frmCierreCaja.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Contable\frmAperturaCaja.resx">
+      <DependentUpon>frmAperturaCaja.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Contable\frmArqueoCaja.resx">
+      <DependentUpon>frmArqueoCaja.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Contable\frmEgresoDinero.resx">
+      <DependentUpon>frmEgresoDinero.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Contable\frmGestionCaja.resx">
+      <DependentUpon>frmGestionCaja.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Contable\frmIngresoDinero.resx">
+      <DependentUpon>frmIngresoDinero.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Contable\frmIngresoGastos.resx">
+      <DependentUpon>frmIngresoGastos.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Estadisticas\frmRankingVentas.resx">
       <DependentUpon>frmRankingVentas.cs</DependentUpon>
@@ -595,6 +716,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Ventas\frmDevolucionReport.resx">
       <DependentUpon>frmDevolucionReport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Ventas\frmImputacionFormasPagos.resx">
+      <DependentUpon>frmImputacionFormasPagos.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Ventas\frmImputacionVenta.resx">
+      <DependentUpon>frmImputacionVenta.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Ventas\frmPedidos.resx">
       <DependentUpon>frmPedidos.cs</DependentUpon>
@@ -830,6 +957,7 @@
     <None Include="Resources\return.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="house-sale-agreement.ico" />
     <Content Include="SqlServerTypes\readme.htm" />
     <Content Include="SqlServerTypes\x64\msvcr120.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -844,6 +972,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
