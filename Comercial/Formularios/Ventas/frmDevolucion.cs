@@ -16,6 +16,7 @@ namespace Comercial.Formularios.Ventas
         bool cargado = false;
         int unTipoBusq = 1;
         decimal unCosto = 0;
+        bool esfraccionado = false;
 
         private List<string> resgClientes = new List<string>();
         private List<string> resgProducto = new List<string>();
@@ -27,7 +28,17 @@ namespace Comercial.Formularios.Ventas
         Clases.classUsuarios instUser = new Clases.classUsuarios();
         int cantDec = Clases.ClassProductos.cantDecimales();
         int cantStock = Clases.ClassProductos.cantDecimalesStock();
-
+        int tieneProductosBalanza = Clases.ClassParametros.buscarParametro("productos", "tieneProductosBalanza") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("productos", "tieneProductosBalanza"));
+        string prefijoBalanza = Clases.ClassParametros.buscarParametro("productos", "prefijoBalanza");
+        string posicionProductoBalanza = Clases.ClassParametros.buscarParametro("productos", "posicionProducto");
+        string posicionPeso = Clases.ClassParametros.buscarParametro("productos", "posicionPeso");
+        string divisorPeso = Clases.ClassParametros.buscarParametro("productos", "divisorPeso");
+        int tieneConsumidorFinal = Clases.ClassParametros.buscarParametro("ventas", "tieneConsumidorFinal") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "tieneConsumidorFinal"));
+        int clienteConsumidorFinal = Clases.ClassParametros.buscarParametro("ventas", "clienteConsumidorFinal") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "clienteConsumidorFinal"));
+        int comisiona = Clases.ClassParametros.buscarParametro("ventas", "comisiona") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "comisiona"));
+        decimal valorDolar = Clases.ClassParametros.buscarParametro("productos", "cotizacionDolar") == "" ? 0 : decimal.Parse(Clases.ClassParametros.buscarParametro("productos", "cotizacionDolar"));
+        int productosDolarizados = Clases.ClassParametros.buscarParametro("productos", "dolarizaProductos") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("productos", "dolarizaProductos"));
+        int tieneLectoraCB = Clases.ClassParametros.buscarParametro("productos", "MecanismoLectora") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("productos", "MecanismoLectora"));
         public frmDevolucion()
         {
             InitializeComponent();
@@ -59,7 +70,8 @@ namespace Comercial.Formularios.Ventas
                 
                 foreach (DataRow fila in pedido.Rows)
                 {
-                    dgvProductos.Rows.Add(fila["Cod_Barras"].ToString(), fila["Cod_Proveedor"].ToString(), fila["Descripcion"].ToString(), Math.Round(decimal.Parse(fila["Stock"].ToString()), cantStock), Math.Round(decimal.Parse(fila["Precio S/IVA"].ToString()), cantDec), Math.Round(decimal.Parse(fila["Precio C/IVA"].ToString()), cantDec), Math.Round(decimal.Parse(fila["Cantidad"].ToString()), cantStock), Math.Round(decimal.Parse(fila["Subtotal"].ToString()), cantDec), Math.Round(decimal.Parse(fila["Precio S/IVA"].ToString()), cantDec), fila["fk_producto"].ToString(), 0, Math.Round(decimal.Parse(fila["costo"].ToString()), cantDec));
+                    var precio = !Convert.ToBoolean(fila["fraccionado"]) ? 0 : Math.Round(decimal.Parse(fila["Precio S/IVA"].ToString()), cantDec);
+                    dgvProductos.Rows.Add(fila["Cod_Barras"].ToString(), fila["Cod_Proveedor"].ToString(), fila["Descripcion"].ToString(), Math.Round(decimal.Parse(fila["Stock"].ToString()), cantStock), Math.Round(decimal.Parse(fila["Precio S/IVA"].ToString()), cantDec), Math.Round(decimal.Parse(fila["Precio C/IVA"].ToString()), cantDec), Math.Round(decimal.Parse(fila["Cantidad"].ToString()), cantStock), Math.Round(decimal.Parse(fila["Subtotal"].ToString()), cantDec), Math.Round(decimal.Parse(fila["Precio S/IVA"].ToString()), cantDec), fila["fk_producto"].ToString(), 0, Math.Round(decimal.Parse(fila["costo"].ToString()), cantDec), Convert.ToBoolean(fila["fraccionado"]), Convert.ToBoolean(fila["dolarizado"]));
                 }
             }
             
@@ -103,6 +115,40 @@ namespace Comercial.Formularios.Ventas
              cboVendedores.SelectedIndex = -1;
             txtDescuento.Text = "0";
             txtTotGeneral.Text = "0";
+            verificarParametros();
+        }
+
+        private void verificarParametros()
+        {
+            if (comisiona == 0)
+            {
+                cboVendedores.SelectedValue = int.Parse(Environment.GetEnvironmentVariable("idUser"));
+                cboVendedores.Enabled = false;
+                nudComision.Value = 0;
+                nudComision.Enabled = false;
+            }
+
+            if (tieneConsumidorFinal == 1)
+            {
+                if (clienteConsumidorFinal == 0)
+                {
+                    MessageBox.Show(this, "Debe crear y parametrizar el cliente CONSUMIDOR FINAL", "VENTAS", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    this.Close();
+
+                }
+                else
+                {
+                   
+                    cargarDatosCliente(1, clienteConsumidorFinal);
+                    txtFiltro.Focus();
+                }
+            }
+            else
+            {
+                txtCliente.Focus();
+            }           
+
+
         }
 
         private void cargarCombos()
@@ -296,9 +342,9 @@ namespace Comercial.Formularios.Ventas
             foreach (DataGridViewRow fila in dgvProductos.Rows)
             {
                 fila.Cells["precioConIva"].Value = Math.Round(decimal.Parse(fila.Cells["precioSinIva"].Value.ToString()) * (1 + Decimal.Parse(cboIVA.Text) / 100), cantDec);
-                fila.Cells["Subtotal"].Value = Math.Round(decimal.Parse(fila.Cells["precioConIva"].Value.ToString()) * decimal.Parse(fila.Cells["Cantidad"].Value.ToString()), cantDec);
+                fila.Cells["Subtotal"].Value = !bool.Parse(fila.Cells["fraccionado"].Value.ToString()) ? Math.Round(decimal.Parse(fila.Cells["precioConIva"].Value.ToString()) * decimal.Parse(fila.Cells["Cantidad"].Value.ToString()), cantDec) : Math.Round(decimal.Parse(fila.Cells["Subtotal"].Value.ToString()), cantDec);
                 totalCIVA += decimal.Parse(fila.Cells["Subtotal"].Value.ToString());
-                totalSIVA += Math.Round(decimal.Parse(fila.Cells["precioSinIva"].Value.ToString()) * decimal.Parse(fila.Cells["Cantidad"].Value.ToString()), cantDec);
+                totalSIVA += !bool.Parse(fila.Cells["fraccionado"].Value.ToString()) ? Math.Round(decimal.Parse(fila.Cells["precioSinIva"].Value.ToString()) * decimal.Parse(fila.Cells["Cantidad"].Value.ToString()), cantDec) : Math.Round(decimal.Parse(fila.Cells["Subtotal"].Value.ToString()), cantDec);
 
             }
 
@@ -317,6 +363,7 @@ namespace Comercial.Formularios.Ventas
         private void buscarProducto()
         {
             DataTable producto = null;
+            bool productoDeBalanzaEncontrado = false;
 
             if (txtFiltro.Text != string.Empty)
             {
@@ -326,7 +373,32 @@ namespace Comercial.Formularios.Ventas
                 }
                 else if (cboFiltro.SelectedIndex == 1)
                 {
-                    producto = instProd.traeProductosPpal(" where baja = 0 and codBarras = " + txtFiltro.Text.Trim());
+                    if(tieneProductosBalanza == 0)
+                    {
+                        producto = instProd.traeProductosPpal(" where baja = 0 and codBarras = " + txtFiltro.Text.Trim());
+                    }
+                    else
+                    {
+                        if (prefijoBalanza == string.Empty || posicionProductoBalanza == string.Empty || posicionPeso == string.Empty || divisorPeso == string.Empty)
+                        {
+                            MessageBox.Show(this, "Para operar con productos de balanza debe parametrizar: Prefijo, Posición de Producto, Posicion de Importe y divisior de importe", "VENTAS", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (Clases.ClassProductosBalanza.esCodigoBalanza(txtFiltro.Text.Trim(), prefijoBalanza))
+                        {
+                            var productoBalanzaId = Clases.ClassProductosBalanza.ExtraerPorPosicion(txtFiltro.Text.Trim(), posicionProductoBalanza);
+
+                            if (productoBalanzaId == null) return;
+
+                            producto = instProd.traeProductosPpal(" where baja = 0 and codBarras = " + productoBalanzaId.Trim());
+                            if (producto.Rows.Count > 0) productoDeBalanzaEncontrado = true;
+                        }
+                        else
+                        {
+                            producto = instProd.traeProductosPpal(" where baja = 0 and codBarras = " + txtFiltro.Text.Trim());
+                        }
+
+                    }
                 }
                 else
 
@@ -338,7 +410,29 @@ namespace Comercial.Formularios.Ventas
             {
                 unProducto = int.Parse(producto.Rows[0]["ID"].ToString());
                 lblDescripcion.Text = producto.Rows[0]["Descripcion"].ToString();
-                nudCantidad.Focus();
+                esfraccionado = bool.Parse(producto.Rows[0]["fraccionado"].ToString());
+                if (!productoDeBalanzaEncontrado)
+                {
+                    if (tieneLectoraCB == 0)
+                    {
+                        nudCantidad.Focus();
+                    }
+                    else
+                    {
+                        nudCantidad.Value = 1;
+                        btnAgregar_Click(null, null);
+                    }
+
+                }
+                else
+                {
+                    var pesoProductoBalanza = Clases.ClassProductosBalanza.ExtraerPorPosicion(txtFiltro.Text.Trim(), posicionPeso);
+                    if (pesoProductoBalanza == null) return;
+                    var importeProductoCalculado = Math.Round((decimal.Parse(pesoProductoBalanza) / decimal.Parse(divisorPeso)) * decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec);
+                    if (importeProductoCalculado == 0) return;
+                    nudCantidad.Value = importeProductoCalculado;
+                    btnAgregar_Click(null, null);
+                }
             }
             else
             {
@@ -369,6 +463,7 @@ namespace Comercial.Formularios.Ventas
                 lbDesc.Visible = false;
                 txtDesc.Text = string.Empty;
                 unTipoBusq = 2;
+                esfraccionado = bool.Parse(producto.Rows[0]["fraccionado"].ToString());
             }
         }
 
@@ -394,9 +489,25 @@ namespace Comercial.Formularios.Ventas
             {
                 if (int.Parse(fila.Cells["id"].Value.ToString()) == unProducto)
                 {
-                    fila.Cells["cantidad"].Value = decimal.Parse(fila.Cells["cantidad"].Value.ToString()) + nudCantidad.Value;
-                    band = true;
-                    break;
+
+                    bool esDolarizado = productosDolarizados == 1 && Convert.ToBoolean(fila.Cells["dolarizado"].Value);
+                    if (!esfraccionado)
+                    {
+                        fila.Cells["cantidad"].Value = decimal.Parse(fila.Cells["cantidad"].Value.ToString()) + nudCantidad.Value;
+                        band = true;
+                        break;
+                    }
+                    else
+                    {
+                        //var cantidad = Math.Round(nudCantidad.Value / decimal.Parse(fila.Cells["precioSinIva"].Value.ToString()), cantStock);
+                        //fila.Cells["cantidad"].Value = decimal.Parse(fila.Cells["cantidad"].Value.ToString()) + cantidad;
+                        //var precio = !esDolarizado ? decimal.Parse(fila.Cells["Subtotal"].Value.ToString()) + nudCantidad.Value : decimal.Parse(fila.Cells["Subtotal"].Value.ToString()) + Math.Round(nudCantidad.Value * valorDolar, cantDec);
+                        //fila.Cells["precioSinIva"].Value = precio;
+                        //fila.Cells["Subtotal"].Value = precio;
+                        band = false;
+                        break;
+                    }
+
                 }
             }
 
@@ -405,7 +516,19 @@ namespace Comercial.Formularios.Ventas
                 DataTable producto = instProd.traerProductosParaEditar(unProducto);
                 if (producto.Rows.Count > 0)
                 {
-                    dgvProductos.Rows.Add(producto.Rows[0]["codBarras"].ToString(), producto.Rows[0]["codProveedor"].ToString(), producto.Rows[0]["descripcion"].ToString(), Math.Round(decimal.Parse(producto.Rows[0]["cantidad"].ToString()), cantStock), Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec), Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec), Math.Round(nudCantidad.Value, cantStock), 0, Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec), unProducto, 0, Math.Round(decimal.Parse(producto.Rows[0]["costo"].ToString()), cantDec));
+                    bool esDolarizado = productosDolarizados == 1 && Convert.ToBoolean(producto.Rows[0]["dolarizado"]);
+                    var costo = !esDolarizado ? Math.Round(decimal.Parse(producto.Rows[0]["costo"].ToString()), cantDec) : Math.Round(decimal.Parse(producto.Rows[0]["costo"].ToString()) * valorDolar, cantDec);
+                    if (!esfraccionado)
+                    {
+                        var precio = !esDolarizado ? Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec) : Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()) * valorDolar, cantDec);
+                        dgvProductos.Rows.Add(producto.Rows[0]["codBarras"].ToString(), producto.Rows[0]["codProveedor"].ToString(), producto.Rows[0]["descripcion"].ToString(), Math.Round(decimal.Parse(producto.Rows[0]["cantidad"].ToString()), cantStock), precio, precio, Math.Round(nudCantidad.Value, cantStock), 0, precio, unProducto, 0, costo, esfraccionado, Convert.ToBoolean(producto.Rows[0]["dolarizado"]));
+                    }
+                    else
+                    {
+                        var cantidad = Math.Round(nudCantidad.Value / decimal.Parse(producto.Rows[0]["precio"].ToString()), cantStock);
+                        var precio = !esDolarizado ? Math.Round(nudCantidad.Value, cantDec) : Math.Round(nudCantidad.Value * valorDolar, 2);
+                        dgvProductos.Rows.Add(producto.Rows[0]["codBarras"].ToString(), producto.Rows[0]["codProveedor"].ToString(), producto.Rows[0]["descripcion"].ToString(), Math.Round(decimal.Parse(producto.Rows[0]["cantidad"].ToString()), cantStock), Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec), Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec), cantidad, precio, Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec), unProducto, 0, costo, esfraccionado, Convert.ToBoolean(producto.Rows[0]["dolarizado"]));
+                    }
                 }
             }
 

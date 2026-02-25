@@ -1,5 +1,6 @@
 ﻿using MySqlConnector;
 using System;
+using System.Collections.Generic;
 using System.Data;
 
 namespace Comercial.Clases
@@ -8,11 +9,11 @@ namespace Comercial.Clases
     {
         classDatos instDatos = new classDatos();
 
-        public DataTable traeProductosPpal (string unFiltro)
+        public DataTable traeProductosPpal(string unFiltro)
         {
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_ProductosConsultaPpal", instDatos.abrirConexion());
             a1.SelectCommand.CommandType = CommandType.StoredProcedure;
-            a1.SelectCommand.Parameters.AddWithValue("unFiltro", unFiltro );
+            a1.SelectCommand.Parameters.AddWithValue("unFiltro", unFiltro);
 
             DataTable t2 = new DataTable();
             a1.Fill(t2);
@@ -56,7 +57,7 @@ namespace Comercial.Clases
         {
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_Productos_TraerLotesIngreso", instDatos.abrirConexion());
             a1.SelectCommand.CommandType = CommandType.StoredProcedure;
-            a1.SelectCommand.Parameters.AddWithValue("unTipo", unTipo );
+            a1.SelectCommand.Parameters.AddWithValue("unTipo", unTipo);
             a1.SelectCommand.Parameters.AddWithValue("desde", desde);
             a1.SelectCommand.Parameters.AddWithValue("hasta", hasta);
             a1.SelectCommand.Parameters.AddWithValue("unComprobante", unComprobante);
@@ -69,13 +70,13 @@ namespace Comercial.Clases
         public int traerDefaultBusq()
         {
             MySqlCommand nComando = new MySqlCommand("select valor from parametros where modulo = 'productos' and parametro = 'indiceBusqueda'", instDatos.abrirConexion());
-            int valor = int.Parse (nComando.ExecuteScalar().ToString());
+            int valor = int.Parse(nComando.ExecuteScalar().ToString());
             instDatos.cerrarConexion();
             return valor;
         }
 
-       
-        public static  int cantDecimales()
+
+        public static int cantDecimales()
         {
             classDatos instDatos = new Clases.classDatos();
             MySqlCommand nComando = new MySqlCommand("select valor from parametros where modulo = 'productos' and parametro = 'decimales'", instDatos.abrirConexion());
@@ -109,7 +110,7 @@ namespace Comercial.Clases
         {
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_Productos_TraerLotesIngresoDetalles", instDatos.abrirConexion());
             a1.SelectCommand.CommandType = CommandType.StoredProcedure;
-            a1.SelectCommand.Parameters.AddWithValue("unComprobante", unComprobante );
+            a1.SelectCommand.Parameters.AddWithValue("unComprobante", unComprobante);
 
             DataTable t2 = new DataTable();
             a1.Fill(t2);
@@ -129,7 +130,7 @@ namespace Comercial.Clases
 
         public decimal calcularPrecioLista(decimal unCosto, int unProveedor)
         {
-            MySqlCommand nComando = new MySqlCommand("select ganancia from Proveedores where id = " + unProveedor  , instDatos.abrirConexion());
+            MySqlCommand nComando = new MySqlCommand("select ganancia from Proveedores where id = " + unProveedor, instDatos.abrirConexion());
             decimal valor = decimal.Parse(nComando.ExecuteScalar().ToString());
             valor = Math.Round(unCosto * (1 + valor / 100), 2);
             instDatos.cerrarConexion();
@@ -138,19 +139,19 @@ namespace Comercial.Clases
 
         public void agregarStock(string unProducto, decimal unaCantidad)
         {
-            MySqlCommand nComando = new MySqlCommand("update stockProductos set cantidad = cantidad +" + unaCantidad.ToString ().Replace (',','.') + " where fk_producto = " + unProducto , instDatos.abrirConexion());
+            MySqlCommand nComando = new MySqlCommand("update stockProductos set cantidad = cantidad +" + unaCantidad.ToString().Replace(',', '.') + " where fk_producto = " + unProducto, instDatos.abrirConexion());
             nComando.ExecuteNonQuery();
             instDatos.cerrarConexion();
         }
 
-        public void actualizarEstadoProducto(string unProducto, bool  baja)
+        public void actualizarEstadoProducto(string unProducto, bool baja)
         {
-            MySqlCommand nComando = new MySqlCommand("update Productos set baja = " + baja.ToString () + " where id = " + unProducto, instDatos.abrirConexion());
+            MySqlCommand nComando = new MySqlCommand("update Productos set baja = " + baja.ToString() + " where id = " + unProducto, instDatos.abrirConexion());
             nComando.ExecuteNonQuery();
             instDatos.cerrarConexion();
         }
 
-        public void actualziarMasivaPrecios (string unProducto, decimal unPrecio, string unaDescripcion, string unCodBarras, int unProveedor)
+        public void actualziarMasivaPrecios(string unProducto, decimal unPrecio, string unaDescripcion, string unCodBarras, int unProveedor)
         {
             MySqlCommand nComando = new MySqlCommand("sp_Productos_CambiarPreciosMasivos", instDatos.abrirConexion());
             nComando.CommandType = CommandType.StoredProcedure;
@@ -165,15 +166,15 @@ namespace Comercial.Clases
             instDatos.cerrarConexion();
         }
 
-        public void actualizarPrecios (int unProducto, decimal unPrecio, decimal unCosto, decimal unPrecioProv)
+        public void actualizarPrecios(int unProducto, decimal unPrecio, decimal unCosto, decimal unPrecioProv)
         {
             MySqlCommand nComando = new MySqlCommand("sp_productosActualizarPrecios", instDatos.abrirConexion());
             nComando.CommandType = CommandType.StoredProcedure;
 
             nComando.Parameters.AddWithValue("@unProducto", unProducto);
-            nComando.Parameters.AddWithValue("@unPrecio", unPrecio );
+            nComando.Parameters.AddWithValue("@unPrecio", unPrecio);
             nComando.Parameters.AddWithValue("@unCosto", unCosto);
-            nComando.Parameters.AddWithValue("@unPrecioProv", unPrecioProv );
+            nComando.Parameters.AddWithValue("@unPrecioProv", unPrecioProv);
 
             nComando.ExecuteNonQuery();
             instDatos.cerrarConexion();
@@ -187,27 +188,27 @@ namespace Comercial.Clases
 
             nComando.Parameters.AddWithValue("@unIdProducto", unProducto);
             nComando.Parameters.AddWithValue("@unStock", unStock);
-            nComando.Parameters.AddWithValue("@unaDif", unaDif );
-            
+            nComando.Parameters.AddWithValue("@unaDif", unaDif);
+
 
             nComando.ExecuteNonQuery();
             instDatos.cerrarConexion();
         }
 
 
-        public void registrarMovimiento(string unProducto, int unTipoMov, string unaDesc, decimal unStockAnt, decimal unStockAct, decimal unCosto, decimal unaVenta, decimal unaCantidad,DateTime unaFecha,string unComprobante, decimal unPrecioProveedor)
-            
+        public void registrarMovimiento(string unProducto, int unTipoMov, string unaDesc, decimal unStockAnt, decimal unStockAct, decimal unCosto, decimal unaVenta, decimal unaCantidad, DateTime unaFecha, string unComprobante, decimal unPrecioProveedor)
+
         {
             MySqlCommand nComando = new MySqlCommand("insert into productosMovimientos (fk_producto, tipoMovimiento, descripcion, stockAnt, stockAct, costo, venta,cantidad,fechaEntrega,nroComprobante,precio_Proveedor,fechaMov) values (@producto,@movimiento,@descripcion,@stockAnt,@stockAct,@costo,@venta,@cantidad,@fecha,@comprobante,@precioProveedor,@fechaMov)", instDatos.abrirConexion());
 
             nComando.Parameters.AddWithValue("@producto", unProducto);
-            nComando.Parameters.AddWithValue("@movimiento", unTipoMov );
+            nComando.Parameters.AddWithValue("@movimiento", unTipoMov);
             nComando.Parameters.AddWithValue("@descripcion", unaDesc);
-            nComando.Parameters.AddWithValue("@stockAnt", unStockAnt );
-            nComando.Parameters.AddWithValue("@stockAct", unStockAct );
-            nComando.Parameters.AddWithValue("@costo", unCosto );
-            nComando.Parameters.AddWithValue("@venta", unaVenta );
-            nComando.Parameters.AddWithValue("@cantidad", unaCantidad );
+            nComando.Parameters.AddWithValue("@stockAnt", unStockAnt);
+            nComando.Parameters.AddWithValue("@stockAct", unStockAct);
+            nComando.Parameters.AddWithValue("@costo", unCosto);
+            nComando.Parameters.AddWithValue("@venta", unaVenta);
+            nComando.Parameters.AddWithValue("@cantidad", unaCantidad);
             nComando.Parameters.AddWithValue("@fecha", unaFecha);
             nComando.Parameters.AddWithValue("@comprobante", unComprobante);
             nComando.Parameters.AddWithValue("@precioProveedor", unPrecioProveedor);
@@ -217,7 +218,8 @@ namespace Comercial.Clases
             instDatos.cerrarConexion();
         }
 
-        public int ABMProductos(string unCodProveedor, string unCodBarras, int unRubro,string unaDescripcion, int unProveedor, decimal unCosto, decimal unPrecio,decimal unStock, decimal unaCantMinima, int unaAccion, int unProducto, decimal unPrecioProveedor)
+        public int ABMProductos(string unCodProveedor, string unCodBarras, int unRubro, string unaDescripcion, int unProveedor, decimal unCosto,
+                                decimal unPrecio, decimal unStock, decimal unaCantMinima, int unaAccion, int unProducto, decimal unPrecioProveedor, bool esFraccionado, bool esDolarizado)
         {
             try
             {
@@ -226,18 +228,20 @@ namespace Comercial.Clases
                 cmd.Connection = instDatos.abrirConexion();
                 cmd.CommandText = "sp_ProductosABM";
 
-                cmd.Parameters.AddWithValue("unCodProveedor", unCodProveedor );
-                cmd.Parameters.AddWithValue("unCodBarras", unCodBarras );
-                cmd.Parameters.AddWithValue("unRubro", unRubro );
-                cmd.Parameters.AddWithValue("unaDescripcion", unaDescripcion );
-                cmd.Parameters.AddWithValue("unProveedor", unProveedor );
-                cmd.Parameters.AddWithValue("unCosto", unCosto );
-                cmd.Parameters.AddWithValue("unPrecio", unPrecio );
-                cmd.Parameters.AddWithValue("unStock", unStock  );
-                cmd.Parameters.AddWithValue("unaCMinima", unaCantMinima );
-                cmd.Parameters.AddWithValue("unaAccion", unaAccion );
-                cmd.Parameters.AddWithValue("unProducto", unProducto );
+                cmd.Parameters.AddWithValue("unCodProveedor", unCodProveedor);
+                cmd.Parameters.AddWithValue("unCodBarras", unCodBarras);
+                cmd.Parameters.AddWithValue("unRubro", unRubro);
+                cmd.Parameters.AddWithValue("unaDescripcion", unaDescripcion);
+                cmd.Parameters.AddWithValue("unProveedor", unProveedor);
+                cmd.Parameters.AddWithValue("unCosto", unCosto);
+                cmd.Parameters.AddWithValue("unPrecio", unPrecio);
+                cmd.Parameters.AddWithValue("unStock", unStock);
+                cmd.Parameters.AddWithValue("unaCMinima", unaCantMinima);
+                cmd.Parameters.AddWithValue("unaAccion", unaAccion);
+                cmd.Parameters.AddWithValue("unProducto", unProducto);
                 cmd.Parameters.AddWithValue("unPrecioProveedor", unPrecioProveedor);
+                cmd.Parameters.AddWithValue("esFraccionado", esFraccionado);
+                cmd.Parameters.AddWithValue("esDolarizado", esDolarizado);
 
 
                 MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int32);
@@ -267,5 +271,99 @@ namespace Comercial.Clases
             return dt;
         }
 
+        public List<ProductoResultadoBarras> BuscarProductosEtiquetasCodigosBarra(
+                                                                                    int proveedorId,
+                                                                                    int rubroId,
+                                                                                    string tipoFiltro,
+                                                                                    string valorFiltro)
+        {
+            try
+            {
+                MySqlDataAdapter da = new MySqlDataAdapter(
+                    "sp_ProductosTraerProductosEtiquetasCodigosBarra",
+                    instDatos.abrirConexion());
+
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+                string filtro = "";
+
+                // 🔹 Filtro proveedor
+                if (proveedorId != 0)
+                    filtro += $" AND p.fk_proveedor = {proveedorId}";
+
+                // 🔹 Filtro rubro
+                if (rubroId != 0)
+                    filtro += $" AND p.fk_Rubro = {rubroId}";
+
+                // 🔹 Filtro por texto
+                if (!string.IsNullOrWhiteSpace(valorFiltro))
+                {
+                    string valorSeguro = MySqlHelper.EscapeString(valorFiltro);
+
+                    switch (tipoFiltro)
+                    {
+                        case "Cod. Proveedor":
+                            filtro += $" AND p.codProveedor LIKE '%{valorSeguro}%'";
+                            break;
+
+                        case "Cod. Barras":
+                            filtro += $" AND p.codBarras LIKE '%{valorSeguro}%'";
+                            break;
+
+                        case "Descripcion":
+                            filtro += $" AND p.descripcion LIKE '%{valorSeguro}%'";
+                            break;
+                    }
+                }
+
+                filtro += " ORDER BY p.descripcion";
+
+                da.SelectCommand.Parameters.AddWithValue("unFiltro", filtro);
+
+                DataTable tabla = new DataTable();
+                da.Fill(tabla);
+
+                List<ProductoResultadoBarras> lista = new List<ProductoResultadoBarras>();
+
+                foreach (DataRow fila in tabla.Rows)
+                {
+                    ProductoResultadoBarras p = new ProductoResultadoBarras
+                    {
+                        Id = Convert.ToInt32(fila["id"]),
+                        CodProveedor = fila["codProveedor"]?.ToString(),
+                        CodBarras = fila["codBarras"]?.ToString(),
+                        Descripcion = fila["descripcion"]?.ToString(),
+                        Precio = Convert.ToDecimal(fila["precio"]),
+                        NombreComercial = fila["nombreComercial"]?.ToString(),
+                        Rubro = fila["Rubro"]?.ToString(),
+                        Sel = false
+                    };
+
+                    lista.Add(p);
+                }
+
+                return lista;
+            }
+            catch
+            {
+
+                return null;
+            }
+        }
+
+    }
+
+    public class ProductoResultadoBarras
+    {
+        public bool Sel { get; set; }
+        public int Id { get; set; }
+        public string CodProveedor { get; set; }
+        public string CodBarras { get; set; }
+        public string Descripcion { get; set; }
+        public decimal Precio { get; set; }
+        public string NombreComercial { get; set; }
+        public string Rubro { get; set; }
+
+        
     }
 }

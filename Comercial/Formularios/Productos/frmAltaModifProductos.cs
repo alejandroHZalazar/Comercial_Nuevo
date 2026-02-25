@@ -17,7 +17,7 @@ namespace Comercial.Formularios.Productos
         public int unAccion;
         public Form llamador;
         private frmConsultaProductos frmConsultaProductos;
-
+        int productosDolarizados = Clases.ClassParametros.buscarParametro("productos", "dolarizaProductos") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("productos", "dolarizaProductos"));
         public frmAltaModifProductos()
         {
             InitializeComponent();
@@ -81,11 +81,11 @@ namespace Comercial.Formularios.Productos
                 int resul;
                 if (unAccion == 1)
                 {
-                    resul = instProd.ABMProductos(txtCodProveedor.Text.Trim(), txtCodBarras.Text.Trim(), int.Parse(cboRubro.SelectedValue.ToString()), txtDescripcion.Text.Trim(), int.Parse(cboProveedor.SelectedValue.ToString()), nudCosto.Value, nudLista.Value, nudStock.Value, nudMinima.Value, 1, 0,nudProveedor .Value );
+                    resul = instProd.ABMProductos(txtCodProveedor.Text.Trim(), txtCodBarras.Text.Trim(), int.Parse(cboRubro.SelectedValue.ToString()), txtDescripcion.Text.Trim(), int.Parse(cboProveedor.SelectedValue.ToString()), nudCosto.Value, nudLista.Value, nudStock.Value, nudMinima.Value, 1, 0,nudProveedor .Value,cbFraccionado.Checked, cbDolarizado.Checked);
                 }
                 else
                 {
-                    resul = instProd .ABMProductos( txtCodProveedor.Text.Trim(), txtCodBarras.Text.Trim(), int.Parse(cboRubro.SelectedValue.ToString()),  txtDescripcion.Text.Trim(), int.Parse(cboProveedor.SelectedValue.ToString()), nudCosto.Value, nudLista.Value, nudStock.Value, nudMinima.Value, 2,unProducto,nudProveedor .Value  );
+                    resul = instProd .ABMProductos( txtCodProveedor.Text.Trim(), txtCodBarras.Text.Trim(), int.Parse(cboRubro.SelectedValue.ToString()),  txtDescripcion.Text.Trim(), int.Parse(cboProveedor.SelectedValue.ToString()), nudCosto.Value, nudLista.Value, nudStock.Value, nudMinima.Value, 2,unProducto,nudProveedor .Value, cbFraccionado.Checked, cbDolarizado.Checked);
                 }
 
                 if (resul == -1)
@@ -140,7 +140,8 @@ namespace Comercial.Formularios.Productos
 
         private void frmAltaModifProductos_Load(object sender, EventArgs e)
         {
-            
+            cbFraccionado.Visible = Clases.ClassParametros.buscarParametro("productos", "tieneProductosFraccionados") == "1" ? true : false;
+            cbDolarizado.Visible = Clases.ClassParametros.buscarParametro("productos", "dolarizaProductos") == "1" ? true : false;
             cargarCombos();
             if (unAccion == 2)
             {
@@ -164,6 +165,8 @@ namespace Comercial.Formularios.Productos
             nudStock.Value = decimal.Parse(producto.Rows[0]["cantidad"].ToString());
             nudMinima.Value = decimal.Parse(producto.Rows[0]["cantidadMinima"].ToString());
             nudProveedor.Value = decimal.Parse(producto.Rows[0]["P_Proveedor"].ToString());
+            cbFraccionado.Checked = Convert.ToBoolean(producto.Rows[0]["fraccionado"]);
+            cbDolarizado.Checked = Clases.ClassParametros.buscarParametro("productos", "dolarizaProductos") != "1" ? false : producto.Rows[0]["dolarizado"].ToString() == ""?false: Convert.ToBoolean(producto.Rows[0]["dolarizado"]);
         }
 
         private void cargarCombos()

@@ -44,6 +44,7 @@
             this.btnEditar = new System.Windows.Forms.Button();
             this.btnAgregar = new System.Windows.Forms.Button();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.btnValorDolar = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTipoPrecios)).BeginInit();
             this.gbDatos.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudValor)).BeginInit();
@@ -86,7 +87,7 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(6, 57);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(64, 15);
+            this.label2.Size = new System.Drawing.Size(63, 15);
             this.label2.TabIndex = 3;
             this.label2.Text = "Tipo Valor:";
             // 
@@ -109,7 +110,7 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(6, 95);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(37, 15);
+            this.label3.Size = new System.Drawing.Size(36, 15);
             this.label3.TabIndex = 5;
             this.label3.Text = "Valor:";
             // 
@@ -212,12 +213,27 @@
             // 
             this.errorProvider1.ContainerControl = this;
             // 
+            // btnValorDolar
+            // 
+            this.btnValorDolar.BackColor = System.Drawing.Color.Silver;
+            this.btnValorDolar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnValorDolar.Image = ((System.Drawing.Image)(resources.GetObject("btnValorDolar.Image")));
+            this.btnValorDolar.Location = new System.Drawing.Point(503, 268);
+            this.btnValorDolar.Name = "btnValorDolar";
+            this.btnValorDolar.Size = new System.Drawing.Size(140, 35);
+            this.btnValorDolar.TabIndex = 5;
+            this.btnValorDolar.Text = "Cotizar Dolar [F7]";
+            this.btnValorDolar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.btnValorDolar.UseVisualStyleBackColor = false;
+            this.btnValorDolar.Click += new System.EventHandler(this.btnValorDolar_Click);
+            // 
             // frmABMTipoPrecios
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(651, 310);
+            this.ClientSize = new System.Drawing.Size(651, 309);
+            this.Controls.Add(this.btnValorDolar);
             this.Controls.Add(this.dgvTipoPrecios);
             this.Controls.Add(this.gbDatos);
             this.Controls.Add(this.btnEliminar);
@@ -261,5 +277,6 @@
         private System.Windows.Forms.NumericUpDown nudValor;
         private System.Windows.Forms.ComboBox cboTipoValor;
         private System.Windows.Forms.ErrorProvider errorProvider1;
+        private System.Windows.Forms.Button btnValorDolar;
     }
 }

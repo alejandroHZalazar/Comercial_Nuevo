@@ -14,8 +14,7 @@ namespace Comercial.Formularios.Productos
     {
         Clases.ClassProductos instProd = new Clases.ClassProductos();
         int cantDec = Clases.ClassProductos.cantDecimales();
-        int cantStock = Clases.ClassProductos.cantDecimalesStock();
-
+        int cantStock = Clases.ClassProductos.cantDecimalesStock();        
         public frmConsultaProductos()
         {
             InitializeComponent();
@@ -43,7 +42,7 @@ namespace Comercial.Formularios.Productos
             lblCosto.Text = string.Empty;
             lblStock.Text = string.Empty;
             lblPProveedor.Text = string.Empty;
-            txtFiltro.Focus();
+            txtFiltro.Focus();            
         }
 
         private void btnBuscar_Click(object sender, EventArgs e)
@@ -80,6 +79,7 @@ namespace Comercial.Formularios.Productos
                     dgvProductos.Columns["iva"].Visible = false;
                     dgvProductos.Columns["fk_proveedor"].Visible = false;
                     dgvProductos.Columns["baja"].Visible = false;
+                    dgvProductos.Columns["fraccionado"].Visible = false;
                     dgvProductos.Focus();
                 }
             }
@@ -120,7 +120,7 @@ namespace Comercial.Formularios.Productos
 
         private void btnEliminar_Click(object sender, EventArgs e)
         {
-            instProd.ABMProductos("", "", 0, "", 0, 0, 0, 0, 0, 3, int.Parse(dgvProductos.CurrentRow.Cells["ID"].Value.ToString()),0);
+            instProd.ABMProductos("", "", 0, "", 0, 0, 0, 0, 0, 3, int.Parse(dgvProductos.CurrentRow.Cells["ID"].Value.ToString()),0,false,false);
             estadoInicial();
             
         }

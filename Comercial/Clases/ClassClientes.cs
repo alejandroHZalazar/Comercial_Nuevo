@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,6 +40,17 @@ namespace Comercial.Clases
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_ClientesTraerDatosVentas", instDatos.abrirConexion());
             a1.SelectCommand.CommandType = CommandType.StoredProcedure;
             a1.SelectCommand.Parameters.AddWithValue("unFiltro", unFiltro);
+
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            return t2;
+        }
+
+        public DataTable traerDatosRecibo(int unCobro)
+        {
+            MySqlDataAdapter a1 = new MySqlDataAdapter("sp_Clientes_PrintRecibo", instDatos.abrirConexion());
+            a1.SelectCommand.CommandType = CommandType.StoredProcedure;
+            a1.SelectCommand.Parameters.AddWithValue("unCobro", unCobro);
 
             DataTable t2 = new DataTable();
             a1.Fill(t2);
@@ -114,6 +126,16 @@ namespace Comercial.Clases
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_CLientesTraerVendedores", instDatos.abrirConexion());
             a1.SelectCommand.CommandType = CommandType.StoredProcedure;
             
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            return t2;
+        }
+
+        public DataTable traerClientesExportarCSV()
+        {
+            MySqlDataAdapter a1 = new MySqlDataAdapter("sp_CLientes_exportar_CSV", instDatos.abrirConexion());
+            a1.SelectCommand.CommandType = CommandType.StoredProcedure;
+
             DataTable t2 = new DataTable();
             a1.Fill(t2);
             return t2;
@@ -274,6 +296,44 @@ namespace Comercial.Clases
             {
                 instDatos.cerrarConexion();
             }
+        }
+
+        public void ExportarListaClientesCsv(DataTable lista)
+        {
+
+            string carpetaDescargas = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+
+            string archivo = $"Clientes_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
+
+            string path = Path.Combine(carpetaDescargas, archivo);
+
+            var sb = new StringBuilder();
+
+
+            // Columnas
+            sb.AppendLine("Nro;Nombre Comercial;Razon Social;CUIL/CUIT;Direccion;Email;Telefono;Celular;Contacto;Condicion IVA;Vendedor;Localidad;Provincias;Zona");
+
+
+            // Detalle
+            foreach (DataRow row in lista.Rows)
+            {
+                sb.AppendLine($"{row["Nro"]};" +
+              $"{row["Nombre Comercial"]};" +
+              $"{row["Razon Social"]};" +
+              $"{row["CUIL/CUIT"]};" +
+              $"{row["Direccion"]};" +
+              $"{row["Email"]};" +
+              $"{row["Telefono"]};" +
+              $"{row["Celular"]};" +
+              $"{row["Contacto"]};" +
+              $"{row["Condicion IVA"]};" +
+              $"{row["Vendedor"]};" +
+              $"{row["Localidad"]};" +
+              $"{row["Provincias"]};" +
+              $"{row["Zona"]}");
+            }
+
+            File.WriteAllText(path, sb.ToString(), Encoding.UTF8);
         }
 
     }

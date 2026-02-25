@@ -260,6 +260,7 @@ namespace Comercial.Formularios.Contable
             this.btnPagoProveedores.Text = "Pago Proveedores";
             this.btnPagoProveedores.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnPagoProveedores.UseVisualStyleBackColor = false;
+            this.btnPagoProveedores.Click += new System.EventHandler(this.btnPagoProveedores_Click);
             // 
             // frmGestionCaja
             // 

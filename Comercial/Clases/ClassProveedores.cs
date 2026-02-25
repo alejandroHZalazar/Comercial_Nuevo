@@ -1,6 +1,8 @@
 ﻿using MySqlConnector;
 using System;
 using System.Data;
+using System.IO;
+using System.Text;
 
 namespace Comercial.Clases
 {
@@ -10,13 +12,30 @@ namespace Comercial.Clases
 
         public DataTable traeProveedores()
         {
-            MySqlDataAdapter rows = new MySqlDataAdapter("select * from Proveedores order by nombreComercial", instDatos.abrirConexion());
+            MySqlDataAdapter rows = new MySqlDataAdapter("select id, nombreComercial from Proveedores order by nombreComercial", instDatos.abrirConexion());
             DataTable dt = new DataTable();
             rows.Fill(dt);
             instDatos.cerrarConexion();
             return dt;
         }
 
+        public DataTable traeProveedoresconTodos()
+        {
+            string sql = @"
+                        SELECT 0 AS id, 'TODOS' AS nombreComercial
+                        UNION ALL
+                        SELECT id, nombreComercial 
+                        FROM Proveedores
+                        ORDER BY id = 0 DESC, nombreComercial";
+
+            MySqlDataAdapter rows = new MySqlDataAdapter(sql, instDatos.abrirConexion());
+
+            DataTable dt = new DataTable();
+            rows.Fill(dt);
+            instDatos.cerrarConexion();
+
+            return dt;
+        }
         public DataTable traerPedidosPendientes(string unFiltro)
         {
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_ProveedoresTraerNotaPedidoPendientes", instDatos.abrirConexion());
@@ -253,5 +272,40 @@ namespace Comercial.Clases
             }
         }
 
+        public DataTable traerResumenPagos(DateTime desde, DateTime hasta)
+        {
+            MySqlDataAdapter a1 = new MySqlDataAdapter("sp_ProveedoresResumenPagos", instDatos.abrirConexion());
+            a1.SelectCommand.CommandType = CommandType.StoredProcedure;
+            a1.SelectCommand.Parameters.AddWithValue("desde", desde);
+            a1.SelectCommand.Parameters.AddWithValue("hasta", hasta);
+
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            return t2;
+        }
+
+        public void ExportarPagosCsv(DataTable detalle)
+        {
+
+            string carpetaDescargas = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+
+            string archivo = "Pagos_" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss") + ".csv";
+
+            string path = Path.Combine(carpetaDescargas, archivo);
+
+            var sb = new StringBuilder();
+
+
+            // Columnas
+            sb.AppendLine("Proveedor;Fecha;Importe;Observaciones");
+
+            // Detalle
+            foreach (DataRow row in detalle.Rows)
+            {
+                sb.AppendLine($"{row["Proveedor"]};{row["Fecha"]};{row["Importe"]};{row["Observaciones"]}");
+            }
+
+            File.WriteAllText(path, sb.ToString(), Encoding.UTF8);
+        }
     }
 }

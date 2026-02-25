@@ -115,6 +115,8 @@ namespace Comercial.Formularios.Ventas
             dgvProductos.Columns["costo"].Visible = false;
             dgvProductos.Columns["precioOrig"].Visible = false;
             dgvProductos.Columns["Stock"].Visible = false;
+            dgvProductos.Columns["fraccionado"].Visible = false;
+            dgvProductos.Columns["dolarizado"].Visible = false;
 
             txtTotalActual.Text = Math .Round (decimal.Parse (dgvOrden.CurrentRow.Cells["total"].Value.ToString()),cantDec ).ToString ();
             DataTable cliente = instClie.traerDatosVenta(" and c.id = " + dgvOrden.CurrentRow.Cells["fk_cliente"].Value.ToString());

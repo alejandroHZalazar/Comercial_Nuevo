@@ -13,7 +13,7 @@ namespace Comercial.Formularios.Proveedores
     public partial class frmGestionProveedores : Form
     {
         Clases.ClassProveedores instProv = new Clases.ClassProveedores();
-
+        int tieneCaja = Clases.ClassParametros.buscarParametro("caja", "haceCaja") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("caja", "haceCaja"));
         public frmGestionProveedores()
         {
             InitializeComponent();
@@ -36,7 +36,7 @@ namespace Comercial.Formularios.Proveedores
             lblCel.Text = string.Empty;
             lblGanancia.Text = string.Empty;
             dgvProveedores.DataSource = instProv.traeProveedoresCabecera();
-        
+            btnResumenPagoProveedores.Enabled = tieneCaja == 1;
             verificarBotones();
         }
 
@@ -88,6 +88,10 @@ namespace Comercial.Formularios.Proveedores
                 btnEliminar_Click (null, null);
             }
 
+            if (e.KeyData == Keys.F5 & btnResumenPagoProveedores.Enabled)
+            {
+                btnResumenPagoProveedores_Click(null, null);
+            }
         }
 
         private void btnAgregar_Click(object sender, EventArgs e)
@@ -111,6 +115,12 @@ namespace Comercial.Formularios.Proveedores
         {
             instProv.ABMProveedores(int.Parse(dgvProveedores.CurrentRow.Cells["Cod"].Value.ToString()), "", "", "", "", "", "", 0, 3,0);
             estadoInicial();
+        }
+
+        private void btnResumenPagoProveedores_Click(object sender, EventArgs e)
+        {
+            frmResumenPagos resumPagos = new frmResumenPagos();
+            resumPagos.ShowDialog();
         }
     }
 }

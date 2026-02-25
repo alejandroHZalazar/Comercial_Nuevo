@@ -192,5 +192,14 @@ namespace Comercial.Formularios.Clientes
 
             }
         }
+
+        private void btnExportar_Click(object sender, EventArgs e)
+        {
+            DataTable lista = instClie.traerClientesExportarCSV();
+
+            if (lista.Rows.Count == 0) return;
+
+            instClie.ExportarListaClientesCsv(lista);
+        }
     }
 }

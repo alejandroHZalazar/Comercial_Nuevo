@@ -51,6 +51,7 @@ namespace Comercial.Formularios.Clientes
             this.dgvCC.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvCC.Size = new System.Drawing.Size(678, 388);
             this.dgvCC.TabIndex = 0;
+            this.dgvCC.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvCC_CellMouseDoubleClick);
             // 
             // btnCobrar
             // 

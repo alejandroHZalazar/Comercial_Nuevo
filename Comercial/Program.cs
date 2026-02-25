@@ -1,4 +1,5 @@
 ﻿using Comercial.Formularios;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace Comercial
         [STAThread]
         static void Main()
         {
+            RegisterAppForToast();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             frmLogin login = new frmLogin();
@@ -29,5 +31,20 @@ namespace Comercial
             }
 
         }
+
+        static void RegisterAppForToast()
+        {
+            string appId = "SistemaComercial";
+            string exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+
+            using (RegistryKey key = Registry.CurrentUser.CreateSubKey(
+                @"Software\Classes\AppUserModelId\" + appId))
+            {
+                key.SetValue("DisplayName", "Sistema Comercial");
+                key.SetValue("IconUri", exePath);
+            }
+        }
+
+
     }
 }

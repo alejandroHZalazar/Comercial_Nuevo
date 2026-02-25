@@ -104,7 +104,8 @@ namespace Comercial.Formularios.Ventas
             dgvProductos.Columns["precioOrig"].Visible = false;
             dgvProductos.Columns["Stock"].Visible = false;
             rtbObserv.Text = dgvOrden.CurrentRow.Cells["observacion"].Value.ToString();
-
+            dgvProductos.Columns["fraccionado"].Visible = false;
+            dgvProductos.Columns["dolarizado"].Visible = false;
 
             txtTotalActual.Text = Math .Round (decimal.Parse (dgvOrden.CurrentRow.Cells["total"].Value.ToString()),cantDec ).ToString ();
             

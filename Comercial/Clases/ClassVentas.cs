@@ -2,6 +2,8 @@
 using System;
 using System.ComponentModel;
 using System.Data;
+using System.IO;
+using System.Text;
 
 namespace Comercial.Clases
 {
@@ -25,6 +27,28 @@ namespace Comercial.Clases
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_Ventas_TraerParaDevolver", instDatos.abrirConexion());
             a1.SelectCommand.CommandType = CommandType.StoredProcedure;
             a1.SelectCommand.Parameters.AddWithValue("unFiltro", unFiltro);
+
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            return t2;
+        }
+
+        public DataTable imprimirVenta(long unId)
+        {
+            MySqlDataAdapter a1 = new MySqlDataAdapter("sp_VentasPrint", instDatos.abrirConexion());
+            a1.SelectCommand.CommandType = CommandType.StoredProcedure;
+            a1.SelectCommand.Parameters.AddWithValue("unaVenta", unId);
+
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            return t2;
+        }
+
+        public DataTable imprimirVentaTk(long unId)
+        {
+            MySqlDataAdapter a1 = new MySqlDataAdapter("sp_VentasPrintNuevo", instDatos.abrirConexion());
+            a1.SelectCommand.CommandType = CommandType.StoredProcedure;
+            a1.SelectCommand.Parameters.AddWithValue("unaVenta", unId);
 
             DataTable t2 = new DataTable();
             a1.Fill(t2);
@@ -256,7 +280,9 @@ namespace Comercial.Clases
             return valor;
         }
 
-        public long grabarVenta(decimal unTotal, decimal unCosto, int unCliente, int unCajero, decimal unIva, decimal unDescuento, decimal unRecargo, int unVendedor, decimal comision, decimal unImpuesto, string unDetalle, int llevaCC, int imputaEnVenta, int tieneMediosPagos, decimal ImporteCobro, string DetallePlanPago)
+        public long grabarVenta(decimal unTotal, decimal unCosto, int unCliente, int unCajero, decimal unIva, decimal unDescuento, 
+                                decimal unRecargo, int unVendedor, decimal comision, decimal unImpuesto, string unDetalle, int llevaCC, 
+                                int imputaEnVenta, int tieneMediosPagos, decimal ImporteCobro, string DetallePlanPago, int haceCaja, int idCaja)
         {
             try
             {
@@ -281,6 +307,8 @@ namespace Comercial.Clases
                 cmd.Parameters.AddWithValue("imputaEnVenta", imputaEnVenta);
                 cmd.Parameters.AddWithValue("tieneMediosPagos", tieneMediosPagos);
                 cmd.Parameters.AddWithValue("ImporteCobro", ImporteCobro);
+                cmd.Parameters.AddWithValue("haceCaja", haceCaja);
+                cmd.Parameters.AddWithValue("idCaja", idCaja);
 
                 MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int64);
                 salida.Direction = ParameterDirection.Output;
@@ -317,6 +345,51 @@ namespace Comercial.Clases
             return valor;
         }
 
+        public DataTable traerVentaDetalleCsv(DateTime desde, DateTime hasta)
+        {
+            MySqlDataAdapter a1 = new MySqlDataAdapter("sp_Ventas_DetalleCSV", instDatos.abrirConexion());
+            a1.SelectCommand.CommandType = CommandType.StoredProcedure;
+            a1.SelectCommand.Parameters.AddWithValue("desde", desde);
+            a1.SelectCommand.Parameters.AddWithValue("hasta", hasta);
+
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            return t2;
+        }
+
+        public DataTable TraerCabeceraFactura(long unaVenta)
+        {
+            MySqlDataAdapter a1 = new MySqlDataAdapter("sp_Ventas_TraerCabeceraFactura", instDatos.abrirConexion());
+            a1.SelectCommand.CommandType = CommandType.StoredProcedure;
+            a1.SelectCommand.Parameters.AddWithValue("unaVenta", unaVenta);           
+
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            return t2;
+        }
+
+        public DataTable TraerDetalleFactura(long unaVenta)
+        {
+            MySqlDataAdapter a1 = new MySqlDataAdapter("sp_Ventas_TraerDetalleFactura", instDatos.abrirConexion());
+            a1.SelectCommand.CommandType = CommandType.StoredProcedure;
+            a1.SelectCommand.Parameters.AddWithValue("unaVenta", unaVenta);
+
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            return t2;
+        }
+
+        public DataTable TraerVentasNoFacturadas(DateTime fechaDesde, DateTime fechaHasta)
+        {
+            MySqlDataAdapter a1 = new MySqlDataAdapter("sp_Ventas_TraerSinFacturarPorFecha", instDatos.abrirConexion());
+            a1.SelectCommand.CommandType = CommandType.StoredProcedure;
+            a1.SelectCommand.Parameters.AddWithValue("desde", fechaDesde);
+            a1.SelectCommand.Parameters.AddWithValue("hasta", fechaHasta);
+
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            return t2;
+        }
         public class CobroFormasPago
         {
             public event PropertyChangedEventHandler PropertyChanged;
@@ -389,8 +462,33 @@ namespace Comercial.Clases
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nombre));
             }
-
         }
+
+            public void ExportarVentasCsv(DataTable detalle)
+            {
+
+                string carpetaDescargas = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+
+                string archivo = "Ventas_" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss") + ".csv";
+
+                string path = Path.Combine(carpetaDescargas, archivo);
+
+                var sb = new StringBuilder();
+
+
+                // Columnas
+                sb.AppendLine("Nro;Fecha;Total;Costo;Cliente;Cajero;IVA;Descuento;Recargo;Vendedor;Comision;Impuesto;Medio Pago 1;Medio Pago 2;Medio Pago 3");
+
+                // Detalle
+                foreach (DataRow row in detalle.Rows)
+                {
+                    sb.AppendLine($"{row["Nro"]};{row["Fecha"]};{row["Total"]};{row["Costo"]};{row["Cliente"]};{row["Cajero"]};{row["IVA"]};{row["Descuento"]};{row["Recargo"]};{row["Vendedor"]};{row["Comision"]};{row["Impuesto"]};{row["Medio Pago 1"]};{row["Medio Pago 2"]};{row["Medio Pago 3"]}");
+                }               
+
+                File.WriteAllText(path, sb.ToString(), Encoding.UTF8);
+            }
+
+        
 
     }
 }

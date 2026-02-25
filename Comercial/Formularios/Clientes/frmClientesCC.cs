@@ -60,6 +60,16 @@ namespace Comercial.Formularios.Clientes
             return saldo;
         }
 
+        private void imprimirCobro (DataTable recibo)
+        {
+            Clases.ClassReportesITextSharp instReport = new Clases.ClassReportesITextSharp();
+            var logo = Clases.ClassParametros.buscarParametro("login", "logo");
+            var nombreEmpresa = Clases.ClassParametros.buscarParametro("empresa", "nombre");
+            var direccionEmpresa = Clases.ClassParametros.buscarParametro("empresa", "direccion");
+            var telEmpresa = Clases.ClassParametros.buscarParametro("empresa", "telefono");
+            var cuilEmpresa = Clases.ClassParametros.buscarParametro("empresa", "cuit");
+            instReport.GenerarYMostrarRecibo(recibo.Rows[0]["Recibo"].ToString(), logo, nombreEmpresa, direccionEmpresa, telEmpresa, cuilEmpresa, DateTime.Parse(recibo.Rows[0]["Fecha"].ToString()), recibo.Rows[0]["Cliente"].ToString(), recibo.Rows[0]["cuil"].ToString(), recibo.Rows[0]["Observaciones"].ToString(), decimal.Parse(recibo.Rows[0]["ImporteTotal"].ToString()));
+        }
         private void btnCobrar_Click(object sender, EventArgs e)
         {
             BindingList<Clases.ClassVentas.CobroFormasPago> dtFormasPAgo = new BindingList<Clases.ClassVentas.CobroFormasPago>();
@@ -80,6 +90,12 @@ namespace Comercial.Formularios.Clientes
                 if (salida != -1)
                 {
                     MessageBox.Show(this, "Cobro Registrado con éxito!!", "CLIENTES", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    
+                    var recibo = instClie.traerDatosRecibo(salida);
+                    if (recibo.Rows.Count > 0)
+                    {
+                        imprimirCobro(recibo);
+                     }
                     cargarGrilla();
                 }
                 else
@@ -118,6 +134,25 @@ namespace Comercial.Formularios.Clientes
             if (e.KeyData ==  Keys.F4)
             {
                 btnND_Click(null, null);
+            }
+        }
+
+        private void dgvCC_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.RowIndex >= 0) // evita encabezados
+            {
+                var fila = dgvCC.Rows[e.RowIndex];
+
+                if (fila.Cells["Movimiento"].Value.ToString() != "Cobro") return;
+
+                var id = int.Parse(fila.Cells["Numero Referencia"].Value.ToString());
+
+                Clases.ClassClientes instClie = new Clases.ClassClientes();
+                var recibo = instClie.traerDatosRecibo(id);
+                if (recibo.Rows.Count > 0)
+                {
+                    imprimirCobro(recibo);
+                }
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.Windows.SDK.Contracts.10.0.19041.1\build\Microsoft.Windows.SDK.Contracts.props" Condition="Exists('..\packages\Microsoft.Windows.SDK.Contracts.10.0.19041.1\build\Microsoft.Windows.SDK.Contracts.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -12,6 +13,8 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -50,8 +53,21 @@
     <Reference Include="BouncyCastle.Crypto, Version=1.9.0.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
       <HintPath>..\packages\Portable.BouncyCastle.1.9.0\lib\net40\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
+    <Reference Include="BouncyCastle.Cryptography, Version=2.0.0.0, Culture=neutral, PublicKeyToken=072edcf4a5328938, processorArchitecture=MSIL">
+      <HintPath>..\packages\BouncyCastle.Cryptography.2.6.2\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
+    </Reference>
+    <Reference Include="FiscalNET">
+      <HintPath>..\..\..\..\IFDrivers\HasarNT\NET\FiscalNET.dll</HintPath>
+    </Reference>
     <Reference Include="Google.Protobuf, Version=3.21.9.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Protobuf.3.21.9\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.EPSON_Impresora_Fiscal">
+      <HintPath>bin\Debug\NET\Interop.EPSON_Impresora_Fiscal.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.5.13.5, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\iTextSharp.5.5.13.5\lib\net461\itextsharp.dll</HintPath>
     </Reference>
     <Reference Include="K4os.Compression.LZ4, Version=1.3.5.0, Culture=neutral, PublicKeyToken=2186fa9121ef231d, processorArchitecture=MSIL">
       <HintPath>..\packages\K4os.Compression.LZ4.1.3.5\lib\netstandard2.0\K4os.Compression.LZ4.dll</HintPath>
@@ -94,6 +110,9 @@
     </Reference>
     <Reference Include="MySqlConnector, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d33d3e53aa5f8c92, processorArchitecture=MSIL">
       <HintPath>..\packages\MySqlConnector.2.5.0\lib\netstandard2.0\MySqlConnector.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.5-beta1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.dll</HintPath>
@@ -155,6 +174,9 @@
       <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
@@ -178,13 +200,20 @@
     <Compile Include="Clases\classDatos.cs" />
     <Compile Include="Clases\ClassEstadisticas.cs" />
     <Compile Include="Clases\ClassLocalidades.cs" />
+    <Compile Include="Clases\ClassNotificaciones.cs" />
     <Compile Include="Clases\ClassParametros.cs" />
     <Compile Include="Clases\ClassPedidos.cs" />
     <Compile Include="Clases\ClassProductos.cs" />
+    <Compile Include="Clases\ClassProductosBalanza.cs" />
     <Compile Include="Clases\ClassProveedores.cs" />
+    <Compile Include="Clases\ClassReportesFiscal.cs" />
+    <Compile Include="Clases\ClassReportesITextSharp.cs" />
     <Compile Include="Clases\classUsuarios.cs" />
     <Compile Include="Clases\ClassValidacion.cs" />
     <Compile Include="Clases\ClassVentas.cs" />
+    <Compile Include="Clases\Fiscal.cs" />
+    <Compile Include="Clases\TicketPrinter.cs" />
+    <Compile Include="Enums\MedioPago.cs" />
     <Compile Include="Formularios\Clientes\frmABMClientes.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -239,6 +268,12 @@
     <Compile Include="Formularios\Configuracion\frmABMDocumentosTipos.Designer.cs">
       <DependentUpon>frmABMDocumentosTipos.cs</DependentUpon>
     </Compile>
+    <Compile Include="Formularios\Configuracion\frmABMEmpresa.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Configuracion\frmABMEmpresa.Designer.cs">
+      <DependentUpon>frmABMEmpresa.cs</DependentUpon>
+    </Compile>
     <Compile Include="Formularios\Configuracion\frmABMivaProcentajes.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -292,6 +327,12 @@
     </Compile>
     <Compile Include="Formularios\Configuracion\frmConsUsuarios.Designer.cs">
       <DependentUpon>frmConsUsuarios.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Configuracion\frmCotizacionDolar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Configuracion\frmCotizacionDolar.Designer.cs">
+      <DependentUpon>frmCotizacionDolar.cs</DependentUpon>
     </Compile>
     <Compile Include="Formularios\Configuracion\frmLocalidades.cs">
       <SubType>Form</SubType>
@@ -353,6 +394,18 @@
     <Compile Include="Formularios\Contable\frmIngresoGastos.Designer.cs">
       <DependentUpon>frmIngresoGastos.cs</DependentUpon>
     </Compile>
+    <Compile Include="Formularios\Contable\frmPagoProveedores.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Contable\frmPagoProveedores.Designer.cs">
+      <DependentUpon>frmPagoProveedores.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Estadisticas\frmExportarVentas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Estadisticas\frmExportarVentas.Designer.cs">
+      <DependentUpon>frmExportarVentas.cs</DependentUpon>
+    </Compile>
     <Compile Include="Formularios\Estadisticas\frmRankingVentas.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -364,6 +417,18 @@
     </Compile>
     <Compile Include="Formularios\Estadisticas\frmVentasEstadisticas.Designer.cs">
       <DependentUpon>frmVentasEstadisticas.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Facturacion\frmFacturacionLotes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Facturacion\frmFacturacionLotes.Designer.cs">
+      <DependentUpon>frmFacturacionLotes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Facturacion\frmReporteFacturacion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Facturacion\frmReporteFacturacion.Designer.cs">
+      <DependentUpon>frmReporteFacturacion.cs</DependentUpon>
     </Compile>
     <Compile Include="Formularios\frmLogin.cs">
       <SubType>Form</SubType>
@@ -412,6 +477,12 @@
     </Compile>
     <Compile Include="Formularios\Productos\frmConsultaProductos.Designer.cs">
       <DependentUpon>frmConsultaProductos.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Productos\frmImprimirEtiquetasyCB.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Productos\frmImprimirEtiquetasyCB.Designer.cs">
+      <DependentUpon>frmImprimirEtiquetasyCB.cs</DependentUpon>
     </Compile>
     <Compile Include="Formularios\Productos\frmIngresoMercaderia.cs">
       <SubType>Form</SubType>
@@ -472,6 +543,12 @@
     </Compile>
     <Compile Include="Formularios\Proveedores\frmOrdenDeCompra.Designer.cs">
       <DependentUpon>frmOrdenDeCompra.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Proveedores\frmResumenPagos.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Proveedores\frmResumenPagos.Designer.cs">
+      <DependentUpon>frmResumenPagos.cs</DependentUpon>
     </Compile>
     <Compile Include="Formularios\Usuarios\frmABMUsuarios.cs">
       <SubType>Form</SubType>
@@ -564,6 +641,7 @@
       <DependentUpon>frmReport.cs</DependentUpon>
     </Compile>
     <Compile Include="SqlServerTypes\Loader.cs" />
+    <Compile Include="Enums\TipoComprobanteHassar.cs" />
     <EmbeddedResource Include="Formularios\Clientes\frmABMClientes.resx">
       <DependentUpon>frmABMClientes.cs</DependentUpon>
     </EmbeddedResource>
@@ -591,6 +669,9 @@
     <EmbeddedResource Include="Formularios\Configuracion\frmABMDocumentosTipos.resx">
       <DependentUpon>frmABMDocumentosTipos.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Configuracion\frmABMEmpresa.resx">
+      <DependentUpon>frmABMEmpresa.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Configuracion\frmABMivaProcentajes.resx">
       <DependentUpon>frmABMivaProcentajes.cs</DependentUpon>
     </EmbeddedResource>
@@ -617,6 +698,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Configuracion\frmConsUsuarios.resx">
       <DependentUpon>frmConsUsuarios.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Configuracion\frmCotizacionDolar.resx">
+      <DependentUpon>frmCotizacionDolar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Configuracion\frmLocalidades.resx">
       <DependentUpon>frmLocalidades.cs</DependentUpon>
@@ -648,11 +732,23 @@
     <EmbeddedResource Include="Formularios\Contable\frmIngresoGastos.resx">
       <DependentUpon>frmIngresoGastos.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Contable\frmPagoProveedores.resx">
+      <DependentUpon>frmPagoProveedores.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Estadisticas\frmExportarVentas.resx">
+      <DependentUpon>frmExportarVentas.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Estadisticas\frmRankingVentas.resx">
       <DependentUpon>frmRankingVentas.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Estadisticas\frmVentasEstadisticas.resx">
       <DependentUpon>frmVentasEstadisticas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Facturacion\frmFacturacionLotes.resx">
+      <DependentUpon>frmFacturacionLotes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Facturacion\frmReporteFacturacion.resx">
+      <DependentUpon>frmReporteFacturacion.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\frmLogin.resx">
       <DependentUpon>frmLogin.cs</DependentUpon>
@@ -677,6 +773,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Productos\frmConsultaProductos.resx">
       <DependentUpon>frmConsultaProductos.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Productos\frmImprimirEtiquetasyCB.resx">
+      <DependentUpon>frmImprimirEtiquetasyCB.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Productos\frmIngresoMercaderia.resx">
       <DependentUpon>frmIngresoMercaderia.cs</DependentUpon>
@@ -707,6 +806,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Proveedores\frmOrdenDeCompra.resx">
       <DependentUpon>frmOrdenDeCompra.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Proveedores\frmResumenPagos.resx">
+      <DependentUpon>frmResumenPagos.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Usuarios\frmABMUsuarios.resx">
       <DependentUpon>frmABMUsuarios.cs</DependentUpon>
@@ -972,8 +1074,38 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <COMReference Include="EPSON_Impresora_Fiscal">
+      <Guid>{AFD24A52-2823-4FBD-B75D-C282C11E1D98}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="OCXFISLib">
+      <Guid>{F2AFBB6A-8275-46F9-8AE3-ECB95620CAE5}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Microsoft.NETFramework.ReferenceAssemblies.net461.1.0.0\build\Microsoft.NETFramework.ReferenceAssemblies.net461.targets" Condition="Exists('..\packages\Microsoft.NETFramework.ReferenceAssemblies.net461.1.0.0\build\Microsoft.NETFramework.ReferenceAssemblies.net461.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Este proyecto hace referencia a los paquetes NuGet que faltan en este equipo. Use la restauración de paquetes NuGet para descargarlos. Para obtener más información, consulte http://go.microsoft.com/fwlink/?LinkID=322105. El archivo que falta es {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.NETFramework.ReferenceAssemblies.net461.1.0.0\build\Microsoft.NETFramework.ReferenceAssemblies.net461.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NETFramework.ReferenceAssemblies.net461.1.0.0\build\Microsoft.NETFramework.ReferenceAssemblies.net461.targets'))" />
+    <Error Condition="!Exists('..\packages\System.Runtime.WindowsRuntime.4.6.0\build\net461\System.Runtime.WindowsRuntime.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Runtime.WindowsRuntime.4.6.0\build\net461\System.Runtime.WindowsRuntime.targets'))" />
+    <Error Condition="!Exists('..\packages\System.Runtime.WindowsRuntime.UI.Xaml.4.6.0\build\net461\System.Runtime.WindowsRuntime.UI.Xaml.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Runtime.WindowsRuntime.UI.Xaml.4.6.0\build\net461\System.Runtime.WindowsRuntime.UI.Xaml.targets'))" />
+  </Target>
+  <Import Project="..\packages\System.Runtime.WindowsRuntime.4.6.0\build\net461\System.Runtime.WindowsRuntime.targets" Condition="Exists('..\packages\System.Runtime.WindowsRuntime.4.6.0\build\net461\System.Runtime.WindowsRuntime.targets')" />
+  <Import Project="..\packages\System.Runtime.WindowsRuntime.UI.Xaml.4.6.0\build\net461\System.Runtime.WindowsRuntime.UI.Xaml.targets" Condition="Exists('..\packages\System.Runtime.WindowsRuntime.UI.Xaml.4.6.0\build\net461\System.Runtime.WindowsRuntime.UI.Xaml.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

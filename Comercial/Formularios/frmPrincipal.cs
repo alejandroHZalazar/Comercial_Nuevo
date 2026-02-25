@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Comercial.Clases;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,6 +13,19 @@ namespace Comercial.Formularios
 {
     public partial class frmPrincipal : Form
     {
+
+        private Clases.ClassNotificaciones notificacionService = new Clases.ClassNotificaciones();
+        int tieneNotificaciones = Clases.ClassParametros.buscarParametro("empresa", "tieneNotificaciones") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("empresa", "tieneNotificaciones"));
+        int notificaDolar = Clases.ClassParametros.buscarParametro("empresa", "notificaDolar") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("empresa", "notificaDolar"));
+        int notificaCantidadMinima = Clases.ClassParametros.buscarParametro("empresa", "notificaCantidadMinima") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("empresa", "notificaCantidadMinima"));
+        private Timer timerNotificaciones;
+        private int notificacionActualId;
+        private string notificacionAccion;
+        private int? notificacionReferenciaId;
+        private NotifyIcon NotifyIcon;
+        int facturaFiscal = Clases.ClassParametros.buscarParametro("ventas", "facturaFiscal") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "facturaFiscal"));
+        int puertoFiscal = Clases.ClassParametros.buscarParametro("ventas", "PuertoFiscal") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "PuertoFiscal"));
+        string marcaFiscal = Clases.ClassParametros.buscarParametro("ventas", "marcaFiscal");
         public frmPrincipal()
         {
             InitializeComponent();
@@ -45,6 +59,7 @@ namespace Comercial.Formularios
         {
             Formularios.Configuracion.frmABMTipoUsuarios unFrmTipoUsuarios = new Configuracion.frmABMTipoUsuarios();
             unFrmTipoUsuarios.ShowDialog();
+            Clases.classUsuarios.setPermisosMenu(int.Parse(Environment.GetEnvironmentVariable("idUser")), this, menuStrip1);
         }
 
         private void aToolStripMenuItem_Click(object sender, EventArgs e)
@@ -58,8 +73,82 @@ namespace Comercial.Formularios
             
             this.Text = "Sistema de Gestión Comercial - Usuario: " + Environment.GetEnvironmentVariable("nombreUser");
             Clases.classUsuarios.setPermisosMenu(int.Parse(Environment.GetEnvironmentVariable("idUser")),this,menuStrip1 );
+
+            if (tieneNotificaciones == 0) return;
+            timerNotificaciones = new Timer();
+            timerNotificaciones.Interval = 60000; // 15 minutos
+            timerNotificaciones.Tick += TimerNotificaciones_Tick;
+            timerNotificaciones.Start();
+
+            EjecutarVerificacion();
+
         }
 
+        private void TimerNotificaciones_Tick(object sender, EventArgs e)
+        {
+            EjecutarVerificacion();
+        }
+
+        private void EjecutarVerificacion()
+        {
+           if (notificaDolar == 1) notificacionService.VerificarDolarAsync();
+           if(notificaCantidadMinima == 1) notificacionService.VerificarStockMinimo();
+
+            MostrarNotificacionesPendientes();
+        }
+
+        private void MostrarNotificacionesPendientes()
+        {
+            DataTable notif = notificacionService.traerNotificacionesPendientes();
+            if (notif.Rows.Count == 0) return;
+
+               
+                    string mensaje = notif.Rows[0]["Mensaje"].ToString();
+                    int id = Convert.ToInt32(notif.Rows[0]["Id"]);
+                    string accion = notif.Rows[0]["Accion"].ToString();
+                    int? referenciaId = notif.Rows[0]["ReferenciaId"] as int?;
+
+                    MostrarNotificacion(mensaje, id, accion, referenciaId);
+                
+            
+        }
+
+        private void MostrarNotificacion(string mensaje, int id, string accion, int? referenciaId)
+        {
+            if (NotifyIcon == null)
+            {
+                NotifyIcon = new NotifyIcon();
+                NotifyIcon.Icon = SystemIcons.Information;
+                NotifyIcon.Visible = true;
+                NotifyIcon.BalloonTipClicked += NotifyIcon_BalloonTipClicked;
+            }
+
+            notificacionActualId = id;
+            notificacionAccion = accion;
+            notificacionReferenciaId = referenciaId;
+
+            NotifyIcon.BalloonTipTitle = "Sistema";
+            NotifyIcon.BalloonTipText = mensaje;
+            NotifyIcon.ShowBalloonTip(5000);
+        }
+
+        private void NotifyIcon_BalloonTipClicked(object sender, EventArgs e)
+        {
+            switch (notificacionAccion)
+            {
+                case "ABRIR_PRODUCTO":
+                    Formularios.Productos.frmListaStock frmProd = new Productos.frmListaStock();
+                    frmProd.ShowDialog();
+                    break;
+
+                case "ABRIR_CONFIG_DOLAR":
+                    Formularios.Configuracion.frmABMTipoPrecios frmDolar = new Formularios.Configuracion.frmABMTipoPrecios();
+                    frmDolar.ShowDialog();
+                    break;
+            }
+
+            notificacionService.MarcarComoLeida(notificacionActualId);
+        }
         private void aBMProductosToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Formularios.Productos.frmConsultaProductos unFrmProd = new Productos.frmConsultaProductos();
@@ -214,12 +303,7 @@ namespace Comercial.Formularios
         {
             Configuracion.frmABMMediosPago unFrmABMMediosPago = new Configuracion.frmABMMediosPago();
             unFrmABMMediosPago.ShowDialog();
-        }
-
-        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
-        }
+        }       
 
         private void gestionDeCajaToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -255,6 +339,55 @@ namespace Comercial.Formularios
         {
             Formularios.Configuracion.frmABMDocumentosTipos unFrmTiposDoc = new Configuracion.frmABMDocumentosTipos();
             unFrmTiposDoc.ShowDialog();
+        }
+
+        private void exportarVentasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Formularios.Estadisticas.frmExportarVentas unFrmExportarVentas = new Estadisticas.frmExportarVentas();
+            unFrmExportarVentas.ShowDialog();
+        }
+
+        private void imprimirEtiquetasYCodBarrasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Formularios.Productos.frmImprimirEtiquetasyCB unFrmImprimirEyCB = new Productos.frmImprimirEtiquetasyCB();
+            unFrmImprimirEyCB.ShowDialog();
+        }
+
+        private void frmPrincipal_Shown(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void parametrosToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Formularios.Configuracion.frmABMEmpresa unFrmABMEmpresa = new Configuracion.frmABMEmpresa();
+            unFrmABMEmpresa.ShowDialog();
+        }
+
+        private void cierreZToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (facturaFiscal == 1)
+            {
+                Fiscal unTk = new Fiscal();
+                ComprobanteFiscal status;
+                if (marcaFiscal.ToUpper() == "EPSON")
+                {
+                    var estado = unTk.CierreZEpson((short)puertoFiscal);
+                }
+            }
+        }
+
+        private void facturacionPorLotesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Formularios.Facturacion.frmFacturacionLotes unFrmLotes = new Facturacion.frmFacturacionLotes();
+            unFrmLotes.ShowDialog();
+
+        }
+
+        private void reportesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Formularios.Facturacion.frmReporteFacturacion unFrmReporte = new Facturacion.frmReporteFacturacion();
+            unFrmReporte.ShowDialog();
         }
     }
 }

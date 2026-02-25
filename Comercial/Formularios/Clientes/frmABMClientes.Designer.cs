@@ -67,6 +67,7 @@
             this.btnEliminar = new System.Windows.Forms.Button();
             this.btnEditar = new System.Windows.Forms.Button();
             this.btnAgregar = new System.Windows.Forms.Button();
+            this.btnExportar = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvClientes)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -490,12 +491,27 @@
             this.btnAgregar.UseVisualStyleBackColor = false;
             this.btnAgregar.Click += new System.EventHandler(this.btnAgregar_Click);
             // 
+            // btnExportar
+            // 
+            this.btnExportar.BackColor = System.Drawing.Color.Silver;
+            this.btnExportar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnExportar.Image = ((System.Drawing.Image)(resources.GetObject("btnExportar.Image")));
+            this.btnExportar.Location = new System.Drawing.Point(658, 496);
+            this.btnExportar.Name = "btnExportar";
+            this.btnExportar.Size = new System.Drawing.Size(159, 34);
+            this.btnExportar.TabIndex = 28;
+            this.btnExportar.Text = "Exportar Lista Clientes";
+            this.btnExportar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.btnExportar.UseVisualStyleBackColor = false;
+            this.btnExportar.Click += new System.EventHandler(this.btnExportar_Click);
+            // 
             // frmABMClientes
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ClientSize = new System.Drawing.Size(839, 542);
+            this.Controls.Add(this.btnExportar);
             this.Controls.Add(this.btnEliminar);
             this.Controls.Add(this.btnEditar);
             this.Controls.Add(this.btnAgregar);
@@ -564,5 +580,6 @@
         private System.Windows.Forms.Label lblProvincia;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Button btnVerCC;
+        private System.Windows.Forms.Button btnExportar;
     }
 }

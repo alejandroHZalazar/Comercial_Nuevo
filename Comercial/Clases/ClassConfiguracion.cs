@@ -25,6 +25,7 @@ namespace Comercial.Clases
             instDatos.cerrarConexion();
             return dt;
         }
+       
 
         public DataTable traeZonasClientes()
         {
@@ -44,6 +45,14 @@ namespace Comercial.Clases
             return dt;
         }
 
+        public DataTable traeRubrosconTdos()
+        {
+            MySqlDataAdapter rows = new MySqlDataAdapter("select 0 as id ,'TODOS' as descripcion union select id, descripcion from Rubros ORDER BY id = 0 DESC, descripcion", instDatos.abrirConexion());
+            DataTable dt = new DataTable();
+            rows.Fill(dt);
+            instDatos.cerrarConexion();
+            return dt;
+        }
         public DataTable traeTipoUsuarios()
         {
             MySqlDataAdapter rows = new MySqlDataAdapter("select * from tipoUsuarios order by id", instDatos.abrirConexion());

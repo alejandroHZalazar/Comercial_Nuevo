@@ -34,6 +34,8 @@
             this.btnEditar = new System.Windows.Forms.Button();
             this.btnAgregar = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lblDescuento = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
             this.lblGanancia = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.lblCel = new System.Windows.Forms.Label();
@@ -50,8 +52,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.lblId = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.lblDescuento = new System.Windows.Forms.Label();
+            this.btnResumenPagoProveedores = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvProveedores)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -140,6 +141,25 @@
             this.groupBox1.TabIndex = 11;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Datos Proveedores";
+            // 
+            // lblDescuento
+            // 
+            this.lblDescuento.AutoSize = true;
+            this.lblDescuento.Location = new System.Drawing.Point(92, 263);
+            this.lblDescuento.Name = "lblDescuento";
+            this.lblDescuento.Size = new System.Drawing.Size(38, 15);
+            this.lblDescuento.TabIndex = 17;
+            this.lblDescuento.Text = "label8";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.Location = new System.Drawing.Point(16, 263);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(70, 15);
+            this.label9.TabIndex = 16;
+            this.label9.Text = "Descuento:";
             // 
             // lblGanancia
             // 
@@ -293,24 +313,19 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Id:";
             // 
-            // label9
+            // btnResumenPagoProveedores
             // 
-            this.label9.AutoSize = true;
-            this.label9.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(16, 263);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(70, 15);
-            this.label9.TabIndex = 16;
-            this.label9.Text = "Descuento:";
-            // 
-            // lblDescuento
-            // 
-            this.lblDescuento.AutoSize = true;
-            this.lblDescuento.Location = new System.Drawing.Point(92, 263);
-            this.lblDescuento.Name = "lblDescuento";
-            this.lblDescuento.Size = new System.Drawing.Size(38, 15);
-            this.lblDescuento.TabIndex = 17;
-            this.lblDescuento.Text = "label8";
+            this.btnResumenPagoProveedores.BackColor = System.Drawing.Color.Silver;
+            this.btnResumenPagoProveedores.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnResumenPagoProveedores.Image = ((System.Drawing.Image)(resources.GetObject("btnResumenPagoProveedores.Image")));
+            this.btnResumenPagoProveedores.Location = new System.Drawing.Point(654, 327);
+            this.btnResumenPagoProveedores.Name = "btnResumenPagoProveedores";
+            this.btnResumenPagoProveedores.Size = new System.Drawing.Size(167, 34);
+            this.btnResumenPagoProveedores.TabIndex = 12;
+            this.btnResumenPagoProveedores.Text = "Resumen Pagos [F5]";
+            this.btnResumenPagoProveedores.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.btnResumenPagoProveedores.UseVisualStyleBackColor = false;
+            this.btnResumenPagoProveedores.Click += new System.EventHandler(this.btnResumenPagoProveedores_Click);
             // 
             // frmGestionProveedores
             // 
@@ -318,6 +333,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ClientSize = new System.Drawing.Size(828, 462);
+            this.Controls.Add(this.btnResumenPagoProveedores);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnEliminar);
             this.Controls.Add(this.btnEditar);
@@ -366,5 +382,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lblDescuento;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Button btnResumenPagoProveedores;
     }
 }

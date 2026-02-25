@@ -342,6 +342,17 @@
         AACT8v8BC1ILiClqstIAAAAASUVORK5CYII=
 </value>
   </data>
+  <data name="facturacionToolStripMenuItem.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAA
+        dgAAAHYBTnsmCAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEJSURBVDhPndJP
+        K0VRFAXwH0qJlJSUESl/RspAMSK8MlCmDKQw82fGB1CUmQwoRZnJwMSXkC/g22i/ztPtvHPRW7W65667
+        19537Q5/Ywv3BW7khXV4zIWEOr0NdYV1ehv28JL4UTlv54VjuKtkHM8L6qZOJsMbTjGEA7wXFveVvYfX
+        DtaxiMPUNH4vtMAAuivPfvSg0YpxjulfGlxjDpeYxwUWMIOzKLhN3ffxnJo84ATDKc4gdjGFNSwnT3g9
+        pUnxcbXCWfRhBb1YwkjSo/bH22pQwmaKENljWjSLaDfoanlfMdEhw+szLaMThrd4OUZxlTG0HE1vaQeR
+        Ly5UlaHlaHqPCzfuvzz6BjXlQnZWlVpUAAAAAElFTkSuQmCC
+</value>
+  </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAYAAAAAAAEAIAC4CQAAZgAAAICAAAABACAAKAgBAB4KAABAQAAAAQAgAChCAABGEgEAMDAAAAEA

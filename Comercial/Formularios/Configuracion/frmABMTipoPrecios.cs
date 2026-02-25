@@ -10,8 +10,10 @@ using System.Windows.Forms;
 
 namespace Comercial.Formularios.Configuracion
 {
+
     public partial class frmABMTipoPrecios : Form
     {
+        int dolarizaProductos = Clases.ClassParametros.buscarParametro("productos", "dolarizaProductos") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("productos", "dolarizaProductos"));
         int accion = 0;
         int tipoId;
         Clases.ClassConfiguracion instConfig = new Clases.ClassConfiguracion();
@@ -49,6 +51,7 @@ namespace Comercial.Formularios.Configuracion
             verificarBotones();
             dgvTipoPrecios.Enabled = true;
             dgvTipoPrecios.Focus();
+            btnValorDolar.Enabled = dolarizaProductos == 1;
         }
 
         private void verificarBotones()
@@ -186,6 +189,17 @@ namespace Comercial.Formularios.Configuracion
                 btnCancelar_Click(null, null);
             }
 
+            if (e.KeyData == Keys.F7 & btnValorDolar.Enabled == true)
+            {
+                btnValorDolar_Click(null, null);
+            }
+
+        }
+
+        private void btnValorDolar_Click(object sender, EventArgs e)
+        {
+            frmCotizacionDolar unFrmCotizacion = new frmCotizacionDolar();
+            unFrmCotizacion.ShowDialog();
         }
     }
 }

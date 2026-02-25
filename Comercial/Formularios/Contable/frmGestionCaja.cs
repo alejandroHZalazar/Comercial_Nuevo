@@ -210,5 +210,27 @@ namespace Comercial.Formularios.Contable
             unFrmCierre.ShowDialog();
             estadoInicial();
         }
+
+        private void btnPagoProveedores_Click(object sender, EventArgs e)
+        {
+            Clases.ClassCaja instCaja = new Clases.ClassCaja();
+            var pagoProveedorId = Clases.ClassParametros.buscarParametro("caja", "ConceptosPagosProveedores");
+            var medioEfectivoId = Clases.ClassParametros.buscarParametro("caja", "MedioPagoEfectivo");
+            DataTable cajaEstado = instCaja.traerEstadoCaja(int.Parse(Environment.GetEnvironmentVariable("idUser")));
+
+            if (cajaEstado.Rows.Count == 0) return;
+            var cajaId = int.Parse(cajaEstado.Rows[0]["caja_id"].ToString());
+
+            if (!string.IsNullOrWhiteSpace(pagoProveedorId) && !string.IsNullOrWhiteSpace(medioEfectivoId))
+            {
+                frmPagoProveedores unFrmPagoProveedores = new frmPagoProveedores(cajaId, int.Parse(medioEfectivoId), int.Parse(pagoProveedorId));
+                unFrmPagoProveedores.ShowDialog();
+                estadoInicial();
+            }
+            else
+            {
+                MessageBox.Show(this, "Debe habilitar el modulo de Caja o parametrizar su valor y parametrizar el valor del medio de Pago efectivo y el Concepto de Pago Proveedores", "Gestion de Caja", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
     }
 }

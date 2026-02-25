@@ -58,6 +58,8 @@
             this.nudDescuento = new System.Windows.Forms.NumericUpDown();
             this.label13 = new System.Windows.Forms.Label();
             this.nudGanancia = new System.Windows.Forms.NumericUpDown();
+            this.cbFraccionado = new System.Windows.Forms.CheckBox();
+            this.cbDolarizado = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudCosto)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudLista)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudStock)).BeginInit();
@@ -104,7 +106,7 @@
             0});
             this.nudCosto.Name = "nudCosto";
             this.nudCosto.Size = new System.Drawing.Size(94, 23);
-            this.nudCosto.TabIndex = 10;
+            this.nudCosto.TabIndex = 9;
             this.nudCosto.Enter += new System.EventHandler(this.nudCosto_Enter);
             this.nudCosto.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.numericUpDown1_KeyPress);
             // 
@@ -166,7 +168,7 @@
             this.cboProveedor.Location = new System.Drawing.Point(107, 171);
             this.cboProveedor.Name = "cboProveedor";
             this.cboProveedor.Size = new System.Drawing.Size(181, 23);
-            this.cboProveedor.TabIndex = 5;
+            this.cboProveedor.TabIndex = 4;
             this.cboProveedor.SelectedIndexChanged += new System.EventHandler(this.cboProveedor_SelectedIndexChanged);
             // 
             // label7
@@ -198,7 +200,7 @@
             0});
             this.nudLista.Name = "nudLista";
             this.nudLista.Size = new System.Drawing.Size(94, 23);
-            this.nudLista.TabIndex = 11;
+            this.nudLista.TabIndex = 10;
             this.nudLista.Enter += new System.EventHandler(this.nudLista_Enter);
             this.nudLista.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nudLista_KeyPress);
             // 
@@ -255,7 +257,7 @@
             -2147483648});
             this.nudStock.Name = "nudStock";
             this.nudStock.Size = new System.Drawing.Size(94, 23);
-            this.nudStock.TabIndex = 12;
+            this.nudStock.TabIndex = 11;
             this.nudStock.Enter += new System.EventHandler(this.nudStock_Enter);
             this.nudStock.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nudStock_KeyPress);
             // 
@@ -294,7 +296,7 @@
             this.btnCalcularPrecio.Location = new System.Drawing.Point(244, 286);
             this.btnCalcularPrecio.Name = "btnCalcularPrecio";
             this.btnCalcularPrecio.Size = new System.Drawing.Size(150, 27);
-            this.btnCalcularPrecio.TabIndex = 9;
+            this.btnCalcularPrecio.TabIndex = 8;
             this.btnCalcularPrecio.Text = "Calcular Precios [F7]";
             this.btnCalcularPrecio.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnCalcularPrecio.UseVisualStyleBackColor = false;
@@ -320,7 +322,7 @@
             0});
             this.nudProveedor.Name = "nudProveedor";
             this.nudProveedor.Size = new System.Drawing.Size(94, 23);
-            this.nudProveedor.TabIndex = 6;
+            this.nudProveedor.TabIndex = 5;
             this.nudProveedor.Enter += new System.EventHandler(this.nudProveedor_Enter);
             this.nudProveedor.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nudProveedor_KeyPress);
             // 
@@ -344,7 +346,7 @@
             0});
             this.nudDescuento.Name = "nudDescuento";
             this.nudDescuento.Size = new System.Drawing.Size(94, 23);
-            this.nudDescuento.TabIndex = 7;
+            this.nudDescuento.TabIndex = 6;
             this.nudDescuento.Enter += new System.EventHandler(this.nudDescuento_Enter);
             this.nudDescuento.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nudDescuento_KeyPress);
             // 
@@ -368,9 +370,29 @@
             0});
             this.nudGanancia.Name = "nudGanancia";
             this.nudGanancia.Size = new System.Drawing.Size(94, 23);
-            this.nudGanancia.TabIndex = 8;
+            this.nudGanancia.TabIndex = 7;
             this.nudGanancia.Enter += new System.EventHandler(this.nudGanancia_Enter);
             this.nudGanancia.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nudGanancia_KeyPress);
+            // 
+            // cbFraccionado
+            // 
+            this.cbFraccionado.AutoSize = true;
+            this.cbFraccionado.Location = new System.Drawing.Point(234, 329);
+            this.cbFraccionado.Name = "cbFraccionado";
+            this.cbFraccionado.Size = new System.Drawing.Size(143, 19);
+            this.cbFraccionado.TabIndex = 12;
+            this.cbFraccionado.Text = "Producto Fraccionado";
+            this.cbFraccionado.UseVisualStyleBackColor = true;
+            // 
+            // cbDolarizado
+            // 
+            this.cbDolarizado.AutoSize = true;
+            this.cbDolarizado.Location = new System.Drawing.Point(234, 354);
+            this.cbDolarizado.Name = "cbDolarizado";
+            this.cbDolarizado.Size = new System.Drawing.Size(134, 19);
+            this.cbDolarizado.TabIndex = 23;
+            this.cbDolarizado.Text = "Producto Dolarizado";
+            this.cbDolarizado.UseVisualStyleBackColor = true;
             // 
             // frmAltaModifProductos
             // 
@@ -378,6 +400,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ClientSize = new System.Drawing.Size(444, 448);
+            this.Controls.Add(this.cbDolarizado);
+            this.Controls.Add(this.cbFraccionado);
             this.Controls.Add(this.nudGanancia);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.nudDescuento);
@@ -460,5 +484,7 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.NumericUpDown nudProveedor;
         private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.CheckBox cbFraccionado;
+        private System.Windows.Forms.CheckBox cbDolarizado;
     }
 }
