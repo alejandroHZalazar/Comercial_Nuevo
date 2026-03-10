@@ -301,9 +301,9 @@ namespace Comercial.Formularios.Ventas
                 
                 fila.Cells["precioConIva"].Value = Math.Round(decimal.Parse(fila.Cells["precioSinIVA"].Value.ToString()) * (1 + Decimal.Parse(cboIVA.Text) / 100), cantDec );
                 //fila.Cells["Subtotal"].Value = !bool.Parse(fila.Cells["fraccionado"].Value.ToString()) ? decimal.Parse(fila.Cells["precioConIva"].Value.ToString()) * decimal.Parse(fila.Cells["Cantidad"].Value.ToString()) : Math.Round(decimal.Parse(fila.Cells["Subtotal"].Value.ToString()), cantDec);
-                fila.Cells["Subtotal"].Value = !bool.Parse(fila.Cells["fraccionado"].Value.ToString()) ? decimal.Parse(fila.Cells["precioConIva"].Value.ToString()) * decimal.Parse(fila.Cells["Cantidad"].Value.ToString()) : Math.Round(decimal.Parse(fila.Cells["precioConIva"].Value.ToString()), cantDec);
+                fila.Cells["Subtotal"].Value = decimal.Parse(fila.Cells["precioConIva"].Value.ToString()) * decimal.Parse(fila.Cells["Cantidad"].Value.ToString());
                 totalConIVA += decimal.Parse(fila.Cells["Subtotal"].Value.ToString());
-                totalSinIva += !bool.Parse(fila.Cells["fraccionado"].Value.ToString()) ? Math.Round(decimal.Parse(fila.Cells["precioSinIva"].Value.ToString()) * decimal.Parse(fila.Cells["Cantidad"].Value.ToString()), cantDec) : Math.Round(decimal.Parse(fila.Cells["Subtotal"].Value.ToString()), cantDec);
+                totalSinIva += Math.Round(decimal.Parse(fila.Cells["precioSinIva"].Value.ToString()) * decimal.Parse(fila.Cells["Cantidad"].Value.ToString()), cantDec);
 
                 //System.Drawing.Color col = System.Drawing.ColorTranslator.FromHtml(instColor .traerColor (fila.Cells ["Color"].Value .ToString ()));
                 //fila.Cells["descripcion"].Style.ForeColor = col;
@@ -423,18 +423,7 @@ namespace Comercial.Formularios.Ventas
                 if (producto.Rows.Count > 0)
                 {
                     bool esDolarizado = productosDolarizados == 1 && Convert.ToBoolean(producto.Rows[0]["dolarizado"]);
-                if (!Convert.ToBoolean(producto.Rows[0]["fraccionado"]))
-                {
                     dgvPedido.Rows.Add(producto.Rows[0]["codBarras"].ToString(), producto.Rows[0]["codProveedor"].ToString(), producto.Rows[0]["descripcion"].ToString(), " ", Math.Round(decimal.Parse(producto.Rows[0]["cantidad"].ToString()), cantStock), esDolarizado == false ? Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec) : Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()) * valorDolar, cantDec), esDolarizado == false ? Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec) : Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()) * valorDolar, cantDec), Math.Round(nudCantidad.Value, cantStock), 0, esDolarizado == false ? Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec) : Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()) * valorDolar, cantDec), unProducto, esDolarizado == false ? Math.Round(decimal.Parse(producto.Rows[0]["costo"].ToString()), cantDec) : Math.Round(decimal.Parse(producto.Rows[0]["costo"].ToString()) * valorDolar, cantDec), Convert.ToBoolean(producto.Rows[0]["fraccionado"]));
-                }
-                else
-                {
-                    
-                    var cantidad = Math.Round(nudCantidad.Value / decimal.Parse(producto.Rows[0]["precio"].ToString()), cantStock);
-                    var precio = !esDolarizado ? nudCantidad.Value : nudCantidad.Value * valorDolar;
-                    dgvPedido.Rows.Add(producto.Rows[0]["codBarras"].ToString(), producto.Rows[0]["codProveedor"].ToString(), producto.Rows[0]["descripcion"].ToString(), " ", Math.Round(decimal.Parse(producto.Rows[0]["cantidad"].ToString()), cantStock), Math.Round(precio,cantDec), Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec), Math.Round(cantidad, cantStock), Math.Round(precio, cantDec), Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec), unProducto, esDolarizado == false ? Math.Round(decimal.Parse(producto.Rows[0]["costo"].ToString()), cantDec) : Math.Round(decimal.Parse(producto.Rows[0]["costo"].ToString()) * valorDolar, cantDec), Convert.ToBoolean(producto.Rows[0]["fraccionado"]));
-                }
-                    
                 }
             
 

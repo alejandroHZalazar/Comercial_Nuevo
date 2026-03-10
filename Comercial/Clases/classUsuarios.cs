@@ -63,6 +63,27 @@ namespace Comercial.Clases
             return t2;
         }
 
+        public int validarCantidadUsuarios()
+        {
+            int licencias = 0;
+
+            using (MySqlCommand cmd = new MySqlCommand("sp_Usuarios_VerificarLicencias", instDatos.abrirConexion()))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                object result = cmd.ExecuteScalar();
+
+                if (result != null && result != DBNull.Value)
+                {
+                    licencias = Convert.ToInt32(result);
+                }
+            }
+
+            instDatos.cerrarConexion();
+
+            return licencias;
+        }
+
         static public void setPermisosMenu(int rol, System.Windows.Forms.Form unForm, System.Windows.Forms.MenuStrip menu)
         {
             

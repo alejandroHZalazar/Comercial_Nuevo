@@ -41,7 +41,15 @@ namespace Comercial.Formularios.Configuracion
             verificarBotones();
             dgvConceptos.Enabled = true;
             dgvConceptos.Focus();
-            
+            cargarCombos();
+        }
+
+        private void cargarCombos()
+        {
+            Clases.ClassConfiguracion instCOnfig = new Clases.ClassConfiguracion();
+            cbMedioPago.DataSource = instCOnfig.traerMediosDePago();
+            cbMedioPago.ValueMember = "id";
+            cbMedioPago.DisplayMember = "Nombre";
         }
 
         private void verificarBotones()
@@ -64,6 +72,8 @@ namespace Comercial.Formularios.Configuracion
         {
             Clases.ClassConfiguracion instConfig = new Clases.ClassConfiguracion();
             dgvConceptos.DataSource = instConfig.traerConceptosCaja();
+            dgvConceptos.Columns["fk_medio_pago"].Visible = false;
+            dgvConceptos.Columns["Operacion"].Visible = false;
         }
 
         private void btnAgregar_Click(object sender, EventArgs e)
@@ -84,6 +94,7 @@ namespace Comercial.Formularios.Configuracion
             btnEditar.Enabled = false;
             btnEliminar.Enabled = false;
             dgvConceptos.Width = 401;
+            cbMedioPago.SelectedIndex = -1;
         }
 
         private void btnGrabar_Click(object sender, EventArgs e)
@@ -94,11 +105,11 @@ namespace Comercial.Formularios.Configuracion
                 Clases.ClassConfiguracion instConfig = new Clases.ClassConfiguracion();
                 if (accion == 1)
                 {
-                    salida = instConfig.ABMConceptosCaja(txtNombre.Text.Trim(), cboTipoMovimiento.SelectedItem.ToString(),cbAfectaEfectivo.Checked,1,0);
+                    salida = instConfig.ABMConceptosCaja(txtNombre.Text.Trim(), cboTipoMovimiento.SelectedItem.ToString(),cbAfectaEfectivo.Checked,1,0,cbAsocMedioPago.Checked?(int)cbMedioPago.SelectedValue:(int?)null, cbAsocMedioPago.Checked ? cbTipoOperacion.Text:null);
                 }
                 else
                 {
-                    salida = instConfig.ABMConceptosCaja(txtNombre.Text.Trim(), cboTipoMovimiento.SelectedItem.ToString(), cbAfectaEfectivo.Checked, 2, conceptoId);
+                    salida = instConfig.ABMConceptosCaja(txtNombre.Text.Trim(), cboTipoMovimiento.SelectedItem.ToString(), cbAfectaEfectivo.Checked, 2, conceptoId, cbAsocMedioPago.Checked ? (int)cbMedioPago.SelectedValue : (int?)null, cbAsocMedioPago.Checked ? cbTipoOperacion.Text : null);
                 }
 
                 if (salida == "1")
@@ -129,6 +140,20 @@ namespace Comercial.Formularios.Configuracion
                 return false;
             }
 
+            if (cbAsocMedioPago.Checked)
+            {
+                if (cbMedioPago.SelectedIndex < 0)
+                {
+                    errorProvider1.SetError(cbMedioPago, "Debe seleccionar una Medio Pago");
+                    return false;
+                }
+                if (cbTipoOperacion.SelectedIndex < 0)
+                {
+                    errorProvider1.SetError(cbTipoOperacion, "Debe seleccionar un Tipo Operación");
+                    return false;
+                }
+            }
+
             return true;
         }
 
@@ -143,6 +168,19 @@ namespace Comercial.Formularios.Configuracion
             cboTipoMovimiento.SelectedItem = concepto.Rows[0]["Tipo"].ToString();
             cbAfectaEfectivo.Checked = bool.Parse(concepto.Rows[0]["afecta_efectivo"].ToString());
 
+            object valorMedioPago = concepto.Rows[0]["fk_medio_pago"];
+
+            int? medioPagoDB = valorMedioPago == DBNull.Value
+                ? (int?)null
+                : Convert.ToInt32(valorMedioPago);
+
+            cbAsocMedioPago.Checked = medioPagoDB.HasValue;
+            cbMedioPago.SelectedValue = medioPagoDB ?? 0;
+
+            cbTipoOperacion.Text = medioPagoDB == null
+                ? ""
+                : concepto.Rows[0]["Operacion"]?.ToString();
+
             conceptoId = int.Parse(concepto.Rows[0]["id"].ToString());
             txtNombre.Focus();
         }
@@ -155,7 +193,7 @@ namespace Comercial.Formularios.Configuracion
         private void btnEliminar_Click(object sender, EventArgs e)
         {
             Clases.ClassConfiguracion instConfig = new Clases.ClassConfiguracion();
-            string salida = instConfig.ABMConceptosCaja("","",false,3, int.Parse(dgvConceptos.CurrentRow.Cells["id"].Value.ToString()));
+            string salida = instConfig.ABMConceptosCaja("","",false,3, int.Parse(dgvConceptos.CurrentRow.Cells["id"].Value.ToString()),0,"");
             if (salida == "1")
             {
                 estadoInicial();
@@ -204,6 +242,11 @@ namespace Comercial.Formularios.Configuracion
             frmABMTipoGastos unFrmABMTipoGastos = new frmABMTipoGastos();
             unFrmABMTipoGastos.ShowDialog();
             estadoInicial();
+        }
+
+        private void cbAsocMedioPago_CheckedChanged(object sender, EventArgs e)
+        {
+            lblMedioPago.Visible = cbMedioPago.Visible = lblTipoOperacion.Visible = cbTipoOperacion.Visible = cbAsocMedioPago.Checked;
         }
     }
 }

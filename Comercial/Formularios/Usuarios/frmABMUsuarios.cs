@@ -66,6 +66,14 @@ namespace Comercial.Formularios.Usuarios
 
         private void btnAgregar_Click(object sender, EventArgs e)
         {
+            Clases.classUsuarios instUser = new Clases.classUsuarios();
+            var habilitaNuevaLicencia = instUser.validarCantidadUsuarios();
+            if (habilitaNuevaLicencia == 0)
+            {
+                MessageBox.Show(this, "Su cantidad de licencias ah llegado al límite", "USUARIOS", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                return;
+            }
+
             estadoAM();
             accion = 1;
             txtNombre .Text  = string.Empty;

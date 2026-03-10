@@ -104,12 +104,12 @@
             // 
             this.dgvRanking.AllowUserToAddRows = false;
             this.dgvRanking.AllowUserToDeleteRows = false;
-            this.dgvRanking.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.dgvRanking.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
             this.dgvRanking.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvRanking.Location = new System.Drawing.Point(228, 90);
             this.dgvRanking.Name = "dgvRanking";
             this.dgvRanking.ReadOnly = true;
-            this.dgvRanking.Size = new System.Drawing.Size(694, 295);
+            this.dgvRanking.Size = new System.Drawing.Size(869, 295);
             this.dgvRanking.TabIndex = 3;
             // 
             // btnRankigCliente
@@ -129,7 +129,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(932, 413);
+            this.ClientSize = new System.Drawing.Size(1112, 413);
             this.Controls.Add(this.btnRankigCliente);
             this.Controls.Add(this.dgvRanking);
             this.Controls.Add(this.btnRankingProductos);

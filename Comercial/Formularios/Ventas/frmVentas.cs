@@ -27,7 +27,7 @@ namespace Comercial.Formularios.Ventas
 
 
         private List<string> resgClientes = new List<string>();
-        private List<string> resgProducto = new List<string>();
+        private List<ProductoBusqueda> resgProducto = new List<ProductoBusqueda>();
         Clases.ClassClientes instClie = new Clases.ClassClientes();
 
         Clases.ClassPedidos instPed = new Clases.ClassPedidos();
@@ -50,6 +50,7 @@ namespace Comercial.Formularios.Ventas
         string divisorPeso = Clases.ClassParametros.buscarParametro("productos", "divisorPeso");
         int tieneCaja = Clases.ClassParametros.buscarParametro("caja", "haceCaja") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("caja", "haceCaja"));
         int CajaId = 0;
+        int facturaEnVenta = Clases.ClassParametros.buscarParametro("ventas", "facturaEnVenta") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "facturaEnVenta"));
         int facturaFiscal = Clases.ClassParametros.buscarParametro("ventas", "facturaFiscal") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "facturaFiscal"));
         int facturaElectronica = Clases.ClassParametros.buscarParametro("ventas", "facturaElectronica") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "facturaElectronica"));
         string marcaFiscal = Clases.ClassParametros.buscarParametro("ventas", "marcaFiscal");
@@ -59,6 +60,7 @@ namespace Comercial.Formularios.Ventas
         int anchoTk = Clases.ClassParametros.buscarParametro("ventas", "anchoTk") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "anchoTk"));
         int puntoVenta = Clases.ClassParametros.buscarParametro("PuntoVenta", Environment.MachineName) == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("PuntoVenta", Environment.MachineName));
         int tieneLectoraCB = Clases.ClassParametros.buscarParametro("productos", "MecanismoLectora") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("productos", "MecanismoLectora"));
+        int filtraPorProveedor = Clases.ClassParametros.buscarParametro("ventas", "filtraPorProveedor") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "filtraPorProveedor"));
         public frmVentas()
         {
             InitializeComponent();
@@ -197,6 +199,13 @@ namespace Comercial.Formularios.Ventas
             cboMedioPago.ValueMember = "Recargo";
             cboMedioPago.DisplayMember = "Nombre";
 
+            cbProveedor.Visible = cboProveedor.Visible = filtraPorProveedor == 1;
+
+            cboProveedor.DataSource = instProv.traeProveedoresCabecera();
+            cboProveedor.ValueMember = "Cod";
+            cboProveedor.DisplayMember = "Proveedor";
+            cboProveedor.SelectedIndex = 0;
+
             cargado = true;
         }
 
@@ -209,7 +218,11 @@ namespace Comercial.Formularios.Ventas
             {
                 foreach (DataRow fila in productos.Rows)
                 {
-                    resgProducto.Add(fila["Descripcion"].ToString());
+                    resgProducto.Add(new ProductoBusqueda
+                    {
+                        Descripcion = fila["Descripcion"].ToString(),
+                        IdProveedor = Convert.ToInt32(fila["fk_proveedor"])
+                    });
                 }
             }
         }
@@ -437,9 +450,9 @@ namespace Comercial.Formularios.Ventas
             foreach (DataGridViewRow fila in dgvProductos.Rows)
             {
                 fila.Cells["precioConIva"].Value = Math.Round(decimal.Parse(fila.Cells["precioSinIva"].Value.ToString()) * (1 + Decimal.Parse(cboIVA.Text) / 100), cantDec);
-                //fila.Cells["Subtotal"].Value = !bool.Parse(fila.Cells["fraccionado"].Value.ToString())? Math.Round(decimal.Parse(fila.Cells["precioConIva"].Value.ToString()) * decimal.Parse(fila.Cells["Cantidad"].Value.ToString()), cantDec):Math.Round(decimal.Parse(fila.Cells["Subtotal"].Value.ToString()),cantDec);
-                fila.Cells["Subtotal"].Value = !bool.Parse(fila.Cells["fraccionado"].Value.ToString()) ? decimal.Parse(fila.Cells["precioConIva"].Value.ToString()) * decimal.Parse(fila.Cells["Cantidad"].Value.ToString()) : Math.Round(decimal.Parse(fila.Cells["precioConIva"].Value.ToString()), cantDec);
-                totalSIVA += !bool.Parse(fila.Cells["fraccionado"].Value.ToString()) ? Math.Round(decimal.Parse(fila.Cells["precioSinIva"].Value.ToString()) * decimal.Parse(fila.Cells["Cantidad"].Value.ToString()), cantDec) : Math.Round(decimal.Parse(fila.Cells["precioSinIva"].Value.ToString()), cantDec);
+                fila.Cells["Subtotal"].Value = Math.Round(decimal.Parse(fila.Cells["precioConIva"].Value.ToString()) * decimal.Parse(fila.Cells["Cantidad"].Value.ToString()), cantDec);
+                // fila.Cells["Subtotal"].Value = !bool.Parse(fila.Cells["fraccionado"].Value.ToString()) ? decimal.Parse(fila.Cells["precioConIva"].Value.ToString()) * decimal.Parse(fila.Cells["Cantidad"].Value.ToString()) : Math.Round(decimal.Parse(fila.Cells["precioConIva"].Value.ToString()), cantDec);
+                totalSIVA += Math.Round(decimal.Parse(fila.Cells["precioSinIva"].Value.ToString()) * decimal.Parse(fila.Cells["Cantidad"].Value.ToString()), cantDec);
 
             }
 
@@ -609,7 +622,7 @@ namespace Comercial.Formularios.Ventas
                         band = false;
                         break;
                     }
-                    
+
                 }
 
             }
@@ -621,17 +634,17 @@ namespace Comercial.Formularios.Ventas
                 {
                     bool esDolarizado = productosDolarizados == 1 && Convert.ToBoolean(producto.Rows[0]["dolarizado"]);
                     var costo = !esDolarizado ? Math.Round(decimal.Parse(producto.Rows[0]["costo"].ToString()), cantDec) : Math.Round(decimal.Parse(producto.Rows[0]["costo"].ToString()) * valorDolar, cantDec);
-                    if (!esfraccionado)
-                    {
-                        var precio = !esDolarizado ? Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec) : Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()) * valorDolar, cantDec);
-                        dgvProductos.Rows.Add(producto.Rows[0]["codBarras"].ToString(), producto.Rows[0]["codProveedor"].ToString(), producto.Rows[0]["descripcion"].ToString(), Math.Round(decimal.Parse(producto.Rows[0]["cantidad"].ToString()), cantStock), precio, precio, Math.Round(nudCantidad.Value, cantStock), 0, precio, unProducto, 0, costo, esfraccionado);
-                    }
-                    else
-                    {
-                        var cantidad = Math.Round(nudCantidad.Value / decimal.Parse(producto.Rows[0]["precio"].ToString()), cantStock);
-                        var precio = !esDolarizado ? Math.Round(nudCantidad.Value, cantDec) : Math.Round(nudCantidad.Value * valorDolar, 2);
-                        dgvProductos.Rows.Add(producto.Rows[0]["codBarras"].ToString(), producto.Rows[0]["codProveedor"].ToString(), producto.Rows[0]["descripcion"].ToString(), Math.Round(decimal.Parse(producto.Rows[0]["cantidad"].ToString()), cantStock), precio, precio, cantidad, precio, precio, unProducto, 0, costo, esfraccionado);
-                    }
+                    // if (!esfraccionado)
+                    //   {
+                    var precio = !esDolarizado ? Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec) : Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()) * valorDolar, cantDec);
+                    dgvProductos.Rows.Add(producto.Rows[0]["codBarras"].ToString(), producto.Rows[0]["codProveedor"].ToString(), producto.Rows[0]["descripcion"].ToString(), Math.Round(decimal.Parse(producto.Rows[0]["cantidad"].ToString()), cantStock), precio, precio, Math.Round(nudCantidad.Value, cantStock), 0, precio, unProducto, 0, costo, esfraccionado);
+                    // }
+                    //else
+                    //{
+                    //    var cantidad = Math.Round(nudCantidad.Value / decimal.Parse(producto.Rows[0]["precio"].ToString()), cantStock);
+                    //    var precio = !esDolarizado ? Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec) : Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()) * valorDolar, cantDec);
+                    //    dgvProductos.Rows.Add(producto.Rows[0]["codBarras"].ToString(), producto.Rows[0]["codProveedor"].ToString(), producto.Rows[0]["descripcion"].ToString(), Math.Round(decimal.Parse(producto.Rows[0]["cantidad"].ToString()), cantStock), precio, precio, cantidad, precio, precio, unProducto, 0, costo, esfraccionado);
+                    //}
                 }
             }
 
@@ -813,16 +826,32 @@ namespace Comercial.Formularios.Ventas
             if (txtDesc.Text.Trim().Length == 0)
             {
                 lbDesc.Visible = false;
+                return;
             }
 
-            var result = resgProducto.FindAll(l => l.ToUpper().Contains(txtDesc.Text.Trim().ToUpper()));
+            string texto = txtDesc.Text.Trim().ToUpper();
 
-            lbDesc.Items.Clear();
+            var result = resgProducto
+                .Where(p => p.Descripcion.ToUpper().Contains(texto));
 
-            if (result.Count > 0)
+            // 🔹 Si el checkbox está marcado, filtramos por proveedor
+            if (cbProveedor.Checked && cboProveedor.SelectedValue != null)
             {
-                result.ForEach(x => lbDesc.Items.Add(x));
+                int idProveedorSeleccionado = Convert.ToInt32(cboProveedor.SelectedValue);
+
+                result = result.Where(p => p.IdProveedor == idProveedorSeleccionado);
+            }
+
+            var listaFinal = result.ToList();
+
+            if (listaFinal.Count > 0)
+            {
+                listaFinal.ForEach(x => lbDesc.Items.Add(x.Descripcion));
                 lbDesc.Visible = true;
+            }
+            else
+            {
+                lbDesc.Visible = false;
             }
         }
 
@@ -868,7 +897,7 @@ namespace Comercial.Formularios.Ventas
 
         }
 
-        private void vender()
+        private async void vender()
         {
             long salida = -1;
             int? planPagoId = null;
@@ -959,30 +988,32 @@ namespace Comercial.Formularios.Ventas
                     else
                     {
                         instPed.marcarPedido(pedidoCargado, 1);
-                        if (facturaFiscal == 1)
+                        if (facturaEnVenta == 1)
                         {
-                            if (puntoVenta == 0)
+                            if (facturaFiscal == 1)
                             {
-                                MessageBox.Show(this, "Debe configurar el punto de venta para este equipo", "VENTAS", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                estadoInicial();
-                            }
-                            DataTable cliente = instClie.traeTodosDatos(unCliente);
-                            if (cliente.Rows.Count == 0) return;
-                            bool esConsumidorFinal = cliente.Rows[0]["abrev"].ToString() == "C" ? true : false;
-                            string letra = cliente.Rows[0]["letra"].ToString();
-                            
+                                if (puntoVenta == 0)
+                                {
+                                    MessageBox.Show(this, "Debe configurar el punto de venta para este equipo", "VENTAS", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    estadoInicial();
+                                }
+                                DataTable cliente = instClie.traeTodosDatos(unCliente);
+                                if (cliente.Rows.Count == 0) return;
+                                bool esConsumidorFinal = cliente.Rows[0]["abrev"].ToString() == "C" ? true : false;
+                                string letra = cliente.Rows[0]["letra"].ToString();
+
                                 Fiscal unTk = new Fiscal();
 
-                            ComprobanteFiscal status;
-                            if (marcaFiscal.ToUpper() == "EPSON")
-                            {
-                                status = unTk.imprimirFacturaEpson(salida);
-                            }
-                            else
-                            {
-                                status = unTk.imprimirFacturaHasar(salida);
-                            }
-                            if (status == null) estadoInicial();
+                                ComprobanteFiscal status;
+                                if (marcaFiscal.ToUpper() == "EPSON")
+                                {
+                                    status = unTk.imprimirFacturaEpson(salida);
+                                }
+                                else
+                                {
+                                    status = unTk.imprimirFacturaHasar(salida);
+                                }
+                                if (status == null) estadoInicial();
 
                                 var salida_Fiscal = unTk.almacenarComprobanteFiscal(status);
 
@@ -992,10 +1023,22 @@ namespace Comercial.Formularios.Ventas
                                     estadoInicial();
                                 }
 
-                            
+
+                            }
+                            else if (facturaElectronica == 1)
+                            {
+
+                                ClassFacturacionElectronica instFactElect = new ClassFacturacionElectronica();
+                                var status = await instFactElect.emitirFacturaElectronica(salida);
+                                if (!status)
+                                {
+                                    MessageBox.Show(this,"Ha ocurrido un error en el proceso de facturación", "VENTAS", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
+                            }
                         }
                         else
                         {
+
                             if (haceNotaVentaTK == 0)
                             {
                                 imprimirVenta(salida);
@@ -1005,13 +1048,14 @@ namespace Comercial.Formularios.Ventas
                                 imprimirNotaVentaTk(salida);
                             }
                         }
-
-
-                        estadoInicial();
-
-
                     }
+
+
+                    estadoInicial();
+
+
                 }
+
 
                 else
                 {
@@ -1131,5 +1175,16 @@ namespace Comercial.Formularios.Ventas
                 nudRecargo.Value = decimal.Parse(cboMedioPago.SelectedValue.ToString());
             }
         }
+
+        private void cbProveedor_CheckedChanged(object sender, EventArgs e)
+        {
+            txtDesc.Text = string.Empty;
+        }
+
+        private void cboProveedor_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            txtDesc.Text = string.Empty;
+        }
     }
+
 }

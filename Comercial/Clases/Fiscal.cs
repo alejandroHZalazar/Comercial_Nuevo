@@ -176,7 +176,9 @@ namespace Comercial.Clases
                 cmd.Parameters.AddWithValue("unFiscal_status", comprobante.FiscalStatus);
                 cmd.Parameters.AddWithValue("unaJornada", comprobante.NumeroJornada);
                 cmd.Parameters.AddWithValue("unCreated_at", comprobante.CreatedAt);
-                
+                cmd.Parameters.AddWithValue("unAfip_qr", comprobante.qrAfip);
+                cmd.Parameters.AddWithValue("unLinkPDF", comprobante.urlComprobante);
+
 
                 MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int64);
                 salida.Direction = ParameterDirection.Output;
@@ -185,6 +187,32 @@ namespace Comercial.Clases
                 cmd.ExecuteScalar();
                 long valor = long.Parse(cmd.Parameters["salida"].Value.ToString());
                 return valor;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                instDatos.cerrarConexion();
+            }
+        }
+
+        public void AddErrorFE(long unaVenta, string unError)
+        {
+            classDatos instDatos = new classDatos();
+            try
+            {
+
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Connection = instDatos.abrirConexion();
+                cmd.CommandText = "sp_fiscal_add_erroresFE ";
+
+                cmd.Parameters.AddWithValue("unaVenta", unaVenta);
+                cmd.Parameters.AddWithValue("unError", unError);    
+                cmd.ExecuteScalar();
+                
             }
             catch (Exception ex)
             {
@@ -224,6 +252,8 @@ namespace Comercial.Clases
         // Datos electrónicos (si aplica)
         public string Cae { get; set; }
         public DateTime? FechaVencimientoCae { get; set; }
+        public string urlComprobante { get; set; }
+        public string qrAfip { get; set; }
 
         // Estado
         public string Estado { get; set; } = "EMITIDO";

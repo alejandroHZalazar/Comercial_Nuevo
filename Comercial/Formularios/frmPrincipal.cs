@@ -360,8 +360,13 @@ namespace Comercial.Formularios
 
         private void parametrosToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Formularios.Configuracion.frmABMEmpresa unFrmABMEmpresa = new Configuracion.frmABMEmpresa();
-            unFrmABMEmpresa.ShowDialog();
+            frmPass unFrmPass = new frmPass();
+            unFrmPass.ShowDialog();
+            if (unFrmPass.DialogResult == DialogResult.OK)
+            {
+                Formularios.Configuracion.frmABMEmpresa unFrmABMEmpresa = new Configuracion.frmABMEmpresa();
+                unFrmABMEmpresa.ShowDialog();
+            }
         }
 
         private void cierreZToolStripMenuItem_Click(object sender, EventArgs e)

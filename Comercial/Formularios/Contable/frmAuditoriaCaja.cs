@@ -108,7 +108,7 @@ namespace Comercial.Formularios.Contable
             if (dgvMovimiento.RowCount == 0) return;
             Clases.ClassCaja instCaja = new Clases.ClassCaja();
             instCaja.ExportarResumenCajaCsv(int.Parse(dgvCajas.CurrentRow.Cells["Nro"].Value.ToString()), dgvCajas.CurrentRow.Cells["Usuario"].Value.ToString(), DateTime.Parse(dgvCajas.CurrentRow.Cells["Apertura"].Value.ToString()),
-                                            DateTime.Parse(dgvCajas.CurrentRow.Cells["Cierre"].Value.ToString()), grillaDT, totalDebeG, totalHaberG, dgvCajas.CurrentRow.Cells["observaciones"].Value.ToString());
+                                            dgvCajas.CurrentRow.Cells["Cierre"].Value.ToString() == string.Empty? DateTime.Now: DateTime.Parse(dgvCajas.CurrentRow.Cells["Cierre"].Value.ToString()), grillaDT, totalDebeG, totalHaberG, dgvCajas.CurrentRow.Cells["observaciones"].Value.ToString());
         }
 
         private void btnBuscarDetalle_Click(object sender, EventArgs e)

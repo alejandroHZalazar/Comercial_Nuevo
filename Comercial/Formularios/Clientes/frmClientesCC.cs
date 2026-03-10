@@ -76,6 +76,23 @@ namespace Comercial.Formularios.Clientes
             Clases.ClassConfiguracion instConfig = new Clases.ClassConfiguracion();
             Clases.ClassClientes instClie = new Clases.ClassClientes();
             var planPagoDT = instConfig.traerPlanesPagoPorId(int.Parse(Clases.ClassParametros.buscarParametro("Cobros", "idPlanEfectivo")));
+            int tieneCaja = Clases.ClassParametros.buscarParametro("caja", "haceCaja") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("caja", "haceCaja"));
+            int CajaId = 0;
+            if (tieneCaja == 1)
+            {
+                Clases.ClassCaja instCaja = new Clases.ClassCaja();
+                DataTable cajaEstado = instCaja.traerEstadoCaja(int.Parse(Environment.GetEnvironmentVariable("idUser")));
+
+                bool cajaAbierta = cajaEstado.Rows.Count == 0 ? false : (cajaEstado.Rows[0]["estado"].ToString() == "ABIERTA" ? true : false);
+                CajaId = cajaEstado.Rows.Count == 0 ? 0 : int.Parse(cajaEstado.Rows[0]["caja_id"].ToString());
+                if (!cajaAbierta)
+                {
+
+                    MessageBox.Show(this, "Debe Abrir Caja", "CLIENTES", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    this.Close();
+                }
+            }
+
             if (planPagoDT.Rows.Count == 0) return;
             var planPagoId = int.Parse(planPagoDT.Rows[0]["id"].ToString());
             Formularios.Ventas.frmImputacionVenta unFrmImputacion = new Formularios.Ventas.frmImputacionVenta(calcularTotal() <= 0? 0: calcularTotal(), planPagoId);
@@ -85,7 +102,7 @@ namespace Comercial.Formularios.Clientes
                 dtFormasPAgo = unFrmImputacion.unDT;
                 var imputacion = dtFormasPAgo.Sum(x => x.Importe);
                 if (imputacion <= 0) return;
-                var salida = instClie.CobrarCliente(_cliente, imputacion);
+                var salida = instClie.CobrarCliente(_cliente, imputacion,tieneCaja,CajaId,dtFormasPAgo[0].idMedio);
 
                 if (salida != -1)
                 {

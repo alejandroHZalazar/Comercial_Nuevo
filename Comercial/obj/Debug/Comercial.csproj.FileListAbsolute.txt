@@ -247,3 +247,5 @@ C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Configuracion.frmABMEmpresa.resources
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Facturacion.frmFacturacionLotes.resources
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Facturacion.frmReporteFacturacion.resources
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.frmPass.resources
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Resources.Resource.resources

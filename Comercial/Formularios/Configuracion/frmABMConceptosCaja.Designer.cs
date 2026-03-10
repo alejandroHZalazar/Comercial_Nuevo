@@ -46,6 +46,12 @@ namespace Comercial.Formularios.Configuracion
             this.btnAgregar = new System.Windows.Forms.Button();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.btnAgregarTiposGastos = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.cbAsocMedioPago = new System.Windows.Forms.CheckBox();
+            this.lblMedioPago = new System.Windows.Forms.Label();
+            this.cbMedioPago = new System.Windows.Forms.ComboBox();
+            this.lblTipoOperacion = new System.Windows.Forms.Label();
+            this.cbTipoOperacion = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvConceptos)).BeginInit();
             this.gbDatos.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
@@ -68,6 +74,12 @@ namespace Comercial.Formularios.Configuracion
             // gbDatos
             // 
             this.gbDatos.BackColor = System.Drawing.Color.Silver;
+            this.gbDatos.Controls.Add(this.cbTipoOperacion);
+            this.gbDatos.Controls.Add(this.lblTipoOperacion);
+            this.gbDatos.Controls.Add(this.cbMedioPago);
+            this.gbDatos.Controls.Add(this.lblMedioPago);
+            this.gbDatos.Controls.Add(this.cbAsocMedioPago);
+            this.gbDatos.Controls.Add(this.label4);
             this.gbDatos.Controls.Add(this.cbAfectaEfectivo);
             this.gbDatos.Controls.Add(this.label3);
             this.gbDatos.Controls.Add(this.cboTipoMovimiento);
@@ -78,14 +90,14 @@ namespace Comercial.Formularios.Configuracion
             this.gbDatos.Controls.Add(this.btnGrabar);
             this.gbDatos.Location = new System.Drawing.Point(419, 12);
             this.gbDatos.Name = "gbDatos";
-            this.gbDatos.Size = new System.Drawing.Size(314, 197);
+            this.gbDatos.Size = new System.Drawing.Size(314, 254);
             this.gbDatos.TabIndex = 4;
             this.gbDatos.TabStop = false;
             // 
             // cbAfectaEfectivo
             // 
             this.cbAfectaEfectivo.AutoSize = true;
-            this.cbAfectaEfectivo.Location = new System.Drawing.Point(110, 99);
+            this.cbAfectaEfectivo.Location = new System.Drawing.Point(151, 77);
             this.cbAfectaEfectivo.Name = "cbAfectaEfectivo";
             this.cbAfectaEfectivo.Size = new System.Drawing.Size(37, 19);
             this.cbAfectaEfectivo.TabIndex = 2;
@@ -95,7 +107,7 @@ namespace Comercial.Formularios.Configuracion
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 101);
+            this.label3.Location = new System.Drawing.Point(6, 79);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(88, 15);
             this.label3.TabIndex = 7;
@@ -108,15 +120,15 @@ namespace Comercial.Formularios.Configuracion
             this.cboTipoMovimiento.Items.AddRange(new object[] {
             "I",
             "E"});
-            this.cboTipoMovimiento.Location = new System.Drawing.Point(110, 56);
+            this.cboTipoMovimiento.Location = new System.Drawing.Point(110, 45);
             this.cboTipoMovimiento.Name = "cboTipoMovimiento";
-            this.cboTipoMovimiento.Size = new System.Drawing.Size(121, 23);
+            this.cboTipoMovimiento.Size = new System.Drawing.Size(182, 23);
             this.cboTipoMovimiento.TabIndex = 1;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 60);
+            this.label2.Location = new System.Drawing.Point(6, 49);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(101, 15);
             this.label2.TabIndex = 5;
@@ -143,7 +155,7 @@ namespace Comercial.Formularios.Configuracion
             this.btnCancelar.BackColor = System.Drawing.Color.Silver;
             this.btnCancelar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCancelar.Image = global::Comercial.Properties.Resources.back_arrow;
-            this.btnCancelar.Location = new System.Drawing.Point(181, 140);
+            this.btnCancelar.Location = new System.Drawing.Point(181, 213);
             this.btnCancelar.Name = "btnCancelar";
             this.btnCancelar.Size = new System.Drawing.Size(111, 35);
             this.btnCancelar.TabIndex = 4;
@@ -157,7 +169,7 @@ namespace Comercial.Formularios.Configuracion
             this.btnGrabar.BackColor = System.Drawing.Color.Silver;
             this.btnGrabar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnGrabar.Image = global::Comercial.Properties.Resources.save__1_;
-            this.btnGrabar.Location = new System.Drawing.Point(9, 140);
+            this.btnGrabar.Location = new System.Drawing.Point(9, 213);
             this.btnGrabar.Name = "btnGrabar";
             this.btnGrabar.Size = new System.Drawing.Size(111, 35);
             this.btnGrabar.TabIndex = 3;
@@ -226,6 +238,67 @@ namespace Comercial.Formularios.Configuracion
             this.btnAgregarTiposGastos.UseVisualStyleBackColor = false;
             this.btnAgregarTiposGastos.Click += new System.EventHandler(this.btnAgregarTiposGastos_Click);
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(6, 109);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(130, 15);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "Asociada Medio Pago:";
+            // 
+            // cbAsocMedioPago
+            // 
+            this.cbAsocMedioPago.AutoSize = true;
+            this.cbAsocMedioPago.Location = new System.Drawing.Point(151, 107);
+            this.cbAsocMedioPago.Name = "cbAsocMedioPago";
+            this.cbAsocMedioPago.Size = new System.Drawing.Size(37, 19);
+            this.cbAsocMedioPago.TabIndex = 9;
+            this.cbAsocMedioPago.Text = "Sí";
+            this.cbAsocMedioPago.UseVisualStyleBackColor = true;
+            this.cbAsocMedioPago.CheckedChanged += new System.EventHandler(this.cbAsocMedioPago_CheckedChanged);
+            // 
+            // lblMedioPago
+            // 
+            this.lblMedioPago.AutoSize = true;
+            this.lblMedioPago.Location = new System.Drawing.Point(6, 139);
+            this.lblMedioPago.Name = "lblMedioPago";
+            this.lblMedioPago.Size = new System.Drawing.Size(77, 15);
+            this.lblMedioPago.TabIndex = 10;
+            this.lblMedioPago.Text = "Medio Pago:";
+            // 
+            // cbMedioPago
+            // 
+            this.cbMedioPago.FormattingEnabled = true;
+            this.cbMedioPago.Items.AddRange(new object[] {
+            "I",
+            "E"});
+            this.cbMedioPago.Location = new System.Drawing.Point(110, 135);
+            this.cbMedioPago.Name = "cbMedioPago";
+            this.cbMedioPago.Size = new System.Drawing.Size(182, 23);
+            this.cbMedioPago.TabIndex = 11;
+            // 
+            // lblTipoOperacion
+            // 
+            this.lblTipoOperacion.AutoSize = true;
+            this.lblTipoOperacion.Location = new System.Drawing.Point(6, 169);
+            this.lblTipoOperacion.Name = "lblTipoOperacion";
+            this.lblTipoOperacion.Size = new System.Drawing.Size(94, 15);
+            this.lblTipoOperacion.TabIndex = 12;
+            this.lblTipoOperacion.Text = "Tipo Operación:";
+            // 
+            // cbTipoOperacion
+            // 
+            this.cbTipoOperacion.FormattingEnabled = true;
+            this.cbTipoOperacion.Items.AddRange(new object[] {
+            "Ventas",
+            "Cobros",
+            "Pagos"});
+            this.cbTipoOperacion.Location = new System.Drawing.Point(110, 165);
+            this.cbTipoOperacion.Name = "cbTipoOperacion";
+            this.cbTipoOperacion.Size = new System.Drawing.Size(182, 23);
+            this.cbTipoOperacion.TabIndex = 13;
+            // 
             // frmABMConceptosCaja
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -275,5 +348,11 @@ namespace Comercial.Formularios.Configuracion
         private System.Windows.Forms.CheckBox cbAfectaEfectivo;
         private System.Windows.Forms.ErrorProvider errorProvider1;
         private System.Windows.Forms.Button btnAgregarTiposGastos;
+        private System.Windows.Forms.ComboBox cbTipoOperacion;
+        private System.Windows.Forms.Label lblTipoOperacion;
+        private System.Windows.Forms.ComboBox cbMedioPago;
+        private System.Windows.Forms.Label lblMedioPago;
+        private System.Windows.Forms.CheckBox cbAsocMedioPago;
+        private System.Windows.Forms.Label label4;
     }
 }

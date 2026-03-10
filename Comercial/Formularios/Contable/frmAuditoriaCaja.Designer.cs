@@ -116,6 +116,7 @@ namespace Comercial.Formularios.Contable
             // 
             this.dgvCajas.AllowUserToAddRows = false;
             this.dgvCajas.AllowUserToDeleteRows = false;
+            this.dgvCajas.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dgvCajas.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvCajas.Location = new System.Drawing.Point(24, 74);
             this.dgvCajas.Name = "dgvCajas";
@@ -244,6 +245,7 @@ namespace Comercial.Formularios.Contable
             // 
             this.dgvMovimiento.AllowUserToAddRows = false;
             this.dgvMovimiento.AllowUserToDeleteRows = false;
+            this.dgvMovimiento.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dgvMovimiento.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvMovimiento.Location = new System.Drawing.Point(13, 17);
             this.dgvMovimiento.Name = "dgvMovimiento";
@@ -340,6 +342,7 @@ namespace Comercial.Formularios.Contable
             // 
             this.dgvDetalle.AllowUserToAddRows = false;
             this.dgvDetalle.AllowUserToDeleteRows = false;
+            this.dgvDetalle.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dgvDetalle.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvDetalle.Location = new System.Drawing.Point(13, 79);
             this.dgvDetalle.Name = "dgvDetalle";

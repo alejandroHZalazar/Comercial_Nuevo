@@ -44,6 +44,20 @@
             this.lbDesc = new System.Windows.Forms.ListBox();
             this.nudDescuento = new System.Windows.Forms.NumericUpDown();
             this.dgvProductos = new System.Windows.Forms.DataGridView();
+            this.Cod_Barras = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Cod_Proveedor = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Descripcion = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Stock = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.precioSinIva = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.precioConIva = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Cantidad = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Subtotal = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.PrecioOrig = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.pedido = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.costo = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.fraccionado = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.dolarizado = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.lblDescripcion = new System.Windows.Forms.Label();
             this.btnAgregar = new System.Windows.Forms.Button();
             this.nudCantidad = new System.Windows.Forms.NumericUpDown();
@@ -94,20 +108,8 @@
             this.label20 = new System.Windows.Forms.Label();
             this.lblMedioPago = new System.Windows.Forms.Label();
             this.cboMedioPago = new System.Windows.Forms.ComboBox();
-            this.Cod_Barras = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Cod_Proveedor = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Descripcion = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Stock = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.precioSinIva = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.precioConIva = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Cantidad = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Subtotal = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.PrecioOrig = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.id = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.pedido = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.costo = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.fraccionado = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.dolarizado = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.cbProveedor = new System.Windows.Forms.CheckBox();
+            this.cboProveedor = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecargo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDescuento)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvProductos)).BeginInit();
@@ -244,6 +246,104 @@
             this.dgvProductos.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvProductos_CellValueChanged);
             this.dgvProductos.RowsRemoved += new System.Windows.Forms.DataGridViewRowsRemovedEventHandler(this.dgvProductos_RowsRemoved);
             // 
+            // Cod_Barras
+            // 
+            this.Cod_Barras.HeaderText = "Cod_Barras";
+            this.Cod_Barras.Name = "Cod_Barras";
+            this.Cod_Barras.ReadOnly = true;
+            // 
+            // Cod_Proveedor
+            // 
+            this.Cod_Proveedor.HeaderText = "C_Prov";
+            this.Cod_Proveedor.Name = "Cod_Proveedor";
+            this.Cod_Proveedor.ReadOnly = true;
+            this.Cod_Proveedor.Width = 50;
+            // 
+            // Descripcion
+            // 
+            this.Descripcion.HeaderText = "Descripcion";
+            this.Descripcion.Name = "Descripcion";
+            this.Descripcion.ReadOnly = true;
+            this.Descripcion.Width = 565;
+            // 
+            // Stock
+            // 
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.Stock.DefaultCellStyle = dataGridViewCellStyle1;
+            this.Stock.HeaderText = "Stock";
+            this.Stock.Name = "Stock";
+            this.Stock.Width = 50;
+            // 
+            // precioSinIva
+            // 
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.precioSinIva.DefaultCellStyle = dataGridViewCellStyle2;
+            this.precioSinIva.HeaderText = "Precio S/IVA";
+            this.precioSinIva.Name = "precioSinIva";
+            this.precioSinIva.Width = 70;
+            // 
+            // precioConIva
+            // 
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.precioConIva.DefaultCellStyle = dataGridViewCellStyle3;
+            this.precioConIva.HeaderText = "Precio C/IVA";
+            this.precioConIva.Name = "precioConIva";
+            this.precioConIva.Width = 70;
+            // 
+            // Cantidad
+            // 
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.Cantidad.DefaultCellStyle = dataGridViewCellStyle4;
+            this.Cantidad.HeaderText = "Cantidad";
+            this.Cantidad.Name = "Cantidad";
+            this.Cantidad.Width = 70;
+            // 
+            // Subtotal
+            // 
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.Subtotal.DefaultCellStyle = dataGridViewCellStyle5;
+            this.Subtotal.HeaderText = "Subtotal";
+            this.Subtotal.Name = "Subtotal";
+            this.Subtotal.Width = 70;
+            // 
+            // PrecioOrig
+            // 
+            this.PrecioOrig.HeaderText = "precioOrig";
+            this.PrecioOrig.Name = "PrecioOrig";
+            this.PrecioOrig.Visible = false;
+            // 
+            // id
+            // 
+            this.id.HeaderText = "id";
+            this.id.Name = "id";
+            this.id.Visible = false;
+            // 
+            // pedido
+            // 
+            this.pedido.HeaderText = "pedido";
+            this.pedido.Name = "pedido";
+            this.pedido.Visible = false;
+            // 
+            // costo
+            // 
+            this.costo.HeaderText = "costo";
+            this.costo.Name = "costo";
+            this.costo.Visible = false;
+            // 
+            // fraccionado
+            // 
+            this.fraccionado.HeaderText = "fraccionado";
+            this.fraccionado.Name = "fraccionado";
+            this.fraccionado.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.fraccionado.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.fraccionado.Visible = false;
+            // 
+            // dolarizado
+            // 
+            this.dolarizado.HeaderText = "dolarizado";
+            this.dolarizado.Name = "dolarizado";
+            this.dolarizado.Visible = false;
+            // 
             // lblDescripcion
             // 
             this.lblDescripcion.AutoSize = true;
@@ -270,14 +370,14 @@
             // 
             this.nudCantidad.DecimalPlaces = 4;
             this.nudCantidad.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nudCantidad.Location = new System.Drawing.Point(894, 52);
+            this.nudCantidad.Location = new System.Drawing.Point(928, 52);
             this.nudCantidad.Maximum = new decimal(new int[] {
             999999999,
             0,
             0,
             0});
             this.nudCantidad.Name = "nudCantidad";
-            this.nudCantidad.Size = new System.Drawing.Size(120, 23);
+            this.nudCantidad.Size = new System.Drawing.Size(86, 23);
             this.nudCantidad.TabIndex = 3;
             this.nudCantidad.Enter += new System.EventHandler(this.nudCantidad_Enter);
             this.nudCantidad.KeyDown += new System.Windows.Forms.KeyEventHandler(this.nudCantidad_KeyDown);
@@ -348,6 +448,8 @@
             // gbFiltro
             // 
             this.gbFiltro.BackColor = System.Drawing.Color.Silver;
+            this.gbFiltro.Controls.Add(this.cboProveedor);
+            this.gbFiltro.Controls.Add(this.cbProveedor);
             this.gbFiltro.Controls.Add(this.btnCambioPrecio);
             this.gbFiltro.Controls.Add(this.lblDescripcion);
             this.gbFiltro.Controls.Add(this.btnAgregar);
@@ -785,103 +887,28 @@
             this.cboMedioPago.TabIndex = 11;
             this.cboMedioPago.SelectedIndexChanged += new System.EventHandler(this.cboMedioPago_SelectedIndexChanged);
             // 
-            // Cod_Barras
+            // cbProveedor
             // 
-            this.Cod_Barras.HeaderText = "Cod_Barras";
-            this.Cod_Barras.Name = "Cod_Barras";
-            this.Cod_Barras.ReadOnly = true;
+            this.cbProveedor.AutoSize = true;
+            this.cbProveedor.Location = new System.Drawing.Point(622, 53);
+            this.cbProveedor.Name = "cbProveedor";
+            this.cbProveedor.Size = new System.Drawing.Size(121, 19);
+            this.cbProveedor.TabIndex = 12;
+            this.cbProveedor.Text = "Filtrar Proveedor";
+            this.cbProveedor.UseVisualStyleBackColor = true;
+            this.cbProveedor.CheckedChanged += new System.EventHandler(this.cbProveedor_CheckedChanged);
             // 
-            // Cod_Proveedor
+            // cboProveedor
             // 
-            this.Cod_Proveedor.HeaderText = "C_Prov";
-            this.Cod_Proveedor.Name = "Cod_Proveedor";
-            this.Cod_Proveedor.ReadOnly = true;
-            this.Cod_Proveedor.Width = 50;
-            // 
-            // Descripcion
-            // 
-            this.Descripcion.HeaderText = "Descripcion";
-            this.Descripcion.Name = "Descripcion";
-            this.Descripcion.ReadOnly = true;
-            this.Descripcion.Width = 565;
-            // 
-            // Stock
-            // 
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.Stock.DefaultCellStyle = dataGridViewCellStyle1;
-            this.Stock.HeaderText = "Stock";
-            this.Stock.Name = "Stock";
-            this.Stock.Width = 50;
-            // 
-            // precioSinIva
-            // 
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.precioSinIva.DefaultCellStyle = dataGridViewCellStyle2;
-            this.precioSinIva.HeaderText = "Precio S/IVA";
-            this.precioSinIva.Name = "precioSinIva";
-            this.precioSinIva.Width = 70;
-            // 
-            // precioConIva
-            // 
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.precioConIva.DefaultCellStyle = dataGridViewCellStyle3;
-            this.precioConIva.HeaderText = "Precio C/IVA";
-            this.precioConIva.Name = "precioConIva";
-            this.precioConIva.Width = 70;
-            // 
-            // Cantidad
-            // 
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.Cantidad.DefaultCellStyle = dataGridViewCellStyle4;
-            this.Cantidad.HeaderText = "Cantidad";
-            this.Cantidad.Name = "Cantidad";
-            this.Cantidad.Width = 70;
-            // 
-            // Subtotal
-            // 
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.Subtotal.DefaultCellStyle = dataGridViewCellStyle5;
-            this.Subtotal.HeaderText = "Subtotal";
-            this.Subtotal.Name = "Subtotal";
-            this.Subtotal.Width = 70;
-            // 
-            // PrecioOrig
-            // 
-            this.PrecioOrig.HeaderText = "precioOrig";
-            this.PrecioOrig.Name = "PrecioOrig";
-            this.PrecioOrig.Visible = false;
-            // 
-            // id
-            // 
-            this.id.HeaderText = "id";
-            this.id.Name = "id";
-            this.id.Visible = false;
-            // 
-            // pedido
-            // 
-            this.pedido.HeaderText = "pedido";
-            this.pedido.Name = "pedido";
-            this.pedido.Visible = false;
-            // 
-            // costo
-            // 
-            this.costo.HeaderText = "costo";
-            this.costo.Name = "costo";
-            this.costo.Visible = false;
-            // 
-            // fraccionado
-            // 
-            this.fraccionado.HeaderText = "fraccionado";
-            this.fraccionado.Name = "fraccionado";
-            this.fraccionado.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.fraccionado.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.fraccionado.Visible = false;
-            // 
-            // dolarizado
-            // 
-            this.dolarizado.HeaderText = "dolarizado";
-            this.dolarizado.Name = "dolarizado";
-            this.dolarizado.Visible = false;
+            this.cboProveedor.FormattingEnabled = true;
+            this.cboProveedor.Items.AddRange(new object[] {
+            "Nota de Venta",
+            "Facturacion"});
+            this.cboProveedor.Location = new System.Drawing.Point(749, 49);
+            this.cboProveedor.Name = "cboProveedor";
+            this.cboProveedor.Size = new System.Drawing.Size(173, 23);
+            this.cboProveedor.TabIndex = 73;
+            this.cboProveedor.SelectedIndexChanged += new System.EventHandler(this.cboProveedor_SelectedIndexChanged);
             // 
             // frmVentas
             // 
@@ -1029,5 +1056,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn costo;
         private System.Windows.Forms.DataGridViewCheckBoxColumn fraccionado;
         private System.Windows.Forms.DataGridViewCheckBoxColumn dolarizado;
+        private System.Windows.Forms.ComboBox cboProveedor;
+        private System.Windows.Forms.CheckBox cbProveedor;
     }
 }

@@ -203,7 +203,7 @@ namespace Comercial.Clases
             return t2;
         }
 
-        public int CobrarCliente(int unCliente, decimal importeCobrar)
+        public int CobrarCliente(int unCliente, decimal importeCobrar, int haceCaja, int idCaja, int unMedioPago)
         {
             try
             {
@@ -213,8 +213,10 @@ namespace Comercial.Clases
                 cmd.CommandText = "sp_clientes_Cobrar";
 
                 cmd.Parameters.AddWithValue("unCliente", unCliente);
-                cmd.Parameters.AddWithValue("ImporteCobro", importeCobrar);               
-
+                cmd.Parameters.AddWithValue("ImporteCobro", importeCobrar);
+                cmd.Parameters.AddWithValue("haceCaja", haceCaja);
+                cmd.Parameters.AddWithValue("idCaja", idCaja);
+                cmd.Parameters.AddWithValue("unMedioPago", unMedioPago);
 
                 MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int32);
                 salida.Direction = ParameterDirection.Output;

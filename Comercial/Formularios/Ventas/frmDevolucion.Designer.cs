@@ -71,15 +71,6 @@
             this.lbDesc = new System.Windows.Forms.ListBox();
             this.nudDescuento = new System.Windows.Forms.NumericUpDown();
             this.dgvProductos = new System.Windows.Forms.DataGridView();
-            this.cboIVA = new System.Windows.Forms.ComboBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.gbFiltro = new System.Windows.Forms.GroupBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
-            this.lblCliente = new System.Windows.Forms.ListBox();
-            this.nudComision = new System.Windows.Forms.NumericUpDown();
-            this.label8 = new System.Windows.Forms.Label();
-            this.btnVenta = new System.Windows.Forms.Button();
             this.Cod_Barras = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Cod_Proveedor = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Descripcion = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -94,6 +85,17 @@
             this.costo = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.fraccionado = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dolarizado = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.cboIVA = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.gbFiltro = new System.Windows.Forms.GroupBox();
+            this.cboProveedor = new System.Windows.Forms.ComboBox();
+            this.cbProveedor = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.lblCliente = new System.Windows.Forms.ListBox();
+            this.nudComision = new System.Windows.Forms.NumericUpDown();
+            this.label8 = new System.Windows.Forms.Label();
+            this.btnVenta = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.nudCantidad)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
@@ -171,14 +173,14 @@
             // 
             this.nudCantidad.DecimalPlaces = 4;
             this.nudCantidad.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nudCantidad.Location = new System.Drawing.Point(894, 52);
+            this.nudCantidad.Location = new System.Drawing.Point(935, 52);
             this.nudCantidad.Maximum = new decimal(new int[] {
             999999999,
             0,
             0,
             0});
             this.nudCantidad.Name = "nudCantidad";
-            this.nudCantidad.Size = new System.Drawing.Size(120, 23);
+            this.nudCantidad.Size = new System.Drawing.Size(79, 23);
             this.nudCantidad.TabIndex = 3;
             this.nudCantidad.Enter += new System.EventHandler(this.nudCantidad_Enter);
             this.nudCantidad.KeyDown += new System.Windows.Forms.KeyEventHandler(this.nudCantidad_KeyDown);
@@ -510,114 +512,6 @@
             this.dgvProductos.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvProductos_CellValueChanged);
             this.dgvProductos.RowsRemoved += new System.Windows.Forms.DataGridViewRowsRemovedEventHandler(this.dgvProductos_RowsRemoved);
             // 
-            // cboIVA
-            // 
-            this.cboIVA.FormattingEnabled = true;
-            this.cboIVA.Location = new System.Drawing.Point(66, 36);
-            this.cboIVA.Name = "cboIVA";
-            this.cboIVA.Size = new System.Drawing.Size(88, 23);
-            this.cboIVA.TabIndex = 65;
-            this.cboIVA.SelectedIndexChanged += new System.EventHandler(this.cboIVA_SelectedIndexChanged);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(28, 39);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(29, 17);
-            this.label4.TabIndex = 75;
-            this.label4.Text = "IVA";
-            // 
-            // gbFiltro
-            // 
-            this.gbFiltro.BackColor = System.Drawing.Color.Silver;
-            this.gbFiltro.Controls.Add(this.lblDescripcion);
-            this.gbFiltro.Controls.Add(this.btnAgregar);
-            this.gbFiltro.Controls.Add(this.nudCantidad);
-            this.gbFiltro.Controls.Add(this.label3);
-            this.gbFiltro.Controls.Add(this.txtDesc);
-            this.gbFiltro.Controls.Add(this.txtFiltro);
-            this.gbFiltro.Controls.Add(this.cboFiltro);
-            this.gbFiltro.Controls.Add(this.label2);
-            this.gbFiltro.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gbFiltro.Location = new System.Drawing.Point(12, 112);
-            this.gbFiltro.Name = "gbFiltro";
-            this.gbFiltro.Size = new System.Drawing.Size(1091, 84);
-            this.gbFiltro.TabIndex = 66;
-            this.gbFiltro.TabStop = false;
-            this.gbFiltro.Text = "Busqueda por Producto";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(8, 24);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(39, 15);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Filtro:";
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label16.Location = new System.Drawing.Point(346, 594);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(67, 17);
-            this.label16.TabIndex = 91;
-            this.label16.Text = "Vendedor";
-            // 
-            // lblCliente
-            // 
-            this.lblCliente.FormattingEnabled = true;
-            this.lblCliente.ItemHeight = 15;
-            this.lblCliente.Location = new System.Drawing.Point(66, 31);
-            this.lblCliente.Name = "lblCliente";
-            this.lblCliente.Size = new System.Drawing.Size(471, 169);
-            this.lblCliente.TabIndex = 73;
-            this.lblCliente.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lblCliente_KeyDown);
-            this.lblCliente.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lblCliente_MouseDoubleClick);
-            // 
-            // nudComision
-            // 
-            this.nudComision.DecimalPlaces = 2;
-            this.nudComision.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nudComision.Location = new System.Drawing.Point(669, 591);
-            this.nudComision.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            -2147483648});
-            this.nudComision.Name = "nudComision";
-            this.nudComision.Size = new System.Drawing.Size(83, 23);
-            this.nudComision.TabIndex = 92;
-            this.nudComision.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nudComision_KeyPress);
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(587, 594);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(70, 17);
-            this.label8.TabIndex = 93;
-            this.label8.Text = "Comisión:";
-            // 
-            // btnVenta
-            // 
-            this.btnVenta.BackColor = System.Drawing.Color.Silver;
-            this.btnVenta.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnVenta.Image = global::Comercial.Properties.Resources.shopping_cart1;
-            this.btnVenta.Location = new System.Drawing.Point(12, 65);
-            this.btnVenta.Name = "btnVenta";
-            this.btnVenta.Size = new System.Drawing.Size(151, 35);
-            this.btnVenta.TabIndex = 94;
-            this.btnVenta.Text = "Cargar Venta";
-            this.btnVenta.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.btnVenta.UseVisualStyleBackColor = false;
-            this.btnVenta.Click += new System.EventHandler(this.btnVenta_Click);
-            // 
             // Cod_Barras
             // 
             this.Cod_Barras.HeaderText = "Cod_Barras";
@@ -713,6 +607,139 @@
             this.dolarizado.HeaderText = "dolarizado";
             this.dolarizado.Name = "dolarizado";
             this.dolarizado.Visible = false;
+            // 
+            // cboIVA
+            // 
+            this.cboIVA.FormattingEnabled = true;
+            this.cboIVA.Location = new System.Drawing.Point(66, 36);
+            this.cboIVA.Name = "cboIVA";
+            this.cboIVA.Size = new System.Drawing.Size(88, 23);
+            this.cboIVA.TabIndex = 65;
+            this.cboIVA.SelectedIndexChanged += new System.EventHandler(this.cboIVA_SelectedIndexChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(28, 39);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(29, 17);
+            this.label4.TabIndex = 75;
+            this.label4.Text = "IVA";
+            // 
+            // gbFiltro
+            // 
+            this.gbFiltro.BackColor = System.Drawing.Color.Silver;
+            this.gbFiltro.Controls.Add(this.cboProveedor);
+            this.gbFiltro.Controls.Add(this.cbProveedor);
+            this.gbFiltro.Controls.Add(this.lblDescripcion);
+            this.gbFiltro.Controls.Add(this.btnAgregar);
+            this.gbFiltro.Controls.Add(this.nudCantidad);
+            this.gbFiltro.Controls.Add(this.label3);
+            this.gbFiltro.Controls.Add(this.txtDesc);
+            this.gbFiltro.Controls.Add(this.txtFiltro);
+            this.gbFiltro.Controls.Add(this.cboFiltro);
+            this.gbFiltro.Controls.Add(this.label2);
+            this.gbFiltro.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbFiltro.Location = new System.Drawing.Point(12, 112);
+            this.gbFiltro.Name = "gbFiltro";
+            this.gbFiltro.Size = new System.Drawing.Size(1091, 84);
+            this.gbFiltro.TabIndex = 66;
+            this.gbFiltro.TabStop = false;
+            this.gbFiltro.Text = "Busqueda por Producto";
+            // 
+            // cboProveedor
+            // 
+            this.cboProveedor.FormattingEnabled = true;
+            this.cboProveedor.Items.AddRange(new object[] {
+            "Nota de Venta",
+            "Facturacion"});
+            this.cboProveedor.Location = new System.Drawing.Point(756, 52);
+            this.cboProveedor.Name = "cboProveedor";
+            this.cboProveedor.Size = new System.Drawing.Size(173, 23);
+            this.cboProveedor.TabIndex = 75;
+            this.cboProveedor.SelectedIndexChanged += new System.EventHandler(this.cboProveedor_SelectedIndexChanged);
+            // 
+            // cbProveedor
+            // 
+            this.cbProveedor.AutoSize = true;
+            this.cbProveedor.Location = new System.Drawing.Point(629, 54);
+            this.cbProveedor.Name = "cbProveedor";
+            this.cbProveedor.Size = new System.Drawing.Size(121, 19);
+            this.cbProveedor.TabIndex = 74;
+            this.cbProveedor.Text = "Filtrar Proveedor";
+            this.cbProveedor.UseVisualStyleBackColor = true;
+            this.cbProveedor.CheckedChanged += new System.EventHandler(this.cbProveedor_CheckedChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(8, 24);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(39, 15);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Filtro:";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label16.Location = new System.Drawing.Point(346, 594);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(67, 17);
+            this.label16.TabIndex = 91;
+            this.label16.Text = "Vendedor";
+            // 
+            // lblCliente
+            // 
+            this.lblCliente.FormattingEnabled = true;
+            this.lblCliente.ItemHeight = 15;
+            this.lblCliente.Location = new System.Drawing.Point(66, 31);
+            this.lblCliente.Name = "lblCliente";
+            this.lblCliente.Size = new System.Drawing.Size(471, 169);
+            this.lblCliente.TabIndex = 73;
+            this.lblCliente.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lblCliente_KeyDown);
+            this.lblCliente.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lblCliente_MouseDoubleClick);
+            // 
+            // nudComision
+            // 
+            this.nudComision.DecimalPlaces = 2;
+            this.nudComision.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nudComision.Location = new System.Drawing.Point(669, 591);
+            this.nudComision.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            -2147483648});
+            this.nudComision.Name = "nudComision";
+            this.nudComision.Size = new System.Drawing.Size(83, 23);
+            this.nudComision.TabIndex = 92;
+            this.nudComision.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nudComision_KeyPress);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.Location = new System.Drawing.Point(587, 594);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(70, 17);
+            this.label8.TabIndex = 93;
+            this.label8.Text = "Comisión:";
+            // 
+            // btnVenta
+            // 
+            this.btnVenta.BackColor = System.Drawing.Color.Silver;
+            this.btnVenta.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnVenta.Image = global::Comercial.Properties.Resources.shopping_cart1;
+            this.btnVenta.Location = new System.Drawing.Point(12, 65);
+            this.btnVenta.Name = "btnVenta";
+            this.btnVenta.Size = new System.Drawing.Size(151, 35);
+            this.btnVenta.TabIndex = 94;
+            this.btnVenta.Text = "Cargar Venta";
+            this.btnVenta.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.btnVenta.UseVisualStyleBackColor = false;
+            this.btnVenta.Click += new System.EventHandler(this.btnVenta_Click);
             // 
             // frmDevolucion
             // 
@@ -835,5 +862,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn costo;
         private System.Windows.Forms.DataGridViewCheckBoxColumn fraccionado;
         private System.Windows.Forms.DataGridViewCheckBoxColumn dolarizado;
+        private System.Windows.Forms.ComboBox cboProveedor;
+        private System.Windows.Forms.CheckBox cbProveedor;
     }
 }

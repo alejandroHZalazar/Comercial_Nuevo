@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Comercial.Clases;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -19,7 +20,7 @@ namespace Comercial.Formularios.Ventas
         bool esfraccionado = false;
 
         private List<string> resgClientes = new List<string>();
-        private List<string> resgProducto = new List<string>();
+        private List<ProductoBusqueda> resgProducto = new List<ProductoBusqueda>();
         Clases.ClassClientes instClie = new Clases.ClassClientes();
 
         Clases.ClassProductos instProd = new Clases.ClassProductos();
@@ -39,6 +40,7 @@ namespace Comercial.Formularios.Ventas
         decimal valorDolar = Clases.ClassParametros.buscarParametro("productos", "cotizacionDolar") == "" ? 0 : decimal.Parse(Clases.ClassParametros.buscarParametro("productos", "cotizacionDolar"));
         int productosDolarizados = Clases.ClassParametros.buscarParametro("productos", "dolarizaProductos") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("productos", "dolarizaProductos"));
         int tieneLectoraCB = Clases.ClassParametros.buscarParametro("productos", "MecanismoLectora") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("productos", "MecanismoLectora"));
+        int filtraPorProveedor = Clases.ClassParametros.buscarParametro("ventas", "filtraPorProveedor") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "filtraPorProveedor"));
         public frmDevolucion()
         {
             InitializeComponent();
@@ -162,6 +164,13 @@ namespace Comercial.Formularios.Ventas
             cboVendedores.DisplayMember = "nombre";
             cboVendedores.SelectedIndex = -1;
 
+            cbProveedor.Visible = cboProveedor.Visible = filtraPorProveedor == 1;
+
+            cboProveedor.DataSource = instProv.traeProveedoresCabecera();
+            cboProveedor.ValueMember = "Cod";
+            cboProveedor.DisplayMember = "Proveedor";
+            cboProveedor.SelectedIndex = 0;
+
             cargado = true;
         }
 
@@ -174,7 +183,11 @@ namespace Comercial.Formularios.Ventas
             {
                 foreach (DataRow fila in productos.Rows)
                 {
-                    resgProducto.Add(fila["Descripcion"].ToString());
+                    resgProducto.Add(new ProductoBusqueda
+                    {
+                        Descripcion = fila["Descripcion"].ToString(),
+                        IdProveedor = Convert.ToInt32(fila["fk_proveedor"])
+                    });
                 }
             }
         }
@@ -656,16 +669,32 @@ namespace Comercial.Formularios.Ventas
             if (txtDesc.Text.Trim().Length == 0)
             {
                 lbDesc.Visible = false;
+                return;
             }
 
-            var result = resgProducto.FindAll(l => l.ToUpper().Contains(txtDesc.Text.Trim().ToUpper()));
+            string texto = txtDesc.Text.Trim().ToUpper();
 
-            lbDesc.Items.Clear();
+            var result = resgProducto
+                .Where(p => p.Descripcion.ToUpper().Contains(texto));
 
-            if (result.Count > 0)
+            // 🔹 Si el checkbox está marcado, filtramos por proveedor
+            if (cbProveedor.Checked && cboProveedor.SelectedValue != null)
             {
-                result.ForEach(x => lbDesc.Items.Add(x));
+                int idProveedorSeleccionado = Convert.ToInt32(cboProveedor.SelectedValue);
+
+                result = result.Where(p => p.IdProveedor == idProveedorSeleccionado);
+            }
+
+            var listaFinal = result.ToList();
+
+            if (listaFinal.Count > 0)
+            {
+                listaFinal.ForEach(x => lbDesc.Items.Add(x.Descripcion));
                 lbDesc.Visible = true;
+            }
+            else
+            {
+                lbDesc.Visible = false;
             }
         }
 
@@ -834,6 +863,16 @@ namespace Comercial.Formularios.Ventas
             {
                 e.KeyChar = ',';
             }
+        }
+
+        private void cbProveedor_CheckedChanged(object sender, EventArgs e)
+        {
+            txtDesc.Text = string.Empty;
+        }
+
+        private void cboProveedor_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            txtDesc.Text = string.Empty;
         }
     }
 }

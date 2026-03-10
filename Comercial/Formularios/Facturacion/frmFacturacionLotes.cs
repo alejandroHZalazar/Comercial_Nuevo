@@ -17,6 +17,7 @@ namespace Comercial.Formularios.Facturacion
         int cantStock = Clases.ClassProductos.cantDecimalesStock();
         int facturaFiscal = Clases.ClassParametros.buscarParametro("ventas", "facturaFiscal") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "facturaFiscal"));
         string marcaFiscal = Clases.ClassParametros.buscarParametro("ventas", "marcaFiscal");
+        int facturaElectronica = Clases.ClassParametros.buscarParametro("ventas", "facturaElectronica") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "facturaElectronica"));
         public frmFacturacionLotes()
         {
             InitializeComponent();
@@ -146,39 +147,56 @@ namespace Comercial.Formularios.Facturacion
                 foreach (var fila in filasSeleccionadas)
                 {
 
-                    var venta = (int)fila.Cells["Nro"].Value;
+                    var venta = (Int64)fila.Cells["Nro"].Value;
 
                     this.Invoke(new Action(() =>
                     {
                         rtbProceso.AppendText($"Procesando venta N° {venta}...\n");
                     }));
-                    ComprobanteFiscal status;
-                    if (marcaFiscal.ToUpper() == "EPSON")
-                    {
-                        status = tk.imprimirFacturaEpson(venta);
-                    }
-                    else
-                    {
-                        status = tk.imprimirFacturaHasar(venta);
-                    }
-                    if (status == null)
-                    {
-                        this.Invoke(new Action(() =>
-                        {
-                            rtbProceso.AppendText($"❌ Error al facturar venta {venta}\n");
-                        }));
-                        continue;
-                    }
 
-                    var salida_Fiscal = tk.almacenarComprobanteFiscal(status);
-
-                    if (salida_Fiscal == -1)
+                    if (facturaFiscal == 1)
                     {
-                        this.Invoke(new Action(() =>
+                        ComprobanteFiscal status;
+                        if (marcaFiscal.ToUpper() == "EPSON")
                         {
-                            rtbProceso.AppendText($"❌ Error al almacenar comprobante venta {venta}\n");
-                        }));
-                        continue;
+                            status = tk.imprimirFacturaEpson(venta);
+                        }
+                        else
+                        {
+                            status = tk.imprimirFacturaHasar(venta);
+                        }
+                        if (status == null)
+                        {
+                            this.Invoke(new Action(() =>
+                            {
+                                rtbProceso.AppendText($"❌ Error al facturar venta {venta}\n");
+                            }));
+                            continue;
+                        }
+
+                        var salida_Fiscal = tk.almacenarComprobanteFiscal(status);
+
+                        if (salida_Fiscal == -1)
+                        {
+                            this.Invoke(new Action(() =>
+                            {
+                                rtbProceso.AppendText($"❌ Error al almacenar comprobante venta {venta}\n");
+                            }));
+                            continue;
+                        }
+                    }
+                    else if (facturaElectronica == 1)
+                    {
+                        ClassFacturacionElectronica instFactElect = new ClassFacturacionElectronica();
+                        var status = instFactElect.emitirFacturaElectronica(venta);
+                        if (!status.Result)
+                        {
+                            this.Invoke(new Action(() =>
+                            {
+                                rtbProceso.AppendText($"❌ Error al almacenar comprobante venta {venta}\n");
+                            }));
+                            continue;
+                        }
                     }
 
                     progreso++;
@@ -197,7 +215,7 @@ namespace Comercial.Formularios.Facturacion
 
         private void frmFacturacionLotes_Load(object sender, EventArgs e)
         {
-            if (facturaFiscal == 0)
+            if (facturaFiscal == 0 && facturaElectronica == 0)
             {
                 MessageBox.Show(this, "Debe habilitar la Facturacion Fiscal o Electronica", "FACTURACION LOTES", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.Close();

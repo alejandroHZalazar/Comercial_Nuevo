@@ -491,4 +491,10 @@ namespace Comercial.Clases
         
 
     }
+
+    public class ProductoBusqueda
+    {
+        public string Descripcion { get; set; }
+        public int IdProveedor { get; set; }
+    }
 }

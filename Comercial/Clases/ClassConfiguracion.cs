@@ -193,7 +193,7 @@ namespace Comercial.Clases
 
         public DataTable traerConceptosCaja()
         {
-            MySqlDataAdapter rows = new MySqlDataAdapter("select concepto_caja_id id, nombre Nombre, tipo_movimiento Tipo, afecta_efectivo from conceptos_caja", instDatos.abrirConexion());
+            MySqlDataAdapter rows = new MySqlDataAdapter("select concepto_caja_id id, nombre Nombre, tipo_movimiento Tipo, afecta_efectivo, fk_medio_pago, Operacion from conceptos_caja", instDatos.abrirConexion());
             DataTable dt = new DataTable();
             rows.Fill(dt);
             instDatos.cerrarConexion();
@@ -202,7 +202,7 @@ namespace Comercial.Clases
 
         public DataTable traerConceptosCajaPorId(int unId)
         {
-            MySqlDataAdapter rows = new MySqlDataAdapter("select concepto_caja_id id, nombre Nombre, tipo_movimiento Tipo, afecta_efectivo from conceptos_caja where concepto_caja_id = " + unId, instDatos.abrirConexion());
+            MySqlDataAdapter rows = new MySqlDataAdapter("select concepto_caja_id id, nombre Nombre, tipo_movimiento Tipo, afecta_efectivo, fk_medio_pago, Operacion from conceptos_caja where concepto_caja_id = " + unId, instDatos.abrirConexion());
             DataTable dt = new DataTable();
             rows.Fill(dt);
             instDatos.cerrarConexion();
@@ -374,7 +374,7 @@ namespace Comercial.Clases
             }
         }
 
-        public string ABMConceptosCaja(string unNombre, string unTipoMovimiento, bool unAfectaEfectivo, int unTipo, int unId)
+        public string ABMConceptosCaja(string unNombre, string unTipoMovimiento, bool unAfectaEfectivo, int unTipo, int unId, int? unMedioPago, string unaOperacion)
         {
             try
             {
@@ -388,6 +388,8 @@ namespace Comercial.Clases
                 cmd.Parameters.AddWithValue("unAfectaEfectivo", unAfectaEfectivo);
                 cmd.Parameters.AddWithValue("unId", unId);
                 cmd.Parameters.AddWithValue("tipo", unTipo);
+                cmd.Parameters.Add("@unMedioPago", MySqlDbType.Int32).Value = (object)unMedioPago ?? DBNull.Value;
+                cmd.Parameters.Add("@unaOperacion", MySqlDbType.VarChar).Value = (object)unaOperacion ?? DBNull.Value;
 
                 MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.VarChar);
                 salida.Direction = ParameterDirection.Output;

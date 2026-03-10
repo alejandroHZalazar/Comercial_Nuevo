@@ -199,6 +199,7 @@
     <Compile Include="Clases\ClassConfiguracion.cs" />
     <Compile Include="Clases\classDatos.cs" />
     <Compile Include="Clases\ClassEstadisticas.cs" />
+    <Compile Include="Clases\ClassFacturacionElectronica.cs" />
     <Compile Include="Clases\ClassLocalidades.cs" />
     <Compile Include="Clases\ClassNotificaciones.cs" />
     <Compile Include="Clases\ClassParametros.cs" />
@@ -213,6 +214,7 @@
     <Compile Include="Clases\ClassVentas.cs" />
     <Compile Include="Clases\Fiscal.cs" />
     <Compile Include="Clases\TicketPrinter.cs" />
+    <Compile Include="Enums\ProvinciasEnum.cs" />
     <Compile Include="Enums\MedioPago.cs" />
     <Compile Include="Formularios\Clientes\frmABMClientes.cs">
       <SubType>Form</SubType>
@@ -436,6 +438,12 @@
     <Compile Include="Formularios\frmLogin.Designer.cs">
       <DependentUpon>frmLogin.cs</DependentUpon>
     </Compile>
+    <Compile Include="Formularios\frmPass.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\frmPass.Designer.cs">
+      <DependentUpon>frmPass.cs</DependentUpon>
+    </Compile>
     <Compile Include="Formularios\frmPrincipal.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -640,6 +648,11 @@
     <Compile Include="Reportes\frmReport.Designer.cs">
       <DependentUpon>frmReport.cs</DependentUpon>
     </Compile>
+    <Compile Include="Resources\Resource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
     <Compile Include="SqlServerTypes\Loader.cs" />
     <Compile Include="Enums\TipoComprobanteHassar.cs" />
     <EmbeddedResource Include="Formularios\Clientes\frmABMClientes.resx">
@@ -752,6 +765,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\frmLogin.resx">
       <DependentUpon>frmLogin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\frmPass.resx">
+      <DependentUpon>frmPass.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\frmPrincipal.resx">
       <DependentUpon>frmPrincipal.cs</DependentUpon>
@@ -868,6 +884,10 @@
     <EmbeddedResource Include="Reportes\ReportVenta.rdlc" />
     <EmbeddedResource Include="Reportes\reportVentasCom.rdlc" />
     <EmbeddedResource Include="Reportes\ReportVentasEstadisticas.rdlc" />
+    <EmbeddedResource Include="Resources\Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="pañaleraDataSet.xsc">
       <DependentUpon>pañaleraDataSet.xsd</DependentUpon>
