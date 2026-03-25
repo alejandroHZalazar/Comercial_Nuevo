@@ -61,6 +61,9 @@ namespace Comercial.Formularios.Ventas
         int puntoVenta = Clases.ClassParametros.buscarParametro("PuntoVenta", Environment.MachineName) == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("PuntoVenta", Environment.MachineName));
         int tieneLectoraCB = Clases.ClassParametros.buscarParametro("productos", "MecanismoLectora") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("productos", "MecanismoLectora"));
         int filtraPorProveedor = Clases.ClassParametros.buscarParametro("ventas", "filtraPorProveedor") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "filtraPorProveedor"));
+        int bonificacionPorLinea  = Clases.ClassParametros.buscarParametro("ventas", "bonificacionesPorDetalle") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "bonificacionesPorDetalle"));
+
+        bool ordenFacturar = false;
         public frmVentas()
         {
             InitializeComponent();
@@ -174,7 +177,8 @@ namespace Comercial.Formularios.Ventas
             txtTotGeneral.Text = "0";
             cboVendedores.SelectedIndex = -1;
             cboMedioPago.SelectedIndex = (tieneMediosPagos == 1 ? 0 : -1);
-
+            dgvProductos.Columns["Sel"].Visible = bonificacionPorLinea == 1;
+            panelSelGrilla.Visible = bonificacionPorLinea == 1;
             verificarParametros();
         }
 
@@ -278,12 +282,12 @@ namespace Comercial.Formularios.Ventas
                 unPedido = unPed;
                 foreach (DataRow fila in pedido.Rows)
                 {
-                    dgvProductos.Rows.Add(fila["Cod_Barras"].ToString(), fila["Cod_Proveedor"].ToString(), fila["Descripcion"].ToString(), Math.Round(decimal.Parse(fila["Stock"].ToString()), cantStock), Math.Round(decimal.Parse(fila["Precio S/IVA"].ToString()), cantDec), Math.Round(decimal.Parse(fila["Precio C/IVA"].ToString()), cantDec), Math.Round(decimal.Parse(fila["Cantidad"].ToString()), cantStock), Math.Round(decimal.Parse(fila["Subtotal"].ToString()), cantDec), Math.Round(decimal.Parse(fila["precioOrig"].ToString()), cantDec), fila["fk_producto"].ToString(), unPedido, Math.Round(decimal.Parse(fila["costo"].ToString()), cantDec), Convert.ToBoolean(fila["fraccionado"]), Convert.ToBoolean(fila["dolarizado"]));
+                    dgvProductos.Rows.Add(false,fila["Cod_Barras"].ToString(), fila["Cod_Proveedor"].ToString(), fila["Descripcion"].ToString(), Math.Round(decimal.Parse(fila["Stock"].ToString()), cantStock), Math.Round(decimal.Parse(fila["Precio S/IVA"].ToString()), cantDec),unRecargo-unDescuento,"", Math.Round(decimal.Parse(fila["Precio C/IVA"].ToString()), cantDec), Math.Round(decimal.Parse(fila["Cantidad"].ToString()), cantStock), Math.Round(decimal.Parse(fila["Subtotal"].ToString()), cantDec), Math.Round(decimal.Parse(fila["precioOrig"].ToString()), cantDec), fila["fk_producto"].ToString(), unPedido, Math.Round(decimal.Parse(fila["costo"].ToString()), cantDec), Convert.ToBoolean(fila["fraccionado"]), Convert.ToBoolean(fila["dolarizado"]));
                 }
             }
             unPedido = 0;
-            nudDescuento.Value = unDescuento;
-            nudRecargo.Value = unRecargo;
+            nudDescuento.Value = 0;
+            nudRecargo.Value = 0;
             cboIVA.Text = unIva.ToString();
             procesoTotales();
             btnCambioPrecio.Enabled = true;
@@ -444,31 +448,102 @@ namespace Comercial.Formularios.Ventas
         {
 
             decimal totalSIVA = 0;
-            decimal totalDescuento = 0;
-            decimal totalRecargo = 0;
+            decimal totalIVA = 0;
+            decimal totalFinal = 0;
+            decimal totalDescRec = 0;
 
             foreach (DataGridViewRow fila in dgvProductos.Rows)
             {
-                fila.Cells["precioConIva"].Value = Math.Round(decimal.Parse(fila.Cells["precioSinIva"].Value.ToString()) * (1 + Decimal.Parse(cboIVA.Text) / 100), cantDec);
-                fila.Cells["Subtotal"].Value = Math.Round(decimal.Parse(fila.Cells["precioConIva"].Value.ToString()) * decimal.Parse(fila.Cells["Cantidad"].Value.ToString()), cantDec);
-                // fila.Cells["Subtotal"].Value = !bool.Parse(fila.Cells["fraccionado"].Value.ToString()) ? decimal.Parse(fila.Cells["precioConIva"].Value.ToString()) * decimal.Parse(fila.Cells["Cantidad"].Value.ToString()) : Math.Round(decimal.Parse(fila.Cells["precioConIva"].Value.ToString()), cantDec);
-                totalSIVA += Math.Round(decimal.Parse(fila.Cells["precioSinIva"].Value.ToString()) * decimal.Parse(fila.Cells["Cantidad"].Value.ToString()), cantDec);
+                decimal precioSinIva = decimal.Parse(fila.Cells["precioSinIva"].Value.ToString());
+                decimal cantidad = decimal.Parse(fila.Cells["Cantidad"].Value.ToString());
+                decimal iva = decimal.Parse(cboIVA.Text);
+                decimal descRec = 0;
 
+                decimal.TryParse(fila.Cells["DescRec"].Value?.ToString(), out descRec);
+
+                // 🔹 1. Precio unitario SIN IVA ajustado (TU regla)
+                decimal precioUnitarioAjustado = Math.Round(
+                    precioSinIva * (1 + (descRec / 100)),
+                    cantDec,
+                    MidpointRounding.AwayFromZero
+                );
+
+                fila.Cells["subtotalSIVA"].Value = precioUnitarioAjustado;
+
+                // 🔹 2. Subtotal SIN IVA
+                decimal subtotalSinIVA = Math.Round(
+                    precioUnitarioAjustado * cantidad,
+                    cantDec,
+                    MidpointRounding.AwayFromZero
+                );
+
+                // 🔹 3. IVA por ítem
+                decimal ivaItem = Math.Round(
+                    subtotalSinIVA * (iva / 100),
+                    cantDec,
+                    MidpointRounding.AwayFromZero
+                );
+
+                // 🔹 4. Precio unitario CON IVA
+                decimal precioConIva = Math.Round(
+                    precioUnitarioAjustado * (1 + iva / 100),
+                    cantDec,
+                    MidpointRounding.AwayFromZero
+                );
+
+                fila.Cells["precioConIva"].Value = precioConIva;
+
+                // 🔹 5. Subtotal final
+                decimal subtotal = Math.Round(
+                    precioConIva * cantidad,
+                    cantDec,
+                    MidpointRounding.AwayFromZero
+                );
+
+                fila.Cells["Subtotal"].Value = subtotal;
+
+                // 🔹 ACUMULAR (SIEMPRE desde valores ya redondeados)
+                totalSIVA += precioSinIva * cantidad;
+                totalIVA += ivaItem;
+                totalFinal += subtotal;
+
+                totalDescRec += Math.Round(
+                    (precioSinIva * (descRec / 100)) * cantidad,
+                    cantDec,
+                    MidpointRounding.AwayFromZero
+                );
             }
 
             if (dgvProductos.RowCount > 0)
             {
-                txtSubSinIVA.Text = totalSIVA.ToString();
-                totalDescuento = Math.Round(totalSIVA * (nudDescuento.Value / 100), cantDec);
-                totalRecargo = Math.Round(totalSIVA * (nudRecargo.Value / 100), cantDec);
-                txtTotalSinIva.Text = Math.Round((totalSIVA - totalDescuento + totalRecargo), cantDec).ToString();
+                txtSubSinIVA.Text = totalSIVA.ToString("F2");
+                txtDescuento.Text = totalDescRec.ToString("F2");
+                var totalGeneralSInIVA = totalSIVA + totalDescRec;
+                txtTotalSinIva.Text = totalGeneralSInIVA.ToString("F2");
 
+                txtIVA.Text = totalIVA.ToString("F2");
 
-                txtDescuento.Text = Math.Round(totalDescuento * -1 + totalRecargo, cantDec).ToString();
-                txtIVA.Text = (Math.Round((totalSIVA - totalDescuento + totalRecargo) * (Decimal.Parse(cboIVA.Text) / 100), cantDec)).ToString();
-                txtIB.Text = (Math.Round((totalSIVA - totalDescuento + totalRecargo) * (Decimal.Parse(cboIngBrutos.Text) / 100), cantDec)).ToString();
-                // txtTotGeneral.Text = (Math.Round((totalSIVA - totalDescuento + totalRecargo ) * (1 + Decimal.Parse(cboIVA.Text) / 100), cantDec)).ToString();
-                txtTotGeneral.Text = (Math.Round(decimal.Parse(txtTotalSinIva.Text) + decimal.Parse(txtIVA.Text) + decimal.Parse(txtIB.Text), cantDec)).ToString();
+                decimal totalIB = Math.Round(
+                    totalGeneralSInIVA * (Decimal.Parse(cboIngBrutos.Text) / 100),
+                    cantDec,
+                    MidpointRounding.AwayFromZero
+                );
+
+                txtIB.Text = totalIB.ToString("F2");
+
+                decimal totalCalculado = totalFinal + totalIB;
+                decimal totalEsperado = Math.Round(totalGeneralSInIVA + totalIVA + totalIB, cantDec);
+
+                // 🔥 Diferencia
+                decimal diferencia = totalEsperado - totalCalculado;
+
+                // 👉 Ajustar SOLO si hay diferencia mínima
+                if (Math.Abs(diferencia) > 0 && Math.Abs(diferencia) <= 0.05m)
+                {
+                    totalCalculado += diferencia;
+                }
+
+                txtTotGeneral.Text = totalCalculado.ToString("F2");
             }
         }
 
@@ -637,7 +712,7 @@ namespace Comercial.Formularios.Ventas
                     // if (!esfraccionado)
                     //   {
                     var precio = !esDolarizado ? Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec) : Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()) * valorDolar, cantDec);
-                    dgvProductos.Rows.Add(producto.Rows[0]["codBarras"].ToString(), producto.Rows[0]["codProveedor"].ToString(), producto.Rows[0]["descripcion"].ToString(), Math.Round(decimal.Parse(producto.Rows[0]["cantidad"].ToString()), cantStock), precio, precio, Math.Round(nudCantidad.Value, cantStock), 0, precio, unProducto, 0, costo, esfraccionado);
+                    dgvProductos.Rows.Add(false,producto.Rows[0]["codBarras"].ToString(), producto.Rows[0]["codProveedor"].ToString(), producto.Rows[0]["descripcion"].ToString(), Math.Round(decimal.Parse(producto.Rows[0]["cantidad"].ToString()), cantStock), precio,0, precio, precio, Math.Round(nudCantidad.Value, cantStock), 0, precio, unProducto, 0, costo, esfraccionado);
                     // }
                     //else
                     //{
@@ -697,22 +772,36 @@ namespace Comercial.Formularios.Ventas
         }
 
         private void nudDescuento_ValueChanged(object sender, EventArgs e)
-        {
-            if (nudDescuento.Value != 0 | nudDescuento.Focused)
-            {
+        {           
                 nudRecargo.Value = 0;
-                procesoTotales();
 
-            }
+                foreach(DataGridViewRow fila in dgvProductos.Rows)
+                {
+                    if ((bool)fila.Cells["Sel"].Value == true || bonificacionPorLinea == 0)
+                    {
+                        fila.Cells["DescRec"].Value = nudDescuento.Value * -1;
+                        fila.Cells["Sel"].Value = false;
+                    }
+                }
+                procesoTotales();            
         }
 
         private void nudRecargo_ValueChanged(object sender, EventArgs e)
         {
-            if (nudRecargo.Value != 0 | nudRecargo.Focused)
-            {
+          
                 nudDescuento.Value = 0;
+
+                foreach (DataGridViewRow fila in dgvProductos.Rows)
+                {
+                    if ((bool)fila.Cells["Sel"].Value == true || bonificacionPorLinea == 0)
+                    {
+                        fila.Cells["DescRec"].Value = nudRecargo.Value;
+                        fila.Cells["Sel"].Value = false;
+                    }
+                }
+                
                 procesoTotales();
-            }
+            
         }
 
         private void frmVentas_KeyDown(object sender, KeyEventArgs e)
@@ -720,6 +809,20 @@ namespace Comercial.Formularios.Ventas
             if (e.KeyData == Keys.F5)
             {
                 btnGrabar_Click(null, null);
+            }
+
+            if (e.KeyData == Keys.F6)
+            {
+                try
+                {
+                    ordenFacturar = true;
+                    btnGrabar_Click(null, null);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, "ERROR EN EL PROCESO DE FACTURACION. " + ex.Message, "FACTURACION", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    ordenFacturar = false;
+                }
             }
         }
 
@@ -754,33 +857,48 @@ namespace Comercial.Formularios.Ventas
             if (formularioValido())
             {
                 vender();
+                ordenFacturar = false;
                 if (buscoPend)
                 {
                     btnPedido_Click(null, null);
                 }
             }
-
-
+            ordenFacturar = false;
         }
 
         private void imprimirVenta(long unaVenta)
         {
-            Reportes.frmReport unFrmReport = new Reportes.frmReport();
+            Clases.ClassReportesITextSharp instItextSahrp = new ClassReportesITextSharp();
+            //Reportes.frmReport unFrmReport = new Reportes.frmReport();
 
-            unFrmReport.nombreReporte = "ReportVenta.rdlc";
-            List<string> var = new List<string>();
-            var.Add(unaVenta.ToString());
-            var.Add(Clases.ClassValidacion.traerEmpresa());
-            var.Add("Tel: " + Clases.ClassValidacion.traerEmpresaTelefono());
-            var.Add(Clases.ClassValidacion.traerEmpresaDireccion());
-            var.Add(Clases.ClassValidacion.traerEmpresaCiudad());
-            var.Add("CUIT: " + Clases.ClassValidacion.traerEmpresaCuit());
-            var.Add(cboIVA.Text);
-            var.Add(cantDec.ToString());
-            var.Add(cantStock.ToString());
-            var.Add(Clases.ClassValidacion.traerRazonSocial());
-            unFrmReport.variable = var;
-            unFrmReport.ShowDialog();
+            //unFrmReport.nombreReporte = "ReportVenta.rdlc";
+            //List<string> var = new List<string>();
+            //var.Add(unaVenta.ToString());
+            //var.Add(Clases.ClassValidacion.traerEmpresa());
+            //var.Add("Tel: " + Clases.ClassValidacion.traerEmpresaTelefono());
+            //var.Add(Clases.ClassValidacion.traerEmpresaDireccion());
+            //var.Add(Clases.ClassValidacion.traerEmpresaCiudad());
+            //var.Add("CUIT: " + Clases.ClassValidacion.traerEmpresaCuit());
+            //var.Add(cboIVA.Text);
+            //var.Add(cantDec.ToString());
+            //var.Add(cantStock.ToString());
+            //var.Add(Clases.ClassValidacion.traerRazonSocial());
+            //unFrmReport.variable = var;
+            //unFrmReport.ShowDialog();
+
+            DialogResult result = MessageBox.Show("¿Desea descargar en formato PDF?\n(Sí = PDF / No = Excel)", "Exportar",MessageBoxButtons.YesNoCancel,MessageBoxIcon.Question);
+
+            if (result == DialogResult.Cancel) return;
+
+            if (result == DialogResult.Yes)
+            {
+
+                instItextSahrp.GenerarVentasPDF(unaVenta);
+            }
+            else
+            {
+                instItextSahrp.GenerarVentasExcel(unaVenta);
+            }
         }
 
         private void imprimirNotaVentaTk(long venta)
@@ -970,13 +1088,15 @@ namespace Comercial.Formularios.Ventas
                     detalle += decimal.Parse(fila.Cells["Cantidad"].Value.ToString()) + "?";
                     detalle += fila.Cells["pedido"].Value.ToString() + ";";
                     detalle += fila.Cells["Subtotal"].Value.ToString() + "¿";
-                    detalle += bool.Parse(fila.Cells["fraccionado"].Value.ToString()) == false ? "0" + "¡" : "1" + "¡";
+                    detalle += bool.Parse(fila.Cells["fraccionado"].Value.ToString()) == false ? "0" + "¡" : "1" + "¡";                    
+                    detalle += decimal.Parse(fila.Cells["DescRec"].Value.ToString()) + "&";
+                    detalle += decimal.Parse(fila.Cells["subtotalSIVA"].Value.ToString()) + "$";
                     detalle = detalle.Replace(',', '.');
                     progreso++;
 
                 }
 
-                salida = instVentas.grabarVenta(decimal.Parse(txtTotGeneral.Text), unCosto, unCliente, int.Parse(Environment.GetEnvironmentVariable("idUser")), decimal.Parse(cboIVA.Text), nudDescuento.Value, nudRecargo.Value, int.Parse(cboVendedores.SelectedValue.ToString()), nudComision.Value / 100, decimal.Parse(cboIngBrutos.Text), detalle, llevaCC, imputaEnVenta, tieneMediosPagos, imputacion, detalleFormasPago, tieneCaja, CajaId);
+                salida = instVentas.grabarVenta(decimal.Parse(txtTotGeneral.Text), unCosto, unCliente, int.Parse(Environment.GetEnvironmentVariable("idUser")), decimal.Parse(cboIVA.Text),null, null, int.Parse(cboVendedores.SelectedValue.ToString()), nudComision.Value / 100, decimal.Parse(cboIngBrutos.Text), detalle, llevaCC, imputaEnVenta, tieneMediosPagos, imputacion, detalleFormasPago, tieneCaja, CajaId);
 
                 if (salida != -1)
                 {
@@ -988,7 +1108,7 @@ namespace Comercial.Formularios.Ventas
                     else
                     {
                         instPed.marcarPedido(pedidoCargado, 1);
-                        if (facturaEnVenta == 1)
+                        if (facturaEnVenta == 1 && ordenFacturar)
                         {
                             if (facturaFiscal == 1)
                             {
@@ -1184,6 +1304,38 @@ namespace Comercial.Formularios.Ventas
         private void cboProveedor_SelectedIndexChanged(object sender, EventArgs e)
         {
             txtDesc.Text = string.Empty;
+        }
+
+        private void btnTodos_Click(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow fila in dgvProductos.Rows)
+            {
+                fila.Cells["Sel"].Value = true;
+            }
+        }
+
+        private void btnNinguno_Click(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow fila in dgvProductos.Rows)
+            {
+                fila.Cells["Sel"].Value = false;
+            }
+        }
+
+        private void nudDescuento_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Enter)
+            {
+                nudDescuento_ValueChanged(null, null);
+            }
+        }
+
+        private void nudRecargo_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Enter)
+            {
+                nudRecargo_ValueChanged(null, null);
+            }
         }
     }
 

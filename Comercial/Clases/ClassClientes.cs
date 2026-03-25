@@ -35,6 +35,20 @@ namespace Comercial.Clases
             return t2;
         }
 
+        public DataTable traerConSaldo(int? unaProvincia, int? unaLocalidad, int? unaZona, int? unVendedor)
+        {
+            MySqlDataAdapter a1 = new MySqlDataAdapter("sp_Clientes_SaldoPendiente", instDatos.abrirConexion());
+            a1.SelectCommand.CommandType = CommandType.StoredProcedure;
+            a1.SelectCommand.Parameters.AddWithValue("unVendedorId", unVendedor);
+            a1.SelectCommand.Parameters.AddWithValue("unaLocalidadId", unaLocalidad);
+            a1.SelectCommand.Parameters.AddWithValue("unaProvinciaId", unaProvincia);
+            a1.SelectCommand.Parameters.AddWithValue("unaZonaId", unaZona);
+
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            return t2;
+        }
+
         public DataTable traerDatosVenta(string unFiltro)
         {
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_ClientesTraerDatosVentas", instDatos.abrirConexion());
@@ -336,6 +350,17 @@ namespace Comercial.Clases
             }
 
             File.WriteAllText(path, sb.ToString(), Encoding.UTF8);
+        }
+
+        public DataTable traerDatosFiscales(int unCliente)
+        {
+            MySqlDataAdapter a1 = new MySqlDataAdapter("sp_clientes_TraerDatosFiscal", instDatos.abrirConexion());
+            a1.SelectCommand.CommandType = CommandType.StoredProcedure;
+            a1.SelectCommand.Parameters.AddWithValue("unCliente", unCliente);
+
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            return t2;
         }
 
     }

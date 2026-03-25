@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Comercial.Clases;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -93,23 +94,21 @@ namespace Comercial.Formularios.Ventas
         private void btnImprimir_Click(object sender, EventArgs e)
         {
             if (dgvDevCabecera.Rows.Count > 0)
-            {
-                Reportes.frmReport unFrmReport = new Reportes.frmReport();
+            {   
 
-                unFrmReport.nombreReporte = "ReportDevolucion.rdlc";
-                List<string> var = new List<string>();
-                var.Add(dgvDevCabecera.CurrentRow.Cells["id"].Value.ToString());
-                var.Add(Clases.ClassValidacion.traerEmpresa());
-                var.Add("Tel: " + Clases.ClassValidacion.traerEmpresaTelefono());
-                var.Add(Clases.ClassValidacion.traerEmpresaDireccion());
-                var.Add(Clases.ClassValidacion.traerEmpresaCiudad());
-                var.Add("CUIT: " + Clases.ClassValidacion.traerEmpresaCuit());
-                var.Add(dgvDevCabecera.CurrentRow.Cells["IVA"].Value.ToString());
-                var.Add(cantDec.ToString());
-                var.Add(cantStock.ToString());
-                var.Add(Clases.ClassValidacion.traerRazonSocial());
-                unFrmReport.variable = var;
-                unFrmReport.ShowDialog();
+                Clases.ClassReportesITextSharp instItextS = new ClassReportesITextSharp();
+                DialogResult result = MessageBox.Show("¿Desea descargar en formato PDF?\n(Sí = PDF / No = Excel)", "Exportar", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if (result == DialogResult.Cancel) return;
+
+                if (result == DialogResult.Yes)
+                {
+                    instItextS.GenerarDevolucionPDF(long.Parse(dgvDevCabecera.CurrentRow.Cells["id"].Value.ToString()));
+                }
+                else
+                {
+                    instItextS.GenerarDevolucionExcel(long.Parse(dgvDevCabecera.CurrentRow.Cells["id"].Value.ToString()));
+                }
+
             }
         }
     }

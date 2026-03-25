@@ -13,6 +13,7 @@ namespace Comercial.Formularios.Estadisticas
     public partial class frmExportarVentas : Form
     {
         DataTable ventasCSV;
+
         public frmExportarVentas()
         {
             InitializeComponent();
@@ -30,16 +31,24 @@ namespace Comercial.Formularios.Estadisticas
         private void btnDescargarDetalle_Click(object sender, EventArgs e)
         {
             Clases.ClassVentas instVentas = new Clases.ClassVentas();
-            if (ventasCSV.Rows.Count == 0)
-            {
-                ventasCSV = instVentas.traerVentaDetalleCsv(dtpDesdeDetalle.Value, dtpHastaDetalle.Value);
-            }
+            Clases.ClassUtil instUtil = new Clases.ClassUtil();
+            ventasCSV = instVentas.traerVentaDetalleCsv(dtpDesdeDetalle.Value, dtpHastaDetalle.Value);
             if (ventasCSV.Rows.Count == 0) return;
-            instVentas.ExportarVentasCsv(ventasCSV);
+            instUtil.ExportarDataTableACsv(ventasCSV,"Resumen_Ventas");
         }
 
         private void frmExportarVentas_Load(object sender, EventArgs e)
         {
+
+        }
+
+        private void btnDescargarDetalleVenta_Click(object sender, EventArgs e)
+        {
+            Clases.ClassVentas instVentas = new Clases.ClassVentas();
+            Clases.ClassUtil instUtil = new Clases.ClassUtil();
+            DataTable ventasProductoCSV = instVentas.traerVentaDetalleProductoCsv(dtpDesdeDetalle.Value, dtpHastaDetalle.Value);
+            if (ventasProductoCSV.Rows.Count == 0) return;
+            instUtil.ExportarDataTableACsv(ventasProductoCSV,"Detalle_Ventas");
 
         }
     }

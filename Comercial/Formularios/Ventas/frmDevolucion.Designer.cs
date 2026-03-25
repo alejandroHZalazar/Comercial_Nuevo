@@ -34,6 +34,8 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmDevolucion));
             this.cboVendedores = new System.Windows.Forms.ComboBox();
             this.btnLimpiar = new System.Windows.Forms.Button();
@@ -71,11 +73,14 @@
             this.lbDesc = new System.Windows.Forms.ListBox();
             this.nudDescuento = new System.Windows.Forms.NumericUpDown();
             this.dgvProductos = new System.Windows.Forms.DataGridView();
+            this.Sel = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Cod_Barras = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Cod_Proveedor = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Descripcion = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Stock = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.precioSinIva = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DescRec = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.SubtotalSinIVA = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.precioConIva = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Cantidad = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Subtotal = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -88,14 +93,23 @@
             this.cboIVA = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.gbFiltro = new System.Windows.Forms.GroupBox();
+            this.lblCliente = new System.Windows.Forms.ListBox();
             this.cboProveedor = new System.Windows.Forms.ComboBox();
             this.cbProveedor = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
-            this.lblCliente = new System.Windows.Forms.ListBox();
             this.nudComision = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
             this.btnVenta = new System.Windows.Forms.Button();
+            this.cboIngBrutos = new System.Windows.Forms.ComboBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.txtIB = new System.Windows.Forms.TextBox();
+            this.label20 = new System.Windows.Forms.Label();
+            this.txtIVA = new System.Windows.Forms.TextBox();
+            this.label19 = new System.Windows.Forms.Label();
+            this.panelSelGrilla = new System.Windows.Forms.Panel();
+            this.btnNinguno = new System.Windows.Forms.Button();
+            this.btnTodos = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.nudCantidad)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
@@ -104,12 +118,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvProductos)).BeginInit();
             this.gbFiltro.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudComision)).BeginInit();
+            this.panelSelGrilla.SuspendLayout();
             this.SuspendLayout();
             // 
             // cboVendedores
             // 
             this.cboVendedores.FormattingEnabled = true;
-            this.cboVendedores.Location = new System.Drawing.Point(425, 591);
+            this.cboVendedores.Location = new System.Drawing.Point(960, 594);
             this.cboVendedores.Name = "cboVendedores";
             this.cboVendedores.Size = new System.Drawing.Size(150, 23);
             this.cboVendedores.TabIndex = 90;
@@ -119,7 +134,7 @@
             this.btnLimpiar.BackColor = System.Drawing.Color.Silver;
             this.btnLimpiar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnLimpiar.Image = global::Comercial.Properties.Resources.escoba;
-            this.btnLimpiar.Location = new System.Drawing.Point(9, 616);
+            this.btnLimpiar.Location = new System.Drawing.Point(349, 620);
             this.btnLimpiar.Name = "btnLimpiar";
             this.btnLimpiar.Size = new System.Drawing.Size(98, 35);
             this.btnLimpiar.TabIndex = 89;
@@ -131,7 +146,7 @@
             // txtTotGeneral
             // 
             this.txtTotGeneral.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtTotGeneral.Location = new System.Drawing.Point(851, 619);
+            this.txtTotGeneral.Location = new System.Drawing.Point(1042, 663);
             this.txtTotGeneral.Name = "txtTotGeneral";
             this.txtTotGeneral.ReadOnly = true;
             this.txtTotGeneral.Size = new System.Drawing.Size(113, 29);
@@ -141,7 +156,7 @@
             // 
             this.label15.AutoSize = true;
             this.label15.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.Location = new System.Drawing.Point(709, 626);
+            this.label15.Location = new System.Drawing.Point(892, 671);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(132, 15);
             this.label15.TabIndex = 87;
@@ -162,7 +177,7 @@
             this.btnAgregar.BackColor = System.Drawing.Color.Silver;
             this.btnAgregar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAgregar.Image = global::Comercial.Properties.Resources.play_button;
-            this.btnAgregar.Location = new System.Drawing.Point(1030, 52);
+            this.btnAgregar.Location = new System.Drawing.Point(1209, 52);
             this.btnAgregar.Name = "btnAgregar";
             this.btnAgregar.Size = new System.Drawing.Size(49, 23);
             this.btnAgregar.TabIndex = 4;
@@ -173,7 +188,7 @@
             // 
             this.nudCantidad.DecimalPlaces = 4;
             this.nudCantidad.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nudCantidad.Location = new System.Drawing.Point(935, 52);
+            this.nudCantidad.Location = new System.Drawing.Point(1114, 52);
             this.nudCantidad.Maximum = new decimal(new int[] {
             999999999,
             0,
@@ -237,7 +252,7 @@
             this.groupBox1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.Location = new System.Drawing.Point(402, 7);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(701, 99);
+            this.groupBox1.Size = new System.Drawing.Size(885, 99);
             this.groupBox1.TabIndex = 86;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Datos Clientes";
@@ -325,7 +340,7 @@
             // txtDescuento
             // 
             this.txtDescuento.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtDescuento.Location = new System.Drawing.Point(423, 622);
+            this.txtDescuento.Location = new System.Drawing.Point(718, 626);
             this.txtDescuento.Name = "txtDescuento";
             this.txtDescuento.ReadOnly = true;
             this.txtDescuento.Size = new System.Drawing.Size(72, 23);
@@ -348,7 +363,7 @@
             // txtSubSinIVA
             // 
             this.txtSubSinIVA.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtSubSinIVA.Location = new System.Drawing.Point(222, 622);
+            this.txtSubSinIVA.Location = new System.Drawing.Point(532, 626);
             this.txtSubSinIVA.Name = "txtSubSinIVA";
             this.txtSubSinIVA.ReadOnly = true;
             this.txtSubSinIVA.Size = new System.Drawing.Size(84, 23);
@@ -358,7 +373,7 @@
             // 
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(139, 626);
+            this.label9.Location = new System.Drawing.Point(453, 630);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(73, 15);
             this.label9.TabIndex = 81;
@@ -368,11 +383,11 @@
             // 
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(316, 626);
+            this.label10.Location = new System.Drawing.Point(622, 630);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(97, 15);
+            this.label10.Size = new System.Drawing.Size(90, 15);
             this.label10.TabIndex = 83;
-            this.label10.Text = "Total Descuento";
+            this.label10.Text = "Total Desc/Rec";
             // 
             // cboFiltro
             // 
@@ -389,7 +404,7 @@
             // txtTotalSinIva
             // 
             this.txtTotalSinIva.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtTotalSinIva.Location = new System.Drawing.Point(586, 622);
+            this.txtTotalSinIva.Location = new System.Drawing.Point(873, 626);
             this.txtTotalSinIva.Name = "txtTotalSinIva";
             this.txtTotalSinIva.ReadOnly = true;
             this.txtTotalSinIva.Size = new System.Drawing.Size(113, 23);
@@ -399,7 +414,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(505, 626);
+            this.label7.Location = new System.Drawing.Point(796, 630);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(71, 15);
             this.label7.TabIndex = 78;
@@ -407,11 +422,11 @@
             // 
             // btnGrabar
             // 
-            this.btnGrabar.BackColor = System.Drawing.Color.Silver;
+            this.btnGrabar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.btnGrabar.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnGrabar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnGrabar.Image = global::Comercial.Properties.Resources.save__1_;
-            this.btnGrabar.Location = new System.Drawing.Point(991, 616);
+            this.btnGrabar.Location = new System.Drawing.Point(1171, 658);
             this.btnGrabar.Name = "btnGrabar";
             this.btnGrabar.Size = new System.Drawing.Size(116, 34);
             this.btnGrabar.TabIndex = 70;
@@ -424,7 +439,7 @@
             // 
             this.nudRecargo.DecimalPlaces = 2;
             this.nudRecargo.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nudRecargo.Location = new System.Drawing.Point(251, 591);
+            this.nudRecargo.Location = new System.Drawing.Point(228, 594);
             this.nudRecargo.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -435,13 +450,14 @@
             this.nudRecargo.TabIndex = 69;
             this.nudRecargo.ValueChanged += new System.EventHandler(this.nudRecargo_ValueChanged);
             this.nudRecargo.Enter += new System.EventHandler(this.nudRecargo_Enter);
+            this.nudRecargo.KeyDown += new System.Windows.Forms.KeyEventHandler(this.nudRecargo_KeyDown);
             this.nudRecargo.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nudRecargo_KeyPress);
             // 
             // label6
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(186, 595);
+            this.label6.Location = new System.Drawing.Point(169, 598);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(53, 15);
             this.label6.TabIndex = 77;
@@ -451,7 +467,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(12, 595);
+            this.label5.Location = new System.Drawing.Point(9, 598);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(67, 15);
             this.label5.TabIndex = 76;
@@ -461,7 +477,7 @@
             // 
             this.lbDesc.FormattingEnabled = true;
             this.lbDesc.ItemHeight = 15;
-            this.lbDesc.Location = new System.Drawing.Point(153, 189);
+            this.lbDesc.Location = new System.Drawing.Point(66, 32);
             this.lbDesc.Name = "lbDesc";
             this.lbDesc.Size = new System.Drawing.Size(472, 169);
             this.lbDesc.TabIndex = 74;
@@ -472,7 +488,7 @@
             // 
             this.nudDescuento.DecimalPlaces = 2;
             this.nudDescuento.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nudDescuento.Location = new System.Drawing.Point(91, 591);
+            this.nudDescuento.Location = new System.Drawing.Point(80, 594);
             this.nudDescuento.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -483,6 +499,7 @@
             this.nudDescuento.TabIndex = 68;
             this.nudDescuento.ValueChanged += new System.EventHandler(this.nudDescuento_ValueChanged);
             this.nudDescuento.Enter += new System.EventHandler(this.nudDescuento_Enter);
+            this.nudDescuento.KeyDown += new System.Windows.Forms.KeyEventHandler(this.nudDescuento_KeyDown);
             this.nudDescuento.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nudDescuento_KeyPress);
             // 
             // dgvProductos
@@ -490,11 +507,14 @@
             this.dgvProductos.AllowUserToAddRows = false;
             this.dgvProductos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvProductos.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Sel,
             this.Cod_Barras,
             this.Cod_Proveedor,
             this.Descripcion,
             this.Stock,
             this.precioSinIva,
+            this.DescRec,
+            this.SubtotalSinIVA,
             this.precioConIva,
             this.Cantidad,
             this.Subtotal,
@@ -506,11 +526,19 @@
             this.dolarizado});
             this.dgvProductos.Location = new System.Drawing.Point(12, 200);
             this.dgvProductos.Name = "dgvProductos";
-            this.dgvProductos.Size = new System.Drawing.Size(1095, 384);
+            this.dgvProductos.Size = new System.Drawing.Size(1275, 384);
             this.dgvProductos.TabIndex = 67;
             this.dgvProductos.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.dgvProductos_CellParsing);
             this.dgvProductos.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvProductos_CellValueChanged);
             this.dgvProductos.RowsRemoved += new System.Windows.Forms.DataGridViewRowsRemovedEventHandler(this.dgvProductos_RowsRemoved);
+            // 
+            // Sel
+            // 
+            this.Sel.HeaderText = "Sel";
+            this.Sel.Name = "Sel";
+            this.Sel.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Sel.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.Sel.Width = 30;
             // 
             // Cod_Barras
             // 
@@ -548,26 +576,42 @@
             this.precioSinIva.Name = "precioSinIva";
             this.precioSinIva.Width = 70;
             // 
+            // DescRec
+            // 
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.DescRec.DefaultCellStyle = dataGridViewCellStyle3;
+            this.DescRec.HeaderText = "Desc/Rec";
+            this.DescRec.Name = "DescRec";
+            this.DescRec.Width = 70;
+            // 
+            // SubtotalSinIVA
+            // 
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.SubtotalSinIVA.DefaultCellStyle = dataGridViewCellStyle4;
+            this.SubtotalSinIVA.HeaderText = "Subtotal S/IVA";
+            this.SubtotalSinIVA.Name = "SubtotalSinIVA";
+            this.SubtotalSinIVA.Width = 70;
+            // 
             // precioConIva
             // 
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.precioConIva.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.precioConIva.DefaultCellStyle = dataGridViewCellStyle5;
             this.precioConIva.HeaderText = "Precio C/IVA";
             this.precioConIva.Name = "precioConIva";
             this.precioConIva.Width = 70;
             // 
             // Cantidad
             // 
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.Cantidad.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.Cantidad.DefaultCellStyle = dataGridViewCellStyle6;
             this.Cantidad.HeaderText = "Cantidad";
             this.Cantidad.Name = "Cantidad";
             this.Cantidad.Width = 70;
             // 
             // Subtotal
             // 
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.Subtotal.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.Subtotal.DefaultCellStyle = dataGridViewCellStyle7;
             this.Subtotal.HeaderText = "Subtotal";
             this.Subtotal.Name = "Subtotal";
             this.Subtotal.Width = 70;
@@ -630,6 +674,7 @@
             // gbFiltro
             // 
             this.gbFiltro.BackColor = System.Drawing.Color.Silver;
+            this.gbFiltro.Controls.Add(this.lblCliente);
             this.gbFiltro.Controls.Add(this.cboProveedor);
             this.gbFiltro.Controls.Add(this.cbProveedor);
             this.gbFiltro.Controls.Add(this.lblDescripcion);
@@ -643,10 +688,21 @@
             this.gbFiltro.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbFiltro.Location = new System.Drawing.Point(12, 112);
             this.gbFiltro.Name = "gbFiltro";
-            this.gbFiltro.Size = new System.Drawing.Size(1091, 84);
+            this.gbFiltro.Size = new System.Drawing.Size(1275, 84);
             this.gbFiltro.TabIndex = 66;
             this.gbFiltro.TabStop = false;
             this.gbFiltro.Text = "Busqueda por Producto";
+            // 
+            // lblCliente
+            // 
+            this.lblCliente.FormattingEnabled = true;
+            this.lblCliente.ItemHeight = 15;
+            this.lblCliente.Location = new System.Drawing.Point(53, 20);
+            this.lblCliente.Name = "lblCliente";
+            this.lblCliente.Size = new System.Drawing.Size(471, 169);
+            this.lblCliente.TabIndex = 73;
+            this.lblCliente.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lblCliente_KeyDown);
+            this.lblCliente.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lblCliente_MouseDoubleClick);
             // 
             // cboProveedor
             // 
@@ -685,28 +741,17 @@
             // 
             this.label16.AutoSize = true;
             this.label16.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label16.Location = new System.Drawing.Point(346, 594);
+            this.label16.Location = new System.Drawing.Point(881, 597);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(67, 17);
             this.label16.TabIndex = 91;
             this.label16.Text = "Vendedor";
             // 
-            // lblCliente
-            // 
-            this.lblCliente.FormattingEnabled = true;
-            this.lblCliente.ItemHeight = 15;
-            this.lblCliente.Location = new System.Drawing.Point(66, 31);
-            this.lblCliente.Name = "lblCliente";
-            this.lblCliente.Size = new System.Drawing.Size(471, 169);
-            this.lblCliente.TabIndex = 73;
-            this.lblCliente.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lblCliente_KeyDown);
-            this.lblCliente.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lblCliente_MouseDoubleClick);
-            // 
             // nudComision
             // 
             this.nudComision.DecimalPlaces = 2;
             this.nudComision.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nudComision.Location = new System.Drawing.Point(669, 591);
+            this.nudComision.Location = new System.Drawing.Point(1204, 594);
             this.nudComision.Minimum = new decimal(new int[] {
             1,
             0,
@@ -721,7 +766,7 @@
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(587, 594);
+            this.label8.Location = new System.Drawing.Point(1122, 597);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(70, 17);
             this.label8.TabIndex = 93;
@@ -741,13 +786,111 @@
             this.btnVenta.UseVisualStyleBackColor = false;
             this.btnVenta.Click += new System.EventHandler(this.btnVenta_Click);
             // 
+            // cboIngBrutos
+            // 
+            this.cboIngBrutos.FormattingEnabled = true;
+            this.cboIngBrutos.Location = new System.Drawing.Point(218, 36);
+            this.cboIngBrutos.Name = "cboIngBrutos";
+            this.cboIngBrutos.Size = new System.Drawing.Size(68, 23);
+            this.cboIngBrutos.TabIndex = 95;
+            this.cboIngBrutos.SelectedIndexChanged += new System.EventHandler(this.cboIngBrutos_SelectedIndexChanged);
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label18.Location = new System.Drawing.Point(168, 39);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(44, 17);
+            this.label18.TabIndex = 96;
+            this.label18.Text = "Ing. B";
+            // 
+            // txtIB
+            // 
+            this.txtIB.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtIB.Location = new System.Drawing.Point(1188, 626);
+            this.txtIB.Name = "txtIB";
+            this.txtIB.ReadOnly = true;
+            this.txtIB.Size = new System.Drawing.Size(84, 23);
+            this.txtIB.TabIndex = 98;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label20.Location = new System.Drawing.Point(1114, 630);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(68, 15);
+            this.label20.TabIndex = 100;
+            this.label20.Text = "Ing. Brutos";
+            // 
+            // txtIVA
+            // 
+            this.txtIVA.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtIVA.Location = new System.Drawing.Point(1024, 626);
+            this.txtIVA.Name = "txtIVA";
+            this.txtIVA.ReadOnly = true;
+            this.txtIVA.Size = new System.Drawing.Size(84, 23);
+            this.txtIVA.TabIndex = 97;
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label19.Location = new System.Drawing.Point(992, 630);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(26, 15);
+            this.label19.TabIndex = 99;
+            this.label19.Text = "IVA";
+            // 
+            // panelSelGrilla
+            // 
+            this.panelSelGrilla.BackColor = System.Drawing.Color.Silver;
+            this.panelSelGrilla.Controls.Add(this.btnNinguno);
+            this.panelSelGrilla.Controls.Add(this.btnTodos);
+            this.panelSelGrilla.Location = new System.Drawing.Point(12, 620);
+            this.panelSelGrilla.Name = "panelSelGrilla";
+            this.panelSelGrilla.Size = new System.Drawing.Size(189, 34);
+            this.panelSelGrilla.TabIndex = 101;
+            // 
+            // btnNinguno
+            // 
+            this.btnNinguno.BackColor = System.Drawing.Color.Gray;
+            this.btnNinguno.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnNinguno.Location = new System.Drawing.Point(101, 5);
+            this.btnNinguno.Name = "btnNinguno";
+            this.btnNinguno.Size = new System.Drawing.Size(75, 23);
+            this.btnNinguno.TabIndex = 1;
+            this.btnNinguno.Text = "Ninguno";
+            this.btnNinguno.UseVisualStyleBackColor = false;
+            this.btnNinguno.Click += new System.EventHandler(this.btnNinguno_Click);
+            // 
+            // btnTodos
+            // 
+            this.btnTodos.BackColor = System.Drawing.Color.Gray;
+            this.btnTodos.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnTodos.Location = new System.Drawing.Point(8, 5);
+            this.btnTodos.Name = "btnTodos";
+            this.btnTodos.Size = new System.Drawing.Size(75, 23);
+            this.btnTodos.TabIndex = 0;
+            this.btnTodos.Text = "Todos";
+            this.btnTodos.UseVisualStyleBackColor = false;
+            this.btnTodos.Click += new System.EventHandler(this.btnTodos_Click);
+            // 
             // frmDevolucion
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(1116, 659);
-            this.Controls.Add(this.lblCliente);
+            this.ClientSize = new System.Drawing.Size(1291, 697);
+            this.Controls.Add(this.panelSelGrilla);
+            this.Controls.Add(this.txtIB);
+            this.Controls.Add(this.label20);
+            this.Controls.Add(this.txtIVA);
+            this.Controls.Add(this.label19);
+            this.Controls.Add(this.lbDesc);
+            this.Controls.Add(this.label18);
+            this.Controls.Add(this.cboIngBrutos);
             this.Controls.Add(this.btnVenta);
             this.Controls.Add(this.nudComision);
             this.Controls.Add(this.label8);
@@ -768,7 +911,6 @@
             this.Controls.Add(this.nudRecargo);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.lbDesc);
             this.Controls.Add(this.nudDescuento);
             this.Controls.Add(this.dgvProductos);
             this.Controls.Add(this.cboIVA);
@@ -796,6 +938,7 @@
             this.gbFiltro.ResumeLayout(false);
             this.gbFiltro.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudComision)).EndInit();
+            this.panelSelGrilla.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -848,11 +991,25 @@
         private System.Windows.Forms.NumericUpDown nudComision;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button btnVenta;
+        private System.Windows.Forms.ComboBox cboProveedor;
+        private System.Windows.Forms.CheckBox cbProveedor;
+        private System.Windows.Forms.ComboBox cboIngBrutos;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.TextBox txtIB;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.TextBox txtIVA;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Panel panelSelGrilla;
+        private System.Windows.Forms.Button btnNinguno;
+        private System.Windows.Forms.Button btnTodos;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Sel;
         private System.Windows.Forms.DataGridViewTextBoxColumn Cod_Barras;
         private System.Windows.Forms.DataGridViewTextBoxColumn Cod_Proveedor;
         private System.Windows.Forms.DataGridViewTextBoxColumn Descripcion;
         private System.Windows.Forms.DataGridViewTextBoxColumn Stock;
         private System.Windows.Forms.DataGridViewTextBoxColumn precioSinIva;
+        private System.Windows.Forms.DataGridViewTextBoxColumn DescRec;
+        private System.Windows.Forms.DataGridViewTextBoxColumn SubtotalSinIVA;
         private System.Windows.Forms.DataGridViewTextBoxColumn precioConIva;
         private System.Windows.Forms.DataGridViewTextBoxColumn Cantidad;
         private System.Windows.Forms.DataGridViewTextBoxColumn Subtotal;
@@ -862,7 +1019,5 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn costo;
         private System.Windows.Forms.DataGridViewCheckBoxColumn fraccionado;
         private System.Windows.Forms.DataGridViewCheckBoxColumn dolarizado;
-        private System.Windows.Forms.ComboBox cboProveedor;
-        private System.Windows.Forms.CheckBox cbProveedor;
     }
 }

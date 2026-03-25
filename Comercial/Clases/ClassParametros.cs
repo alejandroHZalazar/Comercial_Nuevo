@@ -46,6 +46,15 @@ namespace Comercial.Clases
             return valor;
         }
 
+        public static Byte[] traerImagenLogotipo()
+        {
+            classDatos datos = new classDatos();
+            MySqlCommand nComando = new MySqlCommand("select imagen from parametros where modulo = 'login' and parametro = 'imagen'", datos.abrirConexion());
+            Byte[] valor = (Byte[])nComando.ExecuteScalar();
+            datos.cerrarConexion();
+            return valor;
+        }
+
         public static string buscarParametro(string unModulo, string unParametro)
         {
             try

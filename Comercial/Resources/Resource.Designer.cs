@@ -86,5 +86,32 @@ namespace Comercial.Resources {
                 return ResourceManager.GetString("Tipo_Comprobante_FC", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a NOTA DE CREDITO A.
+        /// </summary>
+        internal static string Tipo_Comprobante_NCA {
+            get {
+                return ResourceManager.GetString("Tipo_Comprobante_NCA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a NOTA DE CREDITO B.
+        /// </summary>
+        internal static string Tipo_Comprobante_NCB {
+            get {
+                return ResourceManager.GetString("Tipo_Comprobante_NCB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a NOTA DE CREDITO C.
+        /// </summary>
+        internal static string Tipo_Comprobante_NCC {
+            get {
+                return ResourceManager.GetString("Tipo_Comprobante_NCC", resourceCulture);
+            }
+        }
     }
 }

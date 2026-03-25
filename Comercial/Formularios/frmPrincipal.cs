@@ -394,5 +394,17 @@ namespace Comercial.Formularios
             Formularios.Facturacion.frmReporteFacturacion unFrmReporte = new Facturacion.frmReporteFacturacion();
             unFrmReporte.ShowDialog();
         }
+
+        private void dashboardVentasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Formularios.Estadisticas.frmDashboardVentas unFrmDashVentas = new Estadisticas.frmDashboardVentas();
+            unFrmDashVentas.ShowDialog();
+        }
+
+        private void saldosDeClientesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Formularios.Clientes.frmClientesConSaldo unFrnClientesSaldo = new Clientes.frmClientesConSaldo();
+            unFrnClientesSaldo.ShowDialog();
+        }
     }
 }

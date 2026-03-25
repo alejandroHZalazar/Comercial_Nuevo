@@ -37,6 +37,9 @@
             this.btnRankingProductos = new System.Windows.Forms.Button();
             this.dgvRanking = new System.Windows.Forms.DataGridView();
             this.btnRankigCliente = new System.Windows.Forms.Button();
+            this.cboProveedor = new System.Windows.Forms.ComboBox();
+            this.cbProveedor = new System.Windows.Forms.CheckBox();
+            this.btnExportar = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRanking)).BeginInit();
             this.SuspendLayout();
@@ -44,6 +47,9 @@
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.Color.Silver;
+            this.groupBox1.Controls.Add(this.btnExportar);
+            this.groupBox1.Controls.Add(this.cboProveedor);
+            this.groupBox1.Controls.Add(this.cbProveedor);
             this.groupBox1.Controls.Add(this.dtpDesde);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.dtpHasta);
@@ -51,14 +57,14 @@
             this.groupBox1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(910, 61);
+            this.groupBox1.Size = new System.Drawing.Size(1473, 61);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filtro";
             // 
             // dtpDesde
             // 
-            this.dtpDesde.Location = new System.Drawing.Point(52, 22);
+            this.dtpDesde.Location = new System.Drawing.Point(56, 22);
             this.dtpDesde.Name = "dtpDesde";
             this.dtpDesde.Size = new System.Drawing.Size(235, 23);
             this.dtpDesde.TabIndex = 6;
@@ -74,7 +80,7 @@
             // 
             // dtpHasta
             // 
-            this.dtpHasta.Location = new System.Drawing.Point(327, 22);
+            this.dtpHasta.Location = new System.Drawing.Point(339, 22);
             this.dtpHasta.Name = "dtpHasta";
             this.dtpHasta.Size = new System.Drawing.Size(235, 23);
             this.dtpHasta.TabIndex = 9;
@@ -82,7 +88,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(288, 26);
+            this.label2.Location = new System.Drawing.Point(296, 26);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(38, 15);
             this.label2.TabIndex = 8;
@@ -109,7 +115,7 @@
             this.dgvRanking.Location = new System.Drawing.Point(228, 90);
             this.dgvRanking.Name = "dgvRanking";
             this.dgvRanking.ReadOnly = true;
-            this.dgvRanking.Size = new System.Drawing.Size(869, 295);
+            this.dgvRanking.Size = new System.Drawing.Size(1257, 513);
             this.dgvRanking.TabIndex = 3;
             // 
             // btnRankigCliente
@@ -124,12 +130,42 @@
             this.btnRankigCliente.UseVisualStyleBackColor = false;
             this.btnRankigCliente.Click += new System.EventHandler(this.btnRankigCliente_Click);
             // 
+            // cboProveedor
+            // 
+            this.cboProveedor.FormattingEnabled = true;
+            this.cboProveedor.Location = new System.Drawing.Point(727, 22);
+            this.cboProveedor.Name = "cboProveedor";
+            this.cboProveedor.Size = new System.Drawing.Size(306, 23);
+            this.cboProveedor.TabIndex = 19;
+            // 
+            // cbProveedor
+            // 
+            this.cbProveedor.AutoSize = true;
+            this.cbProveedor.Location = new System.Drawing.Point(579, 24);
+            this.cbProveedor.Name = "cbProveedor";
+            this.cbProveedor.Size = new System.Drawing.Size(143, 19);
+            this.cbProveedor.TabIndex = 18;
+            this.cbProveedor.Text = "Filtrar Por Proveedor";
+            this.cbProveedor.UseVisualStyleBackColor = true;
+            // 
+            // btnExportar
+            // 
+            this.btnExportar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.btnExportar.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnExportar.Image = ((System.Drawing.Image)(resources.GetObject("btnExportar.Image")));
+            this.btnExportar.Location = new System.Drawing.Point(1053, 19);
+            this.btnExportar.Name = "btnExportar";
+            this.btnExportar.Size = new System.Drawing.Size(49, 28);
+            this.btnExportar.TabIndex = 10;
+            this.btnExportar.UseVisualStyleBackColor = false;
+            this.btnExportar.Click += new System.EventHandler(this.btnExportar_Click);
+            // 
             // frmRankingVentas
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(1112, 413);
+            this.ClientSize = new System.Drawing.Size(1497, 615);
             this.Controls.Add(this.btnRankigCliente);
             this.Controls.Add(this.dgvRanking);
             this.Controls.Add(this.btnRankingProductos);
@@ -161,5 +197,8 @@
         private System.Windows.Forms.Button btnRankingProductos;
         private System.Windows.Forms.DataGridView dgvRanking;
         private System.Windows.Forms.Button btnRankigCliente;
+        private System.Windows.Forms.ComboBox cboProveedor;
+        private System.Windows.Forms.CheckBox cbProveedor;
+        private System.Windows.Forms.Button btnExportar;
     }
 }

@@ -36,6 +36,7 @@ namespace Comercial.Formularios.Clientes
             this.txtSaldo = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.btnND = new System.Windows.Forms.Button();
+            this.btnImprimirCC = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCC)).BeginInit();
             this.SuspendLayout();
             // 
@@ -116,12 +117,28 @@ namespace Comercial.Formularios.Clientes
             this.btnND.UseVisualStyleBackColor = false;
             this.btnND.Click += new System.EventHandler(this.btnND_Click);
             // 
+            // btnImprimirCC
+            // 
+            this.btnImprimirCC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.btnImprimirCC.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnImprimirCC.Image = ((System.Drawing.Image)(resources.GetObject("btnImprimirCC.Image")));
+            this.btnImprimirCC.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnImprimirCC.Location = new System.Drawing.Point(746, 375);
+            this.btnImprimirCC.Name = "btnImprimirCC";
+            this.btnImprimirCC.Size = new System.Drawing.Size(121, 55);
+            this.btnImprimirCC.TabIndex = 5;
+            this.btnImprimirCC.Text = "Imprimir [F5]";
+            this.btnImprimirCC.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnImprimirCC.UseVisualStyleBackColor = false;
+            this.btnImprimirCC.Click += new System.EventHandler(this.btnImprimirCC_Click);
+            // 
             // frmClientesCC
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ClientSize = new System.Drawing.Size(879, 440);
+            this.Controls.Add(this.btnImprimirCC);
             this.Controls.Add(this.btnND);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtSaldo);
@@ -152,5 +169,6 @@ namespace Comercial.Formularios.Clientes
         private System.Windows.Forms.TextBox txtSaldo;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnND;
+        private System.Windows.Forms.Button btnImprimirCC;
     }
 }

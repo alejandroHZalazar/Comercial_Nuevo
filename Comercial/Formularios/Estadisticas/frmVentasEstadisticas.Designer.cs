@@ -30,6 +30,8 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmVentasEstadisticas));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.cboProveedor = new System.Windows.Forms.ComboBox();
+            this.cbProveedor = new System.Windows.Forms.CheckBox();
             this.btnPrint = new System.Windows.Forms.Button();
             this.btnBuscar = new System.Windows.Forms.Button();
             this.cboUsuario = new System.Windows.Forms.ComboBox();
@@ -51,8 +53,6 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label6 = new System.Windows.Forms.Label();
             this.nudComision = new System.Windows.Forms.NumericUpDown();
-            this.cboProveedor = new System.Windows.Forms.ComboBox();
-            this.cbProveedor = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvVentas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDetalle)).BeginInit();
@@ -81,16 +81,34 @@
             this.groupBox1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.Location = new System.Drawing.Point(12, 2);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(945, 117);
+            this.groupBox1.Size = new System.Drawing.Size(1046, 117);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filtro";
+            // 
+            // cboProveedor
+            // 
+            this.cboProveedor.FormattingEnabled = true;
+            this.cboProveedor.Location = new System.Drawing.Point(153, 87);
+            this.cboProveedor.Name = "cboProveedor";
+            this.cboProveedor.Size = new System.Drawing.Size(306, 23);
+            this.cboProveedor.TabIndex = 17;
+            // 
+            // cbProveedor
+            // 
+            this.cbProveedor.AutoSize = true;
+            this.cbProveedor.Location = new System.Drawing.Point(9, 89);
+            this.cbProveedor.Name = "cbProveedor";
+            this.cbProveedor.Size = new System.Drawing.Size(143, 19);
+            this.cbProveedor.TabIndex = 16;
+            this.cbProveedor.Text = "Filtrar Por Proveedor";
+            this.cbProveedor.UseVisualStyleBackColor = true;
             // 
             // btnPrint
             // 
             this.btnPrint.BackColor = System.Drawing.Color.Gray;
             this.btnPrint.Image = global::Comercial.Properties.Resources.printer_1;
-            this.btnPrint.Location = new System.Drawing.Point(884, 50);
+            this.btnPrint.Location = new System.Drawing.Point(986, 50);
             this.btnPrint.Name = "btnPrint";
             this.btnPrint.Size = new System.Drawing.Size(54, 36);
             this.btnPrint.TabIndex = 15;
@@ -101,7 +119,7 @@
             // 
             this.btnBuscar.BackColor = System.Drawing.Color.Gray;
             this.btnBuscar.Image = global::Comercial.Properties.Resources.musica_searcher;
-            this.btnBuscar.Location = new System.Drawing.Point(827, 50);
+            this.btnBuscar.Location = new System.Drawing.Point(929, 50);
             this.btnBuscar.Name = "btnBuscar";
             this.btnBuscar.Size = new System.Drawing.Size(54, 36);
             this.btnBuscar.TabIndex = 14;
@@ -111,7 +129,7 @@
             // cboUsuario
             // 
             this.cboUsuario.FormattingEnabled = true;
-            this.cboUsuario.Location = new System.Drawing.Point(573, 58);
+            this.cboUsuario.Location = new System.Drawing.Point(627, 58);
             this.cboUsuario.Name = "cboUsuario";
             this.cboUsuario.Size = new System.Drawing.Size(248, 23);
             this.cboUsuario.TabIndex = 13;
@@ -119,7 +137,7 @@
             // cbUsuario
             // 
             this.cbUsuario.AutoSize = true;
-            this.cbUsuario.Location = new System.Drawing.Point(444, 60);
+            this.cbUsuario.Location = new System.Drawing.Point(480, 60);
             this.cbUsuario.Name = "cbUsuario";
             this.cbUsuario.Size = new System.Drawing.Size(126, 19);
             this.cbUsuario.TabIndex = 12;
@@ -129,7 +147,7 @@
             // cboCliente
             // 
             this.cboCliente.FormattingEnabled = true;
-            this.cboCliente.Location = new System.Drawing.Point(135, 58);
+            this.cboCliente.Location = new System.Drawing.Point(153, 58);
             this.cboCliente.Name = "cboCliente";
             this.cboCliente.Size = new System.Drawing.Size(306, 23);
             this.cboCliente.TabIndex = 11;
@@ -187,7 +205,7 @@
             this.dgvVentas.Name = "dgvVentas";
             this.dgvVentas.ReadOnly = true;
             this.dgvVentas.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvVentas.Size = new System.Drawing.Size(945, 340);
+            this.dgvVentas.Size = new System.Drawing.Size(1046, 340);
             this.dgvVentas.TabIndex = 1;
             this.dgvVentas.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVentas_CellEnter);
             // 
@@ -200,7 +218,7 @@
             this.dgvDetalle.Location = new System.Drawing.Point(9, 22);
             this.dgvDetalle.Name = "dgvDetalle";
             this.dgvDetalle.ReadOnly = true;
-            this.dgvDetalle.Size = new System.Drawing.Size(930, 159);
+            this.dgvDetalle.Size = new System.Drawing.Size(1031, 159);
             this.dgvDetalle.TabIndex = 2;
             // 
             // label3
@@ -230,7 +248,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(448, 473);
+            this.label4.Location = new System.Drawing.Point(549, 473);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(66, 15);
             this.label4.TabIndex = 17;
@@ -240,7 +258,7 @@
             // 
             this.nudVenta.DecimalPlaces = 2;
             this.nudVenta.Enabled = false;
-            this.nudVenta.Location = new System.Drawing.Point(520, 469);
+            this.nudVenta.Location = new System.Drawing.Point(621, 469);
             this.nudVenta.Maximum = new decimal(new int[] {
             276447231,
             23283,
@@ -259,7 +277,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(614, 473);
+            this.label5.Location = new System.Drawing.Point(715, 473);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(65, 15);
             this.label5.TabIndex = 19;
@@ -269,7 +287,7 @@
             // 
             this.nudCosto.DecimalPlaces = 2;
             this.nudCosto.Enabled = false;
-            this.nudCosto.Location = new System.Drawing.Point(685, 469);
+            this.nudCosto.Location = new System.Drawing.Point(786, 469);
             this.nudCosto.Maximum = new decimal(new int[] {
             276447231,
             23283,
@@ -290,7 +308,7 @@
             this.groupBox2.Controls.Add(this.dgvDetalle);
             this.groupBox2.Location = new System.Drawing.Point(12, 502);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(945, 187);
+            this.groupBox2.Size = new System.Drawing.Size(1046, 187);
             this.groupBox2.TabIndex = 21;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Detalle";
@@ -299,7 +317,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(779, 473);
+            this.label6.Location = new System.Drawing.Point(880, 473);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(84, 15);
             this.label6.TabIndex = 22;
@@ -309,7 +327,7 @@
             // 
             this.nudComision.DecimalPlaces = 2;
             this.nudComision.Enabled = false;
-            this.nudComision.Location = new System.Drawing.Point(869, 469);
+            this.nudComision.Location = new System.Drawing.Point(970, 469);
             this.nudComision.Maximum = new decimal(new int[] {
             276447231,
             23283,
@@ -324,30 +342,12 @@
             this.nudComision.Size = new System.Drawing.Size(88, 23);
             this.nudComision.TabIndex = 23;
             // 
-            // cboProveedor
-            // 
-            this.cboProveedor.FormattingEnabled = true;
-            this.cboProveedor.Location = new System.Drawing.Point(158, 87);
-            this.cboProveedor.Name = "cboProveedor";
-            this.cboProveedor.Size = new System.Drawing.Size(306, 23);
-            this.cboProveedor.TabIndex = 17;
-            // 
-            // cbProveedor
-            // 
-            this.cbProveedor.AutoSize = true;
-            this.cbProveedor.Location = new System.Drawing.Point(9, 89);
-            this.cbProveedor.Name = "cbProveedor";
-            this.cbProveedor.Size = new System.Drawing.Size(143, 19);
-            this.cbProveedor.TabIndex = 16;
-            this.cbProveedor.Text = "Filtrar Por Proveedor";
-            this.cbProveedor.UseVisualStyleBackColor = true;
-            // 
             // frmVentasEstadisticas
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(969, 696);
+            this.ClientSize = new System.Drawing.Size(1070, 696);
             this.Controls.Add(this.nudComision);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.groupBox2);

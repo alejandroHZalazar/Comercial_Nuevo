@@ -30,37 +30,40 @@ namespace Comercial.Formularios.Estadisticas
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmExportarVentas));
-            this.btnDescargarDetalle = new System.Windows.Forms.Button();
+            this.btnDescargarResumen = new System.Windows.Forms.Button();
             this.dgvDetalle = new System.Windows.Forms.DataGridView();
             this.btnBuscarDetalle = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.dtpHastaDetalle = new System.Windows.Forms.DateTimePicker();
             this.dtpDesdeDetalle = new System.Windows.Forms.DateTimePicker();
             this.label6 = new System.Windows.Forms.Label();
+            this.btnDescargarDetalleVenta = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDetalle)).BeginInit();
             this.SuspendLayout();
             // 
-            // btnDescargarDetalle
+            // btnDescargarResumen
             // 
-            this.btnDescargarDetalle.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btnDescargarDetalle.Image = ((System.Drawing.Image)(resources.GetObject("btnDescargarDetalle.Image")));
-            this.btnDescargarDetalle.Location = new System.Drawing.Point(862, 70);
-            this.btnDescargarDetalle.Name = "btnDescargarDetalle";
-            this.btnDescargarDetalle.Size = new System.Drawing.Size(49, 28);
-            this.btnDescargarDetalle.TabIndex = 24;
-            this.btnDescargarDetalle.UseVisualStyleBackColor = true;
-            this.btnDescargarDetalle.Click += new System.EventHandler(this.btnDescargarDetalle_Click);
+            this.btnDescargarResumen.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDescargarResumen.Image = ((System.Drawing.Image)(resources.GetObject("btnDescargarResumen.Image")));
+            this.btnDescargarResumen.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnDescargarResumen.Location = new System.Drawing.Point(603, 24);
+            this.btnDescargarResumen.Name = "btnDescargarResumen";
+            this.btnDescargarResumen.Size = new System.Drawing.Size(176, 28);
+            this.btnDescargarResumen.TabIndex = 24;
+            this.btnDescargarResumen.Text = "     Descargar por Ventas";
+            this.btnDescargarResumen.UseVisualStyleBackColor = true;
+            this.btnDescargarResumen.Click += new System.EventHandler(this.btnDescargarDetalle_Click);
             // 
             // dgvDetalle
             // 
             this.dgvDetalle.AllowUserToAddRows = false;
             this.dgvDetalle.AllowUserToDeleteRows = false;
             this.dgvDetalle.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvDetalle.Location = new System.Drawing.Point(10, 70);
+            this.dgvDetalle.Location = new System.Drawing.Point(23, 70);
             this.dgvDetalle.Name = "dgvDetalle";
             this.dgvDetalle.ReadOnly = true;
             this.dgvDetalle.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvDetalle.Size = new System.Drawing.Size(837, 526);
+            this.dgvDetalle.Size = new System.Drawing.Size(951, 526);
             this.dgvDetalle.TabIndex = 23;
             // 
             // btnBuscarDetalle
@@ -108,13 +111,27 @@ namespace Comercial.Formularios.Estadisticas
             this.label6.TabIndex = 18;
             this.label6.Text = "Desde";
             // 
+            // btnDescargarDetalleVenta
+            // 
+            this.btnDescargarDetalleVenta.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDescargarDetalleVenta.Image = ((System.Drawing.Image)(resources.GetObject("btnDescargarDetalleVenta.Image")));
+            this.btnDescargarDetalleVenta.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnDescargarDetalleVenta.Location = new System.Drawing.Point(798, 24);
+            this.btnDescargarDetalleVenta.Name = "btnDescargarDetalleVenta";
+            this.btnDescargarDetalleVenta.Size = new System.Drawing.Size(176, 28);
+            this.btnDescargarDetalleVenta.TabIndex = 25;
+            this.btnDescargarDetalleVenta.Text = "     Descargar Detalle Ventas";
+            this.btnDescargarDetalleVenta.UseVisualStyleBackColor = true;
+            this.btnDescargarDetalleVenta.Click += new System.EventHandler(this.btnDescargarDetalleVenta_Click);
+            // 
             // frmExportarVentas
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(923, 608);
-            this.Controls.Add(this.btnDescargarDetalle);
+            this.ClientSize = new System.Drawing.Size(996, 608);
+            this.Controls.Add(this.btnDescargarDetalleVenta);
+            this.Controls.Add(this.btnDescargarResumen);
             this.Controls.Add(this.dgvDetalle);
             this.Controls.Add(this.btnBuscarDetalle);
             this.Controls.Add(this.label4);
@@ -139,12 +156,13 @@ namespace Comercial.Formularios.Estadisticas
 
         #endregion
 
-        private System.Windows.Forms.Button btnDescargarDetalle;
+        private System.Windows.Forms.Button btnDescargarResumen;
         private System.Windows.Forms.DataGridView dgvDetalle;
         private System.Windows.Forms.Button btnBuscarDetalle;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.DateTimePicker dtpHastaDetalle;
         private System.Windows.Forms.DateTimePicker dtpDesdeDetalle;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button btnDescargarDetalleVenta;
     }
 }

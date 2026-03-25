@@ -73,6 +73,7 @@
             this.ventasToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.rankingDeVentasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportarVentasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dashboardVentasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gestionDeCajaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.auditoriaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -81,6 +82,7 @@
             this.facturacionPorLotesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reportesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.saldosDeClientesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -407,7 +409,8 @@
             // clientesToolStripMenuItem
             // 
             this.clientesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aBMClientesToolStripMenuItem});
+            this.aBMClientesToolStripMenuItem,
+            this.saldosDeClientesToolStripMenuItem});
             this.clientesToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.clientesToolStripMenuItem.Image = global::Comercial.Properties.Resources.customer1;
             this.clientesToolStripMenuItem.Name = "clientesToolStripMenuItem";
@@ -417,7 +420,7 @@
             // aBMClientesToolStripMenuItem
             // 
             this.aBMClientesToolStripMenuItem.Name = "aBMClientesToolStripMenuItem";
-            this.aBMClientesToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.aBMClientesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aBMClientesToolStripMenuItem.Text = "ABM Clientes";
             this.aBMClientesToolStripMenuItem.Click += new System.EventHandler(this.aBMClientesToolStripMenuItem_Click);
             // 
@@ -426,7 +429,8 @@
             this.estadisticasToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ventasToolStripMenuItem1,
             this.rankingDeVentasToolStripMenuItem,
-            this.exportarVentasToolStripMenuItem});
+            this.exportarVentasToolStripMenuItem,
+            this.dashboardVentasToolStripMenuItem});
             this.estadisticasToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.estadisticasToolStripMenuItem.Image = global::Comercial.Properties.Resources.statistics1;
             this.estadisticasToolStripMenuItem.Name = "estadisticasToolStripMenuItem";
@@ -453,6 +457,13 @@
             this.exportarVentasToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.exportarVentasToolStripMenuItem.Text = "Exportar Ventas";
             this.exportarVentasToolStripMenuItem.Click += new System.EventHandler(this.exportarVentasToolStripMenuItem_Click);
+            // 
+            // dashboardVentasToolStripMenuItem
+            // 
+            this.dashboardVentasToolStripMenuItem.Name = "dashboardVentasToolStripMenuItem";
+            this.dashboardVentasToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.dashboardVentasToolStripMenuItem.Text = "Dashboard Ventas";
+            this.dashboardVentasToolStripMenuItem.Click += new System.EventHandler(this.dashboardVentasToolStripMenuItem_Click);
             // 
             // contableToolStripMenuItem
             // 
@@ -522,6 +533,13 @@
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
+            // 
+            // saldosDeClientesToolStripMenuItem
+            // 
+            this.saldosDeClientesToolStripMenuItem.Name = "saldosDeClientesToolStripMenuItem";
+            this.saldosDeClientesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saldosDeClientesToolStripMenuItem.Text = "Saldos de Clientes";
+            this.saldosDeClientesToolStripMenuItem.Click += new System.EventHandler(this.saldosDeClientesToolStripMenuItem_Click);
             // 
             // frmPrincipal
             // 
@@ -605,5 +623,7 @@
         private System.Windows.Forms.ToolStripMenuItem cierreZToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem facturacionPorLotesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem reportesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem dashboardVentasToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saldosDeClientesToolStripMenuItem;
     }
 }

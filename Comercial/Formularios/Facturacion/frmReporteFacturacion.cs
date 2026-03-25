@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace Comercial.Formularios.Facturacion
@@ -45,6 +40,28 @@ namespace Comercial.Formularios.Facturacion
             if (detalle.Rows.Count == 0) return;
 
             dgvDetalle.DataSource = detalle;
+
+            DataGridViewLinkColumn link = new DataGridViewLinkColumn();
+            link.DataPropertyName = "linkPDF";   // nombre del campo que viene de MySQL
+            link.HeaderText = "Link";
+            link.Name = "linkPDF";
+
+            dgvDetalle.Columns.Remove("linkPDF");
+            dgvDetalle.Columns.Add(link);
+        }
+
+        private void dgvDetalle_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dgvDetalle.Columns[e.ColumnIndex] is DataGridViewLinkColumn)
+            {
+                string url = dgvDetalle.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
+
+                System.Diagnostics.Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
         }
     }
 }

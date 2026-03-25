@@ -76,6 +76,7 @@ namespace Comercial.Formularios.Ventas
                 dgvVentasCabecera.Columns["Total"].DefaultCellStyle.Format = "N" + cantDec.ToString();
                 dgvVentasCabecera.Columns["Costo"].DefaultCellStyle.Format = "N" + cantDec.ToString();
                 dgvVentasCabecera.Columns["descuento"].DefaultCellStyle.Format = "N" + cantDec.ToString();
+                dgvVentasCabecera.Columns["IIBB"].DefaultCellStyle.Format = "N" + cantDec.ToString();
             }
             
         }
@@ -94,6 +95,9 @@ namespace Comercial.Formularios.Ventas
                 dgvDetalle.Columns["Precio_C_IVA"].DefaultCellStyle.Format = "N" + cantDec.ToString();
                 dgvDetalle.Columns["Cantidad"].DefaultCellStyle.Format = "N" + cantStock .ToString();
                 dgvDetalle.Columns["Subtotal"].DefaultCellStyle.Format = "N" + cantDec.ToString();
+                dgvDetalle.Columns["Precio"].DefaultCellStyle.Format = "N" + cantDec.ToString();
+                dgvDetalle.Columns["Descuento"].DefaultCellStyle.Format = "N" + cantDec.ToString();
+                dgvDetalle.Columns["Recargo"].DefaultCellStyle.Format = "N" + cantDec.ToString();
             }
         }
 
@@ -109,22 +113,36 @@ namespace Comercial.Formularios.Ventas
             {
                 if (haceNotaVentaTK == 0)
                 {
-                    Reportes.frmReport unFrmReport = new Reportes.frmReport();
+                    //Reportes.frmReport unFrmReport = new Reportes.frmReport();
 
-                    unFrmReport.nombreReporte = "ReportVenta.rdlc";
-                    List<string> var = new List<string>();
-                    var.Add(dgvVentasCabecera.CurrentRow.Cells["id"].Value.ToString());
-                    var.Add(Clases.ClassValidacion.traerEmpresa());
-                    var.Add("Tel: " + Clases.ClassValidacion.traerEmpresaTelefono());
-                    var.Add(Clases.ClassValidacion.traerEmpresaDireccion());
-                    var.Add(Clases.ClassValidacion.traerEmpresaCiudad());
-                    var.Add("CUIT: " + Clases.ClassValidacion.traerEmpresaCuit());
-                    var.Add(dgvVentasCabecera.CurrentRow.Cells["IVA"].Value.ToString());
-                    var.Add(cantDec.ToString());
-                    var.Add(cantStock.ToString());
-                    var.Add(Clases.ClassValidacion.traerRazonSocial());
-                    unFrmReport.variable = var;
-                    unFrmReport.ShowDialog();
+                    //unFrmReport.nombreReporte = "ReportVenta.rdlc";
+                    //List<string> var = new List<string>();
+                    //var.Add(dgvVentasCabecera.CurrentRow.Cells["id"].Value.ToString());
+                    //var.Add(Clases.ClassValidacion.traerEmpresa());
+                    //var.Add("Tel: " + Clases.ClassValidacion.traerEmpresaTelefono());
+                    //var.Add(Clases.ClassValidacion.traerEmpresaDireccion());
+                    //var.Add(Clases.ClassValidacion.traerEmpresaCiudad());
+                    //var.Add("CUIT: " + Clases.ClassValidacion.traerEmpresaCuit());
+                    //var.Add(dgvVentasCabecera.CurrentRow.Cells["IVA"].Value.ToString());
+                    //var.Add(cantDec.ToString());
+                    //var.Add(cantStock.ToString());
+                    //var.Add(Clases.ClassValidacion.traerRazonSocial());
+                    //unFrmReport.variable = var;
+                    //unFrmReport.ShowDialog();
+                    Clases.ClassReportesITextSharp instItextSahrp = new ClassReportesITextSharp();
+                    DialogResult result = MessageBox.Show("¿Desea descargar en formato PDF?\n(Sí = PDF / No = Excel)", "Exportar", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                    if (result == DialogResult.Cancel) return;
+
+                    if (result == DialogResult.Yes)
+                    {
+
+                        instItextSahrp.GenerarVentasPDF((long)dgvVentasCabecera.CurrentRow.Cells["id"].Value);
+                    }
+                    else
+                    {
+                        instItextSahrp.GenerarVentasExcel((long)dgvVentasCabecera.CurrentRow.Cells["id"].Value);
+                    }
                 }
                 else
                 {                    

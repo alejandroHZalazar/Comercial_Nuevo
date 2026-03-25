@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Comercial.Clases;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,8 +11,11 @@ using System.Windows.Forms;
 
 namespace Comercial.Formularios.Clientes
 {
+
     public partial class frmNC : Form
     {
+        int facturaElectronica = Clases.ClassParametros.buscarParametro("ventas", "facturaElectronica") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "facturaElectronica"));
+        int puntoVenta = Clases.ClassParametros.buscarParametro("PuntoVenta", Environment.MachineName) == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("PuntoVenta", Environment.MachineName));
         int _cliente;
         decimal _importe;
 
@@ -28,10 +32,25 @@ namespace Comercial.Formularios.Clientes
             nudImputar.Select(0, nudImputar.Text.Length);
         }
 
-        private void btnGrabar_Click(object sender, EventArgs e)
+        private async void btnGrabar_Click(object sender, EventArgs e)
         {
             if (fomularioValido())
             {
+                if (facturaElectronica == 1)
+                {
+                    ClassFacturacionElectronica instFactElect = new ClassFacturacionElectronica();
+                    Formularios.Facturacion.frmIngresarDatosNC unFrmIngresarDatosNC = new Facturacion.frmIngresarDatosNC(nudImputar.Value,null, null, false);
+                    unFrmIngresarDatosNC.ShowDialog();
+                    if (unFrmIngresarDatosNC.DialogResult == DialogResult.OK && unFrmIngresarDatosNC._compAsociado > 0)
+                    {
+                        var status = await instFactElect.emitirNotaCredito(0, unFrmIngresarDatosNC._compAsociado, unFrmIngresarDatosNC._fechaCompAsoc, unFrmIngresarDatosNC._importe, _cliente, unFrmIngresarDatosNC._iva, unFrmIngresarDatosNC._impuesto);
+
+                        if (!status)
+                        {
+                            MessageBox.Show(this, "Ha ocurrido un error en el proceso de emisión de Nota de Crédito", "DEVOLUCION", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
                 Clases.ClassClientes instClie = new Clases.ClassClientes();
                 var salida = instClie.NC_Cliente(_cliente, nudImputar.Value, rbtObserv.Text.Trim());
                 if (salida != -1)

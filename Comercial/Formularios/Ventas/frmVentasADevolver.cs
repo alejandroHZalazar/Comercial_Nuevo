@@ -121,6 +121,9 @@ namespace Comercial.Formularios.Ventas
                 dgvProductos.Columns["Precio C/IVA"].DefaultCellStyle.Format = "N" + cantDec.ToString();
                 dgvProductos.Columns["Cantidad"].DefaultCellStyle.Format = "N" + cantStock.ToString();
                 dgvProductos.Columns["Subtotal"].DefaultCellStyle.Format = "N" + cantDec.ToString();
+                dgvProductos.Columns["Descuento"].DefaultCellStyle.Format = "N" + cantDec.ToString();
+                dgvProductos.Columns["Recargo"].DefaultCellStyle.Format = "N" + cantDec.ToString();
+                dgvProductos.Columns["Subtotal_S_IVA"].DefaultCellStyle.Format = "N" + cantDec.ToString();
             }
         }
 
@@ -130,7 +133,7 @@ namespace Comercial.Formularios.Ventas
             {
                 ((frmDevolucion)this.llamador).cargarDatosCliente(1, int.Parse(dgvVenta.CurrentRow.Cells["fk_cliente"].Value.ToString()));
                 ((frmDevolucion)this.llamador).unCliente = int.Parse(dgvVenta.CurrentRow.Cells["fk_cliente"].Value.ToString());
-                ((frmDevolucion)this.llamador).cargarVenta(int.Parse(dgvVenta.CurrentRow.Cells["id"].Value.ToString()), decimal.Parse(dgvVenta.CurrentRow.Cells["IVA"].Value.ToString()), decimal.Parse(dgvVenta.CurrentRow.Cells["Descuento"].Value.ToString()), decimal.Parse(dgvVenta.CurrentRow.Cells["Recargo"].Value.ToString()), int.Parse(dgvVenta.CurrentRow.Cells["fk_vendedor"].Value.ToString()), decimal.Parse(dgvVenta.CurrentRow.Cells["Comision"].Value.ToString()));
+                ((frmDevolucion)this.llamador).cargarVenta(int.Parse(dgvVenta.CurrentRow.Cells["id"].Value.ToString()), decimal.Parse(dgvVenta.CurrentRow.Cells["IVA"].Value.ToString()), decimal.Parse(dgvVenta.CurrentRow.Cells["Descuento"].Value.ToString()), decimal.Parse(dgvVenta.CurrentRow.Cells["Recargo"].Value.ToString()), int.Parse(dgvVenta.CurrentRow.Cells["fk_vendedor"].Value.ToString()), decimal.Parse(dgvVenta.CurrentRow.Cells["Comision"].Value.ToString()), decimal.Parse(dgvVenta.CurrentRow.Cells["impuesto"].Value.ToString()));
                 this.Close();
             }
         }

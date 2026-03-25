@@ -126,4 +126,13 @@
   <data name="Tipo_Comprobante_FC" xml:space="preserve">
     <value>FACTURA C</value>
   </data>
+  <data name="Tipo_Comprobante_NCA" xml:space="preserve">
+    <value>NOTA DE CREDITO A</value>
+  </data>
+  <data name="Tipo_Comprobante_NCB" xml:space="preserve">
+    <value>NOTA DE CREDITO B</value>
+  </data>
+  <data name="Tipo_Comprobante_NCC" xml:space="preserve">
+    <value>NOTA DE CREDITO C</value>
+  </data>
 </root>

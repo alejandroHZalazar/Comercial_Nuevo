@@ -1,8 +1,12 @@
-﻿using System;
+﻿using iTextSharp.text;
+using iTextSharp.text.pdf;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,7 +33,7 @@ namespace Comercial.Formularios.Clientes
             Clases.ClassClientes instClie = new Clases.ClassClientes();
             dgvCC.DataSource = instClie.traerCC(_cliente);
             dgvCC.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dgvCC.Columns["Debe"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;            
+            dgvCC.Columns["Debe"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             dgvCC.Columns["Debe"].DefaultCellStyle.Format = "C2";
             dgvCC.Columns["Haber"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             dgvCC.Columns["Haber"].DefaultCellStyle.Format = "C2";
@@ -46,7 +50,7 @@ namespace Comercial.Formularios.Clientes
             {
                 if (decimal.Parse(fila.Cells["Saldo"].Value.ToString()) > 0)
                 {
-                    if (decimal.Parse(fila.Cells["Debe"].Value.ToString()) > 0 )
+                    if (decimal.Parse(fila.Cells["Debe"].Value.ToString()) > 0)
                     {
                         saldo += decimal.Parse(fila.Cells["Saldo"].Value.ToString());
                     }
@@ -60,15 +64,31 @@ namespace Comercial.Formularios.Clientes
             return saldo;
         }
 
-        private void imprimirCobro (DataTable recibo)
+        private void imprimirCobro(DataTable recibo)
         {
             Clases.ClassReportesITextSharp instReport = new Clases.ClassReportesITextSharp();
+            Clases.ClassClientes instClie = new Clases.ClassClientes();
             var logo = Clases.ClassParametros.buscarParametro("login", "logo");
             var nombreEmpresa = Clases.ClassParametros.buscarParametro("empresa", "nombre");
             var direccionEmpresa = Clases.ClassParametros.buscarParametro("empresa", "direccion");
             var telEmpresa = Clases.ClassParametros.buscarParametro("empresa", "telefono");
             var cuilEmpresa = Clases.ClassParametros.buscarParametro("empresa", "cuit");
-            instReport.GenerarYMostrarRecibo(recibo.Rows[0]["Recibo"].ToString(), logo, nombreEmpresa, direccionEmpresa, telEmpresa, cuilEmpresa, DateTime.Parse(recibo.Rows[0]["Fecha"].ToString()), recibo.Rows[0]["Cliente"].ToString(), recibo.Rows[0]["cuil"].ToString(), recibo.Rows[0]["Observaciones"].ToString(), decimal.Parse(recibo.Rows[0]["ImporteTotal"].ToString()));
+            var saldo = ObtenerSaldoCliente(instClie.traerCC(_cliente));
+            instReport.GenerarYMostrarRecibo(recibo.Rows[0]["Recibo"].ToString(), logo, nombreEmpresa, direccionEmpresa, telEmpresa, cuilEmpresa, DateTime.Parse(recibo.Rows[0]["Fecha"].ToString()), recibo.Rows[0]["Cliente"].ToString(), recibo.Rows[0]["cuil"].ToString(), recibo.Rows[0]["Observaciones"].ToString(), decimal.Parse(recibo.Rows[0]["ImporteTotal"].ToString()), saldo);
+        }
+
+        private decimal ObtenerSaldoCliente(DataTable dt)
+        {
+            decimal totalDebe = 0;
+            decimal totalHaber = 0;
+
+            foreach (DataRow row in dt.Rows)
+            {
+                totalDebe += Convert.ToDecimal(row["Debe"]);
+                totalHaber += Convert.ToDecimal(row["Haber"]);
+            }
+
+            return totalDebe - totalHaber;
         }
         private void btnCobrar_Click(object sender, EventArgs e)
         {
@@ -95,24 +115,24 @@ namespace Comercial.Formularios.Clientes
 
             if (planPagoDT.Rows.Count == 0) return;
             var planPagoId = int.Parse(planPagoDT.Rows[0]["id"].ToString());
-            Formularios.Ventas.frmImputacionVenta unFrmImputacion = new Formularios.Ventas.frmImputacionVenta(calcularTotal() <= 0? 0: calcularTotal(), planPagoId);
+            Formularios.Ventas.frmImputacionVenta unFrmImputacion = new Formularios.Ventas.frmImputacionVenta(calcularTotal() <= 0 ? 0 : calcularTotal(), planPagoId);
             unFrmImputacion.ShowDialog();
             if (unFrmImputacion.DialogResult == DialogResult.OK)
             {
                 dtFormasPAgo = unFrmImputacion.unDT;
                 var imputacion = dtFormasPAgo.Sum(x => x.Importe);
                 if (imputacion <= 0) return;
-                var salida = instClie.CobrarCliente(_cliente, imputacion,tieneCaja,CajaId,dtFormasPAgo[0].idMedio);
+                var salida = instClie.CobrarCliente(_cliente, imputacion, tieneCaja, CajaId, dtFormasPAgo[0].idMedio);
 
                 if (salida != -1)
                 {
                     MessageBox.Show(this, "Cobro Registrado con éxito!!", "CLIENTES", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    
+
                     var recibo = instClie.traerDatosRecibo(salida);
                     if (recibo.Rows.Count > 0)
                     {
                         imprimirCobro(recibo);
-                     }
+                    }
                     cargarGrilla();
                 }
                 else
@@ -148,9 +168,14 @@ namespace Comercial.Formularios.Clientes
                 btnNC_Click(null, null);
             }
 
-            if (e.KeyData ==  Keys.F4)
+            if (e.KeyData == Keys.F4)
             {
                 btnND_Click(null, null);
+            }
+
+            if (e.KeyData == Keys.F5)
+            {
+                btnImprimirCC_Click(null, null);
             }
         }
 
@@ -171,6 +196,188 @@ namespace Comercial.Formularios.Clientes
                     imprimirCobro(recibo);
                 }
             }
+        }
+
+        private void btnImprimirCC_Click(object sender, EventArgs e)
+        {
+            GenerarEstadoCuentaPDF();
+        }
+
+        private void GenerarEstadoCuentaPDF()
+        {
+            var instClie = new Clases.ClassClientes();
+            DataTable dt = instClie.traerCC(_cliente);
+            DataTable cliente = instClie.traeTodosDatos(_cliente);
+            if (cliente.Rows.Count == 0) return;
+
+            // 📅 Fecha desde (primer día del mes - 2 meses)
+            DateTime fechaDesde = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-2);
+
+            // Filtrar
+            var rowsFiltradas = dt.AsEnumerable()
+                .Where(r => Convert.ToDateTime(r["Fecha"]) >= fechaDesde);
+
+            if (!rowsFiltradas.Any())
+            {
+                MessageBox.Show("No hay movimientos en el período.");
+                return;
+            }
+
+            DataTable dtFiltrado = rowsFiltradas.CopyToDataTable();
+
+            // 🧾 Crear PDF
+            string downloads = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+
+            string nombreSeguro = string.Join("_", cliente.Rows[0]["nombreComercial"].ToString().Split(Path.GetInvalidFileNameChars()));
+
+            string path = Path.Combine(downloads, $"EstadoCuenta_{nombreSeguro}_{DateTime.Now:yyyyMMdd}.pdf");
+
+            using (FileStream fs = new FileStream(path, FileMode.Create))
+            {
+                Document doc = new Document(PageSize.A4, 20, 20, 20, 20);
+                PdfWriter.GetInstance(doc, fs);
+                doc.Open();
+
+                // 🔹 HEADER
+                AgregarHeader(doc);
+
+                // 🔹 SUBTITULO
+                doc.Add(new Paragraph($"Estado de cuenta desde {fechaDesde:dd/MM/yyyy}"));
+                doc.Add(new Paragraph($"Sres: {cliente.Rows[0]["nombreComercial"]}"));
+                doc.Add(new Paragraph(" "));
+
+                // 🔹 TABLA
+                // 🔹 FUENTES
+                var fontHeader = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 10);
+                var fontNormal = FontFactory.GetFont(FontFactory.HELVETICA, 9);
+
+                // 🔹 TABLA (SIN REFERENCIA)
+                PdfPTable table = new PdfPTable(5);
+                table.WidthPercentage = 100;
+                table.SetWidths(new float[] { 2, 2.25f, 2, 2, 2 });
+
+                // 🔹 HEADER
+                PdfPCell HeaderCell(string text)
+                {
+                    var cell = new PdfPCell(new Phrase(text, fontHeader));
+                    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                    cell.BackgroundColor = BaseColor.LIGHT_GRAY;
+                    return cell;
+                }
+
+                table.AddCell(HeaderCell("Fecha"));
+                table.AddCell(HeaderCell("Movimiento"));
+                table.AddCell(HeaderCell("Debe"));
+                table.AddCell(HeaderCell("Haber"));
+                table.AddCell(HeaderCell("Saldo"));
+
+                // 🔹 FUNCIONES CELDAS
+                PdfPCell CellLeft(string text)
+                {
+                    var cell = new PdfPCell(new Phrase(text, fontNormal));
+                    cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                    return cell;
+                }
+
+                PdfPCell CellRight(string text)
+                {
+                    var cell = new PdfPCell(new Phrase(text, fontNormal));
+                    cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                    return cell;
+                }
+
+                // 🔹 TOTALES
+                decimal totalDebe = 0;
+                decimal totalHaber = 0;
+                decimal totalSaldo = 0;
+
+                // 🔹 DATOS
+                foreach (DataRow row in dtFiltrado.Rows)
+                {
+                    decimal debe = Convert.ToDecimal(row["Debe"]);
+                    decimal haber = Convert.ToDecimal(row["Haber"]);
+                    decimal saldo = Convert.ToDecimal(row["Saldo"]);
+
+                    table.AddCell(CellLeft(Convert.ToDateTime(row["Fecha"]).ToString("dd/MM/yyyy")));
+                    table.AddCell(CellLeft(row["Movimiento"].ToString()));
+                    table.AddCell(CellRight(debe.ToString("C2")));
+                    table.AddCell(CellRight(haber.ToString("C2")));
+                    table.AddCell(CellRight(saldo.ToString("C2")));
+
+                    totalDebe += debe;
+                    totalHaber += haber;
+                    totalSaldo += saldo; // 🔥 SUMATORIA
+                }
+
+                // 🔹 FILA DE TOTALES
+                PdfPCell totalLabel = new PdfPCell(new Phrase("TOTALES", fontHeader));
+                totalLabel.Colspan = 2;
+                totalLabel.HorizontalAlignment = Element.ALIGN_RIGHT;
+                totalLabel.BackgroundColor = BaseColor.LIGHT_GRAY;
+
+                table.AddCell(totalLabel);
+                table.AddCell(CellRight(totalDebe.ToString("C2")));
+                table.AddCell(CellRight(totalHaber.ToString("C2")));
+                table.AddCell(CellRight(totalSaldo.ToString("C2")));
+
+                doc.Add(table);
+
+                // 🔹 SALDO FINAL
+                doc.Add(new Paragraph(" "));
+                doc.Add(new Paragraph($"Saldo Total: {totalSaldo.ToString("C2")}", fontHeader));
+
+                doc.Close();
+
+                System.Diagnostics.Process.Start(new ProcessStartInfo
+                {
+                    FileName = path,
+                    UseShellExecute = true
+                });
+            }
+        }
+
+        private void AgregarHeader(Document doc)
+        {
+            byte[] logoBytes = Clases.ClassParametros.traerImagenLogotipo();
+
+            PdfPTable header = new PdfPTable(2);
+            header.WidthPercentage = 100;
+            header.SetWidths(new float[] { 1, 3 });
+
+            // 🖼 LOGO
+            if (logoBytes != null)
+            {
+                iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance(logoBytes);
+                logo.ScaleToFit(80f, 80f);
+                PdfPCell cellLogo = new PdfPCell(logo);
+                cellLogo.Border = 0;
+                header.AddCell(cellLogo);
+            }
+            else
+            {
+                header.AddCell("");
+            }
+
+            // 🏢 DATOS EMPRESA
+
+
+            var NombreEmpresa = Clases.ClassParametros.buscarParametro("empresa", "nombre");
+            var telEmpresa = Clases.ClassParametros.buscarParametro("empresa", "telefono");
+            var dirEmpresa = Clases.ClassParametros.buscarParametro("empresa", "direccion") + " " + Clases.ClassParametros.buscarParametro("empresa", "localidad");
+            var mailEmpresa = Clases.ClassParametros.buscarParametro("empresa", "mail");
+
+            Paragraph datos = new Paragraph();
+            datos.Add(new Chunk(NombreEmpresa + "\n", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12)));
+            datos.Add(new Chunk($"Tel: {telEmpresa}\n"));
+            datos.Add(new Chunk($"Dirección: {dirEmpresa}\n"));
+            datos.Add(new Chunk($"Email: {mailEmpresa}\n"));
+
+            PdfPCell cellDatos = new PdfPCell(datos);
+            cellDatos.Border = 0;
+            header.AddCell(cellDatos);
+
+            doc.Add(header);
+            doc.Add(new Paragraph(" "));
         }
     }
 }

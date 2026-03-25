@@ -8,20 +8,20 @@ namespace Comercial.Enums
 {
     public enum ProvinciasEnum
     {
-        CORDOBA = 1,
-        CATAMARCA = 2,
-        CHACO = 3,
-        CHUBUT = 4,
-        CIUDAD_AUTONOMA_BUENOS_AIRES = 5,
-        CORRIENTES = 6,
-        ENTRE_RIOS = 7,
-        FORMOSA = 8,
-        JUJUY = 9,
-        LA_PAMPA = 10,
-        LA_RIOJA = 11,
-        MENDOZA = 12,
-        MISIONES = 13,
-        NEUQUEN = 14,
+        BUENOS_AIRES = 2,
+        CATAMARCA = 3,
+        CHACO = 4,
+        CHUBUT = 5,
+        CORDOBA = 6,
+        CORRIENTES = 7,
+        ENTRE_RIOS = 8,
+        FORMOSA = 9,
+        JUJUY = 10,
+        LA_PAMPA = 11,
+        LA_RIOJA = 12,
+        MENDOZA = 13,
+        MISIONES = 14,
+        NEUQUEN = 15,
         RIO_NEGRO = 16,
         SALTA = 17,
         SAN_JUAN = 18,
@@ -31,7 +31,6 @@ namespace Comercial.Enums
         SANTIAGO_DEL_ESTERO = 22,
         TIERRA_DEL_FUEGO = 23,
         TUCUMAN = 24,
-        OTRO = 25,
-        BUENOS_AIRES = 26
+        OTRO = 26
     }
 }

@@ -37,24 +37,60 @@ namespace Comercial.Clases
             return t2;
         }
 
-        public DataTable traerVentasRankingProductos(DateTime  desde, DateTime hasta)
+        public DataTable traerVentasRankingProductos(DateTime  desde, DateTime hasta, int? unProveedor)
         {
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_Ventas_RankingProductos", instDatos.abrirConexion());
             a1.SelectCommand.CommandType = CommandType.StoredProcedure;
             a1.SelectCommand.Parameters.AddWithValue("desde", desde);
             a1.SelectCommand.Parameters.AddWithValue("hasta", hasta);
+            a1.SelectCommand.Parameters.AddWithValue("unProveedorId", unProveedor);
 
             DataTable t2 = new DataTable();
             a1.Fill(t2);
             return t2;
         }
 
-        public DataTable traerVentasRankingClientes(DateTime  desde, DateTime hasta)
+        public DataTable traerVentasRankingClientes(DateTime  desde, DateTime hasta, int? unProveedor)
         {
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_Ventas_RankingClientes", instDatos.abrirConexion());
             a1.SelectCommand.CommandType = CommandType.StoredProcedure;
             a1.SelectCommand.Parameters.AddWithValue("desde", desde);
             a1.SelectCommand.Parameters.AddWithValue("hasta", hasta);
+            a1.SelectCommand.Parameters.AddWithValue("unProveedorId", unProveedor);
+
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            return t2;
+        }
+
+        public DataTable traerDashboardVentasTotales()
+        {
+            MySqlDataAdapter a1 = new MySqlDataAdapter("sp_dashboard_Ventas_Totales", instDatos.abrirConexion());
+            a1.SelectCommand.CommandType = CommandType.StoredProcedure;            
+
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            return t2;
+        }
+
+        public DataTable traerDashboardVentasMes(DateTime unDesde, DateTime unHasta)
+        {
+            MySqlDataAdapter a1 = new MySqlDataAdapter("sp_dashboard_VentasMes", instDatos.abrirConexion());
+            a1.SelectCommand.CommandType = CommandType.StoredProcedure;
+            a1.SelectCommand.Parameters.AddWithValue("desde", unDesde);
+            a1.SelectCommand.Parameters.AddWithValue("hasta", unHasta);
+
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            return t2;
+        }
+
+        public DataTable traerDashboardVentasClientes(DateTime unDesde, DateTime unHasta)
+        {
+            MySqlDataAdapter a1 = new MySqlDataAdapter("sp_dashboard_VentasClientes", instDatos.abrirConexion());
+            a1.SelectCommand.CommandType = CommandType.StoredProcedure;
+            a1.SelectCommand.Parameters.AddWithValue("desde", unDesde);
+            a1.SelectCommand.Parameters.AddWithValue("hasta", unHasta);
 
             DataTable t2 = new DataTable();
             a1.Fill(t2);

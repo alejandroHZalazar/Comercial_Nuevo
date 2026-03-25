@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 
@@ -55,6 +56,16 @@ namespace Comercial.Clases
             return t2;
         }
 
+        public DataTable imprimirDevolucion(long unId)
+        {
+            MySqlDataAdapter a1 = new MySqlDataAdapter("sp_DevolucionPrint", instDatos.abrirConexion());
+            a1.SelectCommand.CommandType = CommandType.StoredProcedure;
+            a1.SelectCommand.Parameters.AddWithValue("unaDevolucion", unId);
+
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            return t2;
+        }
         public DataTable traerDetalleVentaADevolver(long unaVenta)
         {
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_Ventas_TraerParaDevolverDetalle", instDatos.abrirConexion());
@@ -148,14 +159,15 @@ namespace Comercial.Clases
             }
         }
 
-        public long grabarCabeceraDevolucion(decimal unTotal, decimal unCosto, int unCliente, int unCajero, decimal unIva, decimal unDescuento, decimal unRecargo, int unVendedor, decimal unaComision)
+        public long grabarDevolucion(decimal unTotal, decimal unCosto, int unCliente, int unCajero, decimal unIva, decimal unDescuento, decimal unRecargo, int unVendedor, decimal unaComision, decimal unImpuesto,
+                                        string unDetalle, int unLlevaCC)
         {
             try
             {
                 MySqlCommand cmd = new MySqlCommand();
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Connection = instDatos.abrirConexion();
-                cmd.CommandText = "sp_DevolucionGrabarCabecera";
+                cmd.CommandText = "sp_DevolucionAddDevolucion";
 
                 cmd.Parameters.AddWithValue("unTotal", unTotal);
                 cmd.Parameters.AddWithValue("unCosto", unCosto);
@@ -166,6 +178,9 @@ namespace Comercial.Clases
                 cmd.Parameters.AddWithValue("unRecargo", unRecargo);
                 cmd.Parameters.AddWithValue("unVendedor", unVendedor);
                 cmd.Parameters.AddWithValue("unaComision", unaComision);
+                cmd.Parameters.AddWithValue("unImpuesto", unImpuesto);
+                cmd.Parameters.AddWithValue("detalle", unDetalle);
+                cmd.Parameters.AddWithValue("llevaCC", unLlevaCC);
 
                 MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int64);
                 salida.Direction = ParameterDirection.Output;
@@ -280,8 +295,8 @@ namespace Comercial.Clases
             return valor;
         }
 
-        public long grabarVenta(decimal unTotal, decimal unCosto, int unCliente, int unCajero, decimal unIva, decimal unDescuento, 
-                                decimal unRecargo, int unVendedor, decimal comision, decimal unImpuesto, string unDetalle, int llevaCC, 
+        public long grabarVenta(decimal unTotal, decimal unCosto, int unCliente, int unCajero, decimal unIva, decimal? unDescuento, 
+                                decimal? unRecargo, int unVendedor, decimal comision, decimal unImpuesto, string unDetalle, int llevaCC, 
                                 int imputaEnVenta, int tieneMediosPagos, decimal ImporteCobro, string DetallePlanPago, int haceCaja, int idCaja)
         {
             try
@@ -357,6 +372,17 @@ namespace Comercial.Clases
             return t2;
         }
 
+        public DataTable traerVentaDetalleProductoCsv(DateTime desde, DateTime hasta)
+        {
+            MySqlDataAdapter a1 = new MySqlDataAdapter("sp_Ventas_DetalleProductosCSV", instDatos.abrirConexion());
+            a1.SelectCommand.CommandType = CommandType.StoredProcedure;
+            a1.SelectCommand.Parameters.AddWithValue("desde", desde);
+            a1.SelectCommand.Parameters.AddWithValue("hasta", hasta);
+
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            return t2;
+        }
         public DataTable TraerCabeceraFactura(long unaVenta)
         {
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_Ventas_TraerCabeceraFactura", instDatos.abrirConexion());
@@ -373,6 +399,28 @@ namespace Comercial.Clases
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_Ventas_TraerDetalleFactura", instDatos.abrirConexion());
             a1.SelectCommand.CommandType = CommandType.StoredProcedure;
             a1.SelectCommand.Parameters.AddWithValue("unaVenta", unaVenta);
+
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            return t2;
+        }
+
+        public DataTable TraerCabeceraNC(long unaDevolucion)
+        {
+            MySqlDataAdapter a1 = new MySqlDataAdapter("sp_Devolucion_TraerCabeceraNotaCredito", instDatos.abrirConexion());
+            a1.SelectCommand.CommandType = CommandType.StoredProcedure;
+            a1.SelectCommand.Parameters.AddWithValue("UnaDevolucion", unaDevolucion);
+
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            return t2;
+        }
+
+        public DataTable TraerDetalleNC(long unaDevolucion)
+        {
+            MySqlDataAdapter a1 = new MySqlDataAdapter("sp_Devolucion_TraerDetalleNotaCredito", instDatos.abrirConexion());
+            a1.SelectCommand.CommandType = CommandType.StoredProcedure;
+            a1.SelectCommand.Parameters.AddWithValue("UnaDevolucion", unaDevolucion);
 
             DataTable t2 = new DataTable();
             a1.Fill(t2);
@@ -463,33 +511,6 @@ namespace Comercial.Clases
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nombre));
             }
         }
-
-            public void ExportarVentasCsv(DataTable detalle)
-            {
-
-                string carpetaDescargas = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
-
-                string archivo = "Ventas_" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss") + ".csv";
-
-                string path = Path.Combine(carpetaDescargas, archivo);
-
-                var sb = new StringBuilder();
-
-
-                // Columnas
-                sb.AppendLine("Nro;Fecha;Total;Costo;Cliente;Cajero;IVA;Descuento;Recargo;Vendedor;Comision;Impuesto;Medio Pago 1;Medio Pago 2;Medio Pago 3");
-
-                // Detalle
-                foreach (DataRow row in detalle.Rows)
-                {
-                    sb.AppendLine($"{row["Nro"]};{row["Fecha"]};{row["Total"]};{row["Costo"]};{row["Cliente"]};{row["Cajero"]};{row["IVA"]};{row["Descuento"]};{row["Recargo"]};{row["Vendedor"]};{row["Comision"]};{row["Impuesto"]};{row["Medio Pago 1"]};{row["Medio Pago 2"]};{row["Medio Pago 3"]}");
-                }               
-
-                File.WriteAllText(path, sb.ToString(), Encoding.UTF8);
-            }
-
-        
-
     }
 
     public class ProductoBusqueda

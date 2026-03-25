@@ -143,13 +143,14 @@ namespace Comercial.Formularios.Estadisticas
         {
             if (dgvVentas.RowCount > 0)
             {
-                dgvVentas.Columns["Desc_Rec"].DefaultCellStyle.Format = "N" + cantDec.ToString();
+                dgvVentas.Columns["Desc_Rec"].Visible = false;
                 dgvVentas.Columns["TotalCIVA"].DefaultCellStyle.Format = "N" + cantDec.ToString();
                 dgvVentas.Columns["IVA"].DefaultCellStyle.Format = "N" + cantDec.ToString();
                 dgvVentas.Columns["totalSIVA"].DefaultCellStyle.Format = "N" + cantDec.ToString();
                 dgvVentas.Columns["Costo"].DefaultCellStyle.Format = "N" + cantDec.ToString();
                 dgvVentas.Columns["Comision"].DefaultCellStyle.Format = "N" + cantDec.ToString();
                 dgvVentas.Columns["P_Com"].DefaultCellStyle.Format = "N" + cantDec.ToString();
+                dgvVentas.Columns["Impuesto"].DefaultCellStyle.Format = "N" + cantDec.ToString();
             }
         }
 
@@ -175,7 +176,10 @@ namespace Comercial.Formularios.Estadisticas
                 dgvDetalle.Columns["Precio_S_IVA"].DefaultCellStyle.Format = "N" + cantDec.ToString();
                 dgvDetalle.Columns["Cantidad"].DefaultCellStyle.Format = "N" + cantStock.ToString();
                 dgvDetalle.Columns["Subtotal"].DefaultCellStyle.Format = "N" + cantDec.ToString();
-                
+                dgvDetalle.Columns["Precio"].DefaultCellStyle.Format = "N" + cantDec.ToString();
+                dgvDetalle.Columns["Desc/Rec"].DefaultCellStyle.Format = "N" + cantDec.ToString();
+                dgvDetalle.Columns["Precio_C_IVA"].DefaultCellStyle.Format = "N" + cantDec.ToString();
+
             }
         }
 
