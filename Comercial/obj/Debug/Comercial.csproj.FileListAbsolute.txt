@@ -278,3 +278,5 @@ C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\bin\Debug\Microsoft.
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\bin\Debug\RBush.xml
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\bin\Debug\SixLabors.Fonts.xml
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Clientes.frmClientesConSaldo.resources
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Estadisticas.frmDashboardProveedores.resources
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Estadisticas.frmDashboardClientes.resources

@@ -214,6 +214,7 @@
     </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -445,6 +446,18 @@
     </Compile>
     <Compile Include="Formularios\Contable\frmPagoProveedores.Designer.cs">
       <DependentUpon>frmPagoProveedores.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Estadisticas\frmDashboardClientes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Estadisticas\frmDashboardClientes.Designer.cs">
+      <DependentUpon>frmDashboardClientes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Estadisticas\frmDashboardProveedores.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Estadisticas\frmDashboardProveedores.Designer.cs">
+      <DependentUpon>frmDashboardProveedores.cs</DependentUpon>
     </Compile>
     <Compile Include="Formularios\Estadisticas\frmDashboardVentas.cs">
       <SubType>Form</SubType>
@@ -806,6 +819,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Contable\frmPagoProveedores.resx">
       <DependentUpon>frmPagoProveedores.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Estadisticas\frmDashboardClientes.resx">
+      <DependentUpon>frmDashboardClientes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Estadisticas\frmDashboardProveedores.resx">
+      <DependentUpon>frmDashboardProveedores.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Estadisticas\frmDashboardVentas.resx">
       <DependentUpon>frmDashboardVentas.cs</DependentUpon>

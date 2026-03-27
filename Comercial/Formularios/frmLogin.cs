@@ -85,7 +85,12 @@ namespace Comercial.Formularios
         {
             try
             {
-                pbLogo.Image = Image.FromFile(instParam.traePathLogo());
+                pbLogo.SizeMode = PictureBoxSizeMode.Zoom;
+
+                using (var imgTemp = Image.FromFile(instParam.traePathLogo()))
+                {
+                    pbLogo.Image = new Bitmap(imgTemp); // 🔥 evita lock del archivo
+                }
             }
             catch { }
         }
