@@ -14,7 +14,7 @@ namespace Comercial.Clases
         Clases.classDatos instDatos = new classDatos();
 
 
-        public int pedidosAddCabecera(decimal unTotal, int unCliente, decimal unIva, decimal unRecargo, decimal unDescuento,int unVendedor, string  unaObserv)
+        public int pedidosAddCabecera(decimal unTotal, int unCliente, decimal unIva, decimal? unRecargo, decimal? unDescuento,int unVendedor, string  unaObserv)
         {
             try
             {
@@ -26,8 +26,8 @@ namespace Comercial.Clases
                 cmd.Parameters.AddWithValue("unTotal", unTotal);
                 cmd.Parameters.AddWithValue("unCliente", unCliente );
                 cmd.Parameters.AddWithValue("unIva", unIva );
-                cmd.Parameters.AddWithValue("unRecargo", unRecargo );
-                cmd.Parameters.AddWithValue("unDescuento", unDescuento );
+                cmd.Parameters.AddWithValue("unRecargo", unRecargo.HasValue ? (object)unRecargo.Value : DBNull.Value);
+                cmd.Parameters.AddWithValue("unDescuento", unDescuento.HasValue ? (object)unDescuento.Value : DBNull.Value);
                 cmd.Parameters.AddWithValue("unVendedor", unVendedor );
                 cmd.Parameters.AddWithValue("unaObserv", unaObserv);
 
@@ -49,7 +49,8 @@ namespace Comercial.Clases
             }
         }
 
-        public int pedidosAddDetalle(int unPedido, int unProducto, string unCodBarras, string  unCodProveedor, string unaDescripcion, decimal unPrecioSinIva,decimal unPrecioConIva, decimal unaCantidad, decimal unSubtotal,decimal unPrecioOrig,decimal unCosto,string unaObserv)
+        // NOTA: el SP sp_PedidosAddDetalle debe incluir los parámetros unDescuento, unRecargo, unSubtotalSinIva
+        public int pedidosAddDetalle(int unPedido, int unProducto, string unCodBarras, string  unCodProveedor, string unaDescripcion, decimal unPrecioSinIva,decimal unPrecioConIva, decimal unaCantidad, decimal unSubtotal,decimal unPrecioOrig,decimal unCosto,string unaObserv, decimal unDescuento, decimal unRecargo, decimal unSubtotalSinIva)
         {
             try
             {
@@ -70,6 +71,9 @@ namespace Comercial.Clases
                 cmd.Parameters.AddWithValue("unPrecioOrig", unPrecioOrig);
                 cmd.Parameters.AddWithValue("unCosto", unCosto);
                 cmd.Parameters.AddWithValue("unaObserv", unaObserv);
+                cmd.Parameters.AddWithValue("unDescuento", unDescuento);
+                cmd.Parameters.AddWithValue("unRecargo", unRecargo);
+                cmd.Parameters.AddWithValue("unSubtotalSinIva", unSubtotalSinIva);
                 MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int32);
                 salida.Direction = ParameterDirection.Output;
                 cmd.Parameters.Add(salida);

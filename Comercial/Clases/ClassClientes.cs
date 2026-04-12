@@ -163,6 +163,27 @@ namespace Comercial.Clases
             return valor;
         }
 
+        public string traerDetalleCobroFormaPago(int cobroId)
+        {
+            MySqlCommand nComando = new MySqlCommand(
+                "SELECT fn_CobrosDetalleTexto(@unCobroId)",
+                instDatos.abrirConexion()
+            );
+
+            nComando.Parameters.AddWithValue("@unCobroId", cobroId);
+
+            object res = nComando.ExecuteScalar();
+
+            string valor = "";
+
+            if (res != null && res != DBNull.Value)
+                valor = res.ToString();
+
+            instDatos.cerrarConexion();
+
+            return valor;
+        }
+
 
         public int ABMClientes(int unId, string unNombreComercial, string unaRazonSocial, string unCuil, string unaDireccion, string unEMail, string unTelefono, string unCelular, string unContacto, int unaCondIva, int unVendedor, int unaAccion,int unaZona, int unaLocaldiad)
         {
@@ -217,7 +238,7 @@ namespace Comercial.Clases
             return t2;
         }
 
-        public int CobrarCliente(int unCliente, decimal importeCobrar, int haceCaja, int idCaja, int unMedioPago)
+        public int CobrarCliente(int unCliente, decimal importeCobrar, int haceCaja, int idCaja, string detallePlanPago)
         {
             try
             {
@@ -230,7 +251,7 @@ namespace Comercial.Clases
                 cmd.Parameters.AddWithValue("ImporteCobro", importeCobrar);
                 cmd.Parameters.AddWithValue("haceCaja", haceCaja);
                 cmd.Parameters.AddWithValue("idCaja", idCaja);
-                cmd.Parameters.AddWithValue("unMedioPago", unMedioPago);
+                cmd.Parameters.AddWithValue("detallePlanPago", detallePlanPago);
 
                 MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int32);
                 salida.Direction = ParameterDirection.Output;

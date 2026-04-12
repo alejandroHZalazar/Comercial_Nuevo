@@ -73,7 +73,7 @@ namespace Comercial.Formularios
             
             this.Text = "Sistema de Gestión Comercial - Usuario: " + Environment.GetEnvironmentVariable("nombreUser");
             Clases.classUsuarios.setPermisosMenu(int.Parse(Environment.GetEnvironmentVariable("idUser")),this,menuStrip1 );
-
+            facturacionPorLotesToolStripMenuItem.Visible = false;
             if (tieneNotificaciones == 0) return;
             timerNotificaciones = new Timer();
             timerNotificaciones.Interval = 60000; // 15 minutos
@@ -385,6 +385,10 @@ namespace Comercial.Formularios
         private void facturacionPorLotesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Formularios.Facturacion.frmFacturacionLotes unFrmLotes = new Facturacion.frmFacturacionLotes();
+            unFrmLotes.FormClosed += (s, args) =>
+            {
+                facturacionPorLotesToolStripMenuItem.Visible = false;
+            };
             unFrmLotes.ShowDialog();
 
         }
@@ -405,6 +409,14 @@ namespace Comercial.Formularios
         {
             Formularios.Clientes.frmClientesConSaldo unFrnClientesSaldo = new Clientes.frmClientesConSaldo();
             unFrnClientesSaldo.ShowDialog();
+        }
+
+        private void frmPrincipal_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F6)
+            {
+                facturacionPorLotesToolStripMenuItem.Visible = true;
+            }
         }
     }
 }

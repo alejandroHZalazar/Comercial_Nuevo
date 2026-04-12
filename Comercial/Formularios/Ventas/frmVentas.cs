@@ -265,7 +265,7 @@ namespace Comercial.Formularios.Ventas
             }
         }
 
-        public void cargarPedidoPendiente(int unPed, decimal unIva, decimal unDescuento, decimal unRecargo)
+        public void cargarPedidoPendiente(int unPed, decimal unIva, decimal? unDescuento, decimal? unRecargo)
         {
             unPedido = 0;
             pedidoCargado = unPed;
@@ -280,9 +280,35 @@ namespace Comercial.Formularios.Ventas
             if (pedido.Rows.Count > 0)
             {
                 unPedido = unPed;
+
+                // Si la cabecera tiene descuento/recargo global se aplica igual a todas las filas:
+                //   descRec = (descuento * -1) + recargo
+                // Si es null significa que el pedido usa bonificación por línea:
+                //   se lee descuento/recargo de cada fila de PedidoDetalle
+                bool tieneGlobal = unDescuento.HasValue || unRecargo.HasValue;
+                decimal descRecGlobal = tieneGlobal
+                    ? ((unDescuento ?? 0) * -1) + (unRecargo ?? 0)
+                    : 0;
+
                 foreach (DataRow fila in pedido.Rows)
                 {
-                    dgvProductos.Rows.Add(false,fila["Cod_Barras"].ToString(), fila["Cod_Proveedor"].ToString(), fila["Descripcion"].ToString(), Math.Round(decimal.Parse(fila["Stock"].ToString()), cantStock), Math.Round(decimal.Parse(fila["Precio S/IVA"].ToString()), cantDec),unRecargo-unDescuento,"", Math.Round(decimal.Parse(fila["Precio C/IVA"].ToString()), cantDec), Math.Round(decimal.Parse(fila["Cantidad"].ToString()), cantStock), Math.Round(decimal.Parse(fila["Subtotal"].ToString()), cantDec), Math.Round(decimal.Parse(fila["precioOrig"].ToString()), cantDec), fila["fk_producto"].ToString(), unPedido, Math.Round(decimal.Parse(fila["costo"].ToString()), cantDec), Convert.ToBoolean(fila["fraccionado"]), Convert.ToBoolean(fila["dolarizado"]));
+                    decimal descRec;
+                    if (tieneGlobal)
+                    {
+                        descRec = descRecGlobal;
+                    }
+                    else
+                    {
+                        // Leer bonificación propia de la línea (campos nuevos en PedidoDetalle)
+                        decimal lineDesc = 0, lineRec = 0;
+                        if (pedido.Columns.Contains("descuento") && fila["descuento"] != DBNull.Value)
+                            decimal.TryParse(fila["descuento"].ToString(), out lineDesc);
+                        if (pedido.Columns.Contains("recargo") && fila["recargo"] != DBNull.Value)
+                            decimal.TryParse(fila["recargo"].ToString(), out lineRec);
+                        descRec = (lineDesc * -1) + lineRec;
+                    }
+
+                    dgvProductos.Rows.Add(false, fila["Cod_Barras"].ToString(), fila["Cod_Proveedor"].ToString(), fila["Descripcion"].ToString(), Math.Round(decimal.Parse(fila["Stock"].ToString()), cantStock), Math.Round(decimal.Parse(fila["Precio S/IVA"].ToString()), cantDec), descRec, "", Math.Round(decimal.Parse(fila["Precio C/IVA"].ToString()), cantDec), Math.Round(decimal.Parse(fila["Cantidad"].ToString()), cantStock), Math.Round(decimal.Parse(fila["Subtotal"].ToString()), cantDec), Math.Round(decimal.Parse(fila["precioOrig"].ToString()), cantDec), fila["fk_producto"].ToString(), unPedido, Math.Round(decimal.Parse(fila["costo"].ToString()), cantDec), Convert.ToBoolean(fila["fraccionado"]), Convert.ToBoolean(fila["dolarizado"]));
                 }
             }
             unPedido = 0;
@@ -1046,7 +1072,7 @@ namespace Comercial.Formularios.Ventas
                     planPagoId = int.Parse(planPagoDT.Rows[0]["id"].ToString());
                 }
 
-                if (imputaEnVenta == 1)
+                if (imputaEnVenta == 1 || llevaCC == 1)
                 {
                     frmImputacionVenta unFrmImputacion = new frmImputacionVenta(decimal.Parse(txtTotGeneral.Text), planPagoId ?? 0);
                     unFrmImputacion.ShowDialog();

@@ -477,7 +477,7 @@
             // 
             this.lbDesc.FormattingEnabled = true;
             this.lbDesc.ItemHeight = 15;
-            this.lbDesc.Location = new System.Drawing.Point(66, 32);
+            this.lbDesc.Location = new System.Drawing.Point(153, 189);
             this.lbDesc.Name = "lbDesc";
             this.lbDesc.Size = new System.Drawing.Size(472, 169);
             this.lbDesc.TabIndex = 74;
@@ -674,7 +674,6 @@
             // gbFiltro
             // 
             this.gbFiltro.BackColor = System.Drawing.Color.Silver;
-            this.gbFiltro.Controls.Add(this.lblCliente);
             this.gbFiltro.Controls.Add(this.cboProveedor);
             this.gbFiltro.Controls.Add(this.cbProveedor);
             this.gbFiltro.Controls.Add(this.lblDescripcion);
@@ -697,7 +696,7 @@
             // 
             this.lblCliente.FormattingEnabled = true;
             this.lblCliente.ItemHeight = 15;
-            this.lblCliente.Location = new System.Drawing.Point(53, 20);
+            this.lblCliente.Location = new System.Drawing.Point(66, 33);
             this.lblCliente.Name = "lblCliente";
             this.lblCliente.Size = new System.Drawing.Size(471, 169);
             this.lblCliente.TabIndex = 73;
@@ -883,6 +882,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ClientSize = new System.Drawing.Size(1291, 697);
+            this.Controls.Add(this.lblCliente);
             this.Controls.Add(this.panelSelGrilla);
             this.Controls.Add(this.txtIB);
             this.Controls.Add(this.label20);

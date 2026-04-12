@@ -622,13 +622,14 @@ namespace Comercial.Formularios.Ventas
                     if (!esfraccionado)
                     {
                         var precio = !esDolarizado ? Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec) : Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()) * valorDolar, cantDec);
-                        dgvProductos.Rows.Add(producto.Rows[0]["codBarras"].ToString(), producto.Rows[0]["codProveedor"].ToString(), producto.Rows[0]["descripcion"].ToString(), Math.Round(decimal.Parse(producto.Rows[0]["cantidad"].ToString()), cantStock), precio, precio, Math.Round(nudCantidad.Value, cantStock), 0, precio, unProducto, 0, costo, esfraccionado, Convert.ToBoolean(producto.Rows[0]["dolarizado"]));
+                        dgvProductos.Rows.Add(false, producto.Rows[0]["codBarras"].ToString(), producto.Rows[0]["codProveedor"].ToString(), producto.Rows[0]["descripcion"].ToString(), Math.Round(decimal.Parse(producto.Rows[0]["cantidad"].ToString()), cantStock), precio,0, precio, precio, Math.Round(nudCantidad.Value, cantStock), 0, precio, unProducto, 0, costo, esfraccionado, Convert.ToBoolean(producto.Rows[0]["dolarizado"]));
+
                     }
                     else
                     {
                         var cantidad = Math.Round(nudCantidad.Value / decimal.Parse(producto.Rows[0]["precio"].ToString()), cantStock);
                         var precio = !esDolarizado ? Math.Round(nudCantidad.Value, cantDec) : Math.Round(nudCantidad.Value * valorDolar, 2);
-                        dgvProductos.Rows.Add(producto.Rows[0]["codBarras"].ToString(), producto.Rows[0]["codProveedor"].ToString(), producto.Rows[0]["descripcion"].ToString(), Math.Round(decimal.Parse(producto.Rows[0]["cantidad"].ToString()), cantStock), Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec), Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec), cantidad, precio, Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec), unProducto, 0, costo, esfraccionado, Convert.ToBoolean(producto.Rows[0]["dolarizado"]));
+                        dgvProductos.Rows.Add(producto.Rows[0]["codBarras"].ToString(), producto.Rows[0]["codProveedor"].ToString(), producto.Rows[0]["descripcion"].ToString(), Math.Round(decimal.Parse(producto.Rows[0]["cantidad"].ToString()), cantStock),          precio,0,precio,precio, Math.Round(cantidad, cantStock),           0, precio, unProducto, 0, costo, esfraccionado, Convert.ToBoolean(producto.Rows[0]["dolarizado"]));
                     }
                 }
             }

@@ -122,7 +122,20 @@ namespace Comercial.Formularios.Clientes
                 dtFormasPAgo = unFrmImputacion.unDT;
                 var imputacion = dtFormasPAgo.Sum(x => x.Importe);
                 if (imputacion <= 0) return;
-                var salida = instClie.CobrarCliente(_cliente, imputacion, tieneCaja, CajaId, dtFormasPAgo[0].idMedio);
+                string detalleFormasPago = string.Empty;
+                foreach (Clases.ClassVentas.CobroFormasPago item in dtFormasPAgo)
+                {
+                    detalleFormasPago += item.idMedio + "#";
+                    detalleFormasPago += item.idPlan + "*";
+                    detalleFormasPago += item.Importe + "!";
+                    detalleFormasPago += item.Referencia1 + "?";
+                    detalleFormasPago += item.Referencia2 + ";";
+                    detalleFormasPago += item.Referencia3 + "¿";
+                    detalleFormasPago = detalleFormasPago.Replace(',', '.');
+                }
+
+
+                var salida = instClie.CobrarCliente(_cliente, imputacion, tieneCaja, CajaId, detalleFormasPago);
 
                 if (salida != -1)
                 {
@@ -211,7 +224,7 @@ namespace Comercial.Formularios.Clientes
             if (cliente.Rows.Count == 0) return;
 
             // 📅 Fecha desde (primer día del mes - 2 meses)
-            DateTime fechaDesde = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-2);
+            DateTime fechaDesde = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-6);
 
             // Filtrar
             var rowsFiltradas = dt.AsEnumerable()
@@ -378,6 +391,26 @@ namespace Comercial.Formularios.Clientes
 
             doc.Add(header);
             doc.Add(new Paragraph(" "));
+        }
+
+        private void dgvCC_CellEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            rtbDetalleCobro.Text = string.Empty;
+            if (e.RowIndex >= 0) // evita encabezados
+            {
+                var fila = dgvCC.Rows[e.RowIndex];
+
+                if (fila.Cells["Movimiento"].Value.ToString() != "Cobro") return;
+
+                var id = int.Parse(fila.Cells["Numero Referencia"].Value.ToString());
+
+                Clases.ClassClientes instClie = new Clases.ClassClientes();
+                var detalle = instClie.traerDetalleCobroFormaPago(id);
+                if (detalle != string.Empty)
+                {
+                    Clases.ClassUtil.CargarRichConFormato(detalle, rtbDetalleCobro);
+                }
+            }
         }
     }
 }

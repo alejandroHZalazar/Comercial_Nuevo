@@ -359,7 +359,7 @@ namespace Comercial.Clases
                 Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                 "Downloads");
 
-            string path = Path.Combine(downloads, $"Venta_{unaVenta}_{DateTime.Now.ToString("ddMMyyyy_HHmmss")}.pdf");
+            string path = Path.Combine(downloads, $"Venta_{unaVenta}_{DateTime.Now:ddMMyyyy_HHmmss}.pdf");
 
             using (FileStream fs = new FileStream(path, FileMode.Create))
             {
@@ -373,11 +373,9 @@ namespace Comercial.Clases
                 DataRow cab = dt.Rows[0];
 
                 // ================= HEADER =================
-
                 AgregarHeaderVenta(doc, cab);
 
                 // ================= CLIENTE =================
-                // 🔹 Sres
                 Paragraph p1 = new Paragraph();
                 p1.Add(new Chunk("Sres: ", bold));
                 p1.Add(new Chunk(cab["nombreComercial"].ToString(), normal));
@@ -385,126 +383,69 @@ namespace Comercial.Clases
 
                 Chunk glue = new Chunk(new VerticalPositionMark());
 
-                // 🔹 Razón Social + CUIT
                 Paragraph p2 = new Paragraph();
-
                 p2.Add(new Chunk("Razón Social: ", bold));
                 p2.Add(new Chunk(cab["razonSocial"].ToString(), normal));
-
-                p2.Add(glue); // 🔥 empuja lo siguiente a la derecha
-
+                p2.Add(glue);
                 p2.Add(new Chunk("CUIT: ", bold));
                 p2.Add(new Chunk(cab["cuil"].ToString(), normal));
-
                 doc.Add(p2);
 
-                // 🔹 Dirección + Teléfono
                 Paragraph p3 = new Paragraph();
-
                 p3.Add(new Chunk("Dirección: ", bold));
                 p3.Add(new Chunk(cab["Direccion"].ToString(), normal));
-
-                p3.Add(glue); // 🔥 alinea a la derecha
-
+                p3.Add(glue);
                 p3.Add(new Chunk("Tel: ", bold));
-                p3.Add(new Chunk(Clases.ClassValidacion.traerEmpresaTelefono(), normal));
-
+                p3.Add(new Chunk(cab["Tel"].ToString(), normal));
                 doc.Add(p3);
 
-                // 🔹 Condición IVA
                 Paragraph p4 = new Paragraph();
                 p4.Add(new Chunk("Cond. IVA: ", bold));
                 p4.Add(new Chunk(cab["Cond_IVA"].ToString(), normal));
                 doc.Add(p4);
 
-                // 🔹 Espacio
                 doc.Add(new Paragraph(" "));
 
                 // ================= TABLA =================
-                // 🔹 Fuentes
                 Font bold8 = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 8);
                 Font normal8 = FontFactory.GetFont(FontFactory.HELVETICA, 8);
 
-                // 🔹 Tabla
                 PdfPTable table = new PdfPTable(9);
                 table.WidthPercentage = 100;
-
-                // 🔹 Anchos (ajustables)
                 table.SetWidths(new float[] { 3, 2, 8, 2, 2, 2, 2, 2, 2 });
 
-                // 🔹 Encabezados
                 string[] headers = {
-                                    "C. Barras",
-                                    "C. Prov",
-                                    "Descripción",
-                                    "P Lista",
-                                    "%",
-                                    "P S/IVA",
-                                    "P C/IVA",
-                                    "Cant",
-                                    "Subtotal"
-                                };
+            "C. Barras","C. Prov","Descripción","P Lista","%",
+            "P S/IVA","P C/IVA","Cant","Subtotal"
+        };
 
                 foreach (var h in headers)
                 {
                     PdfPCell cell = new PdfPCell(new Phrase(h, bold8));
                     cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                    cell.Padding = 3f;
-
                     table.AddCell(cell);
                 }
 
-                // 🔹 Detalle
-                decimal total = 0;
                 var culture = new System.Globalization.CultureInfo("es-AR");
+
                 foreach (DataRow row in dt.Rows)
                 {
                     decimal precioSinIva = Convert.ToDecimal(row["precioSinIva"]);
                     decimal desc = Convert.ToDecimal(row["descuento_Linea"]);
                     decimal rec = Convert.ToDecimal(row["recargo_linea"]);
                     decimal porcentaje = rec > 0 ? rec : -desc;
-
                     decimal precioAjustado = Convert.ToDecimal(row["subtotalSinIVA"]);
 
-                    // C. Barras
-                    table.AddCell(new PdfPCell(new Phrase(row["codBarras"].ToString(), normal8)));
+                    table.AddCell(new Phrase(row["codBarras"].ToString(), normal8));
+                    table.AddCell(new Phrase(row["codProveedor"].ToString(), normal8));
+                    table.AddCell(new Phrase(row["descripcion"].ToString(), normal8));
 
-                    // C. Prov
-                    table.AddCell(new PdfPCell(new Phrase(row["codProveedor"].ToString(), normal8)));
-
-                    // Descripción
-                    table.AddCell(new PdfPCell(new Phrase(row["descripcion"].ToString(), normal8)));
-
-                    // 🔹 P Lista
-                    PdfPCell c1 = new PdfPCell(new Phrase(precioSinIva.ToString("N2", culture), normal8));
-                    c1.HorizontalAlignment = Element.ALIGN_RIGHT;
-                    table.AddCell(c1);
-
-                    // 🔹 %
-                    PdfPCell c2 = new PdfPCell(new Phrase(porcentaje.ToString("N2", culture), normal8));
-                    c2.HorizontalAlignment = Element.ALIGN_RIGHT;
-                    table.AddCell(c2);
-
-                    // 🔹 P S/IVA
-                    PdfPCell c3 = new PdfPCell(new Phrase(precioAjustado.ToString("N2", culture), normal8));
-                    c3.HorizontalAlignment = Element.ALIGN_RIGHT;
-                    table.AddCell(c3);
-
-                    // 🔹 P C/IVA
-                    PdfPCell c4 = new PdfPCell(new Phrase(Convert.ToDecimal(row["precioConIva"]).ToString("N2", culture), normal8));
-                    c4.HorizontalAlignment = Element.ALIGN_RIGHT;
-                    table.AddCell(c4);
-
-                    // 🔹 Cantidad (solo alineado, sin miles obligatorio)
-                    PdfPCell c5 = new PdfPCell(new Phrase(Convert.ToDecimal(row["cantidad"]).ToString("N2", culture), normal8));
-                    c5.HorizontalAlignment = Element.ALIGN_RIGHT;
-                    table.AddCell(c5);
-
-                    // 🔹 Subtotal
-                    PdfPCell c6 = new PdfPCell(new Phrase(Convert.ToDecimal(row["subtotalIVA"]).ToString("N2", culture), normal8));
-                    c6.HorizontalAlignment = Element.ALIGN_RIGHT;
-                    table.AddCell(c6);
+                    table.AddCell(new PdfPCell(new Phrase(precioSinIva.ToString("N2", culture), normal8)) { HorizontalAlignment = Element.ALIGN_RIGHT });
+                    table.AddCell(new PdfPCell(new Phrase(porcentaje.ToString("N2", culture), normal8)) { HorizontalAlignment = Element.ALIGN_RIGHT });
+                    table.AddCell(new PdfPCell(new Phrase(precioAjustado.ToString("N2", culture), normal8)) { HorizontalAlignment = Element.ALIGN_RIGHT });
+                    table.AddCell(new PdfPCell(new Phrase(Convert.ToDecimal(row["precioConIva"]).ToString("N2", culture), normal8)) { HorizontalAlignment = Element.ALIGN_RIGHT });
+                    table.AddCell(new PdfPCell(new Phrase(Convert.ToDecimal(row["cantidad"]).ToString("N2", culture), normal8)) { HorizontalAlignment = Element.ALIGN_RIGHT });
+                    table.AddCell(new PdfPCell(new Phrase(Convert.ToDecimal(row["subtotalIVA"]).ToString("N2", culture), normal8)) { HorizontalAlignment = Element.ALIGN_RIGHT });
                 }
 
                 doc.Add(table);
@@ -515,102 +456,94 @@ namespace Comercial.Clases
                 decimal totalConIva = 0;
                 decimal impuesto = 0;
                 decimal IVA = 0;
-                // 🔹 recorrer nuevamente o acumular en el foreach anterior
+                decimal subtotalBase = 0;
+
                 foreach (DataRow row in dt.Rows)
                 {
-                    decimal precioSinIva = Convert.ToDecimal(row["subtotalSinIVA"]);
-                    decimal precioConIva = Convert.ToDecimal(row["precioConIva"]);
-                    decimal cantidad = Convert.ToDecimal(row["cantidad"]);
-                    decimal desc = Convert.ToDecimal(row["descuento_Linea"]);
-                    decimal rec = Convert.ToDecimal(row["recargo_linea"]);
-
-
-                    totalSinIva += precioSinIva * cantidad;
-                    totalConIva += precioConIva * cantidad;
-
-                    impuesto = Convert.ToDecimal(row["impuesto"]); // toma uno (si es el mismo para todos)
+                    subtotalBase += Convert.ToDecimal(row["precioSinIva"]) * Convert.ToDecimal(row["cantidad"]);
+                    totalSinIva += Convert.ToDecimal(row["subtotalSinIVA"]) * Convert.ToDecimal(row["cantidad"]);
+                    totalConIva += Convert.ToDecimal(row["precioConIva"]) * Convert.ToDecimal(row["cantidad"]);
+                    impuesto = Convert.ToDecimal(row["impuesto"]);
                     IVA = Convert.ToDecimal(row["IVA"]);
                 }
 
-
-
                 decimal ivaCalculado = IVA == 0 ? 0 : totalConIva - totalSinIva;
                 decimal percepcion = impuesto == 0 ? 0 : totalSinIva * (impuesto / 100);
-
                 decimal totalGeneral = totalSinIva + ivaCalculado + percepcion;
 
                 PdfPTable tablaTotales = new PdfPTable(3);
-                tablaTotales.WidthPercentage = 50; // 🔹 mitad de la hoja
-                tablaTotales.HorizontalAlignment = Element.ALIGN_RIGHT;
-
+                tablaTotales.WidthPercentage = 100;
                 tablaTotales.SetWidths(new float[] { 6, 1, 3 });
 
-                // 🔹 Colores
                 BaseColor grisClaro = new BaseColor(230, 230, 230);
-
-                // 🔹 Fuentes
                 Font bold9 = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 9);
                 Font normal9 = FontFactory.GetFont(FontFactory.HELVETICA, 9);
 
-                PdfPCell f1c1 = new PdfPCell(new Phrase("Total Sin IVA", bold9));
-                f1c1.BackgroundColor = grisClaro;
+                tablaTotales.AddCell(new PdfPCell(new Phrase("Subtotal Sin IVA", bold9)) { BackgroundColor = grisClaro });
+                tablaTotales.AddCell(new PdfPCell(new Phrase(subtotalBase.ToString("N2", culture), normal9)){Colspan = 2,HorizontalAlignment = Element.ALIGN_RIGHT,BackgroundColor = grisClaro});
 
-                PdfPCell f1c2 = new PdfPCell(new Phrase(totalSinIva.ToString("N2", culture), normal9));
-                f1c2.HorizontalAlignment = Element.ALIGN_RIGHT;
-                f1c2.BackgroundColor = grisClaro;
-                f1c2.Colspan = 2;
-
-                tablaTotales.AddCell(f1c1);
-                tablaTotales.AddCell(f1c2);
+                tablaTotales.AddCell(new PdfPCell(new Phrase("Total Sin IVA", bold9)) { BackgroundColor = grisClaro });
+                tablaTotales.AddCell(new PdfPCell(new Phrase(totalSinIva.ToString("N2", culture), normal9)) { Colspan = 2, HorizontalAlignment = Element.ALIGN_RIGHT, BackgroundColor = grisClaro });
 
                 tablaTotales.AddCell(new PdfPCell(new Phrase("IVA", bold9)) { BackgroundColor = grisClaro });
+                tablaTotales.AddCell(new PdfPCell(new Phrase(IVA.ToString("N2", culture), normal9)) { BackgroundColor = grisClaro });
+                tablaTotales.AddCell(new PdfPCell(new Phrase(ivaCalculado.ToString("N2", culture), normal9)) { BackgroundColor = grisClaro, HorizontalAlignment = Element.ALIGN_RIGHT });
 
-                tablaTotales.AddCell(new PdfPCell(new Phrase(IVA.ToString("N2", culture), normal9))
-                {
-                    HorizontalAlignment = Element.ALIGN_RIGHT,
-                    BackgroundColor = grisClaro
-                });
-
-                tablaTotales.AddCell(new PdfPCell(new Phrase(ivaCalculado.ToString("N2", culture), normal9))
-                {
-                    HorizontalAlignment = Element.ALIGN_RIGHT,
-                    BackgroundColor = grisClaro
-                });
-
-                tablaTotales.AddCell(new PdfPCell(new Phrase("Percep. IIBB PCIA. Chaco - Misiones", bold9)) { BackgroundColor = grisClaro });
-
-                tablaTotales.AddCell(new PdfPCell(new Phrase(impuesto.ToString("N2", culture), normal9))
-                {
-                    HorizontalAlignment = Element.ALIGN_RIGHT,
-                    BackgroundColor = grisClaro
-                });
-
-                tablaTotales.AddCell(new PdfPCell(new Phrase(percepcion.ToString("N2", culture), normal9))
-                {
-                    HorizontalAlignment = Element.ALIGN_RIGHT,
-                    BackgroundColor = grisClaro
-                });
+                tablaTotales.AddCell(new PdfPCell(new Phrase("Percepción IIBB", bold9)) { BackgroundColor = grisClaro });
+                tablaTotales.AddCell(new PdfPCell(new Phrase(impuesto.ToString("N2", culture), normal9)) { BackgroundColor = grisClaro });
+                tablaTotales.AddCell(new PdfPCell(new Phrase(percepcion.ToString("N2", culture), normal9)) { BackgroundColor = grisClaro, HorizontalAlignment = Element.ALIGN_RIGHT });
 
                 tablaTotales.AddCell(new PdfPCell(new Phrase("TOTAL GENERAL", bold9)) { BackgroundColor = grisClaro });
+                tablaTotales.AddCell(new PdfPCell(new Phrase("")) { BackgroundColor = grisClaro });
+                tablaTotales.AddCell(new PdfPCell(new Phrase(totalGeneral.ToString("N2", culture), bold9)) { BackgroundColor = grisClaro, HorizontalAlignment = Element.ALIGN_RIGHT });
 
-                tablaTotales.AddCell(new PdfPCell(new Phrase("", normal9))
-                {
-                    BackgroundColor = grisClaro
-                });
+                // ================= MEDIOS DE PAGO =================
+                Font boldTitulo = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 10);
+                Font normalTexto = FontFactory.GetFont(FontFactory.HELVETICA, 9);
 
-                tablaTotales.AddCell(new PdfPCell(new Phrase(totalGeneral.ToString("N2", culture), bold9))
+                string mp1 = cab["Medio_Pago_1"]?.ToString();
+                string mp2 = cab["Medio_Pago_2"]?.ToString();
+                string mp3 = cab["Medio_Pago_3"]?.ToString();
+
+                List<string> mediosPago = new List<string>();
+
+                if (!string.IsNullOrEmpty(mp1) && mp1 != "Sin Especificar") mediosPago.Add(mp1);
+                if (!string.IsNullOrEmpty(mp2) && mp2 != "Sin Especificar") mediosPago.Add(mp2);
+                if (!string.IsNullOrEmpty(mp3) && mp3 != "Sin Especificar") mediosPago.Add(mp3);
+
+                PdfPCell cellMP = new PdfPCell { Border = Rectangle.NO_BORDER };
+
+                Paragraph tituloMP = new Paragraph("Medios de Pago:", boldTitulo);
+                tituloMP.SpacingAfter = 5f;
+                cellMP.AddElement(tituloMP);
+
+                foreach (var mp in mediosPago)
                 {
-                    HorizontalAlignment = Element.ALIGN_RIGHT,
-                    BackgroundColor = grisClaro
-                });
+                    cellMP.AddElement(new Paragraph("• " + mp, normalTexto));
+                }
+
+                if (mediosPago.Count == 0)
+                {
+                    cellMP.AddElement(new Paragraph("Sin Medios de Pago", normalTexto));
+                }
+
+                // ================= LAYOUT FINAL =================
+                PdfPTable layout = new PdfPTable(2);
+                layout.WidthPercentage = 100;
+                layout.SetWidths(new float[] { 1, 1 });
+
+                PdfPCell left = new PdfPCell(cellMP) { Border = Rectangle.NO_BORDER };
+                PdfPCell right = new PdfPCell(tablaTotales) { Border = Rectangle.NO_BORDER };
+
+                layout.AddCell(left);   // 👈 Medios de Pago IZQUIERDA
+                layout.AddCell(right);  // 👉 Totales DERECHA
 
                 doc.Add(new Paragraph(" "));
-                doc.Add(tablaTotales);
+                doc.Add(layout);
 
                 doc.Close();
             }
 
-            // 🔥 ABRIR AUTOMÁTICAMENTE
             Process.Start(new ProcessStartInfo()
             {
                 FileName = path,
@@ -632,10 +565,17 @@ namespace Comercial.Clases
             left.WidthPercentage = 100;
             left.SetWidths(new float[] { 1, 3 });
 
+            byte[] imgBytes = (byte[])cab["imagen"];
+
+            using (var ms = new MemoryStream(imgBytes))
+            {
+                System.Drawing.Image test = System.Drawing.Image.FromStream(ms);
+            }
+
             if (cab["imagen"] != DBNull.Value)
             {
                 Image logo = Image.GetInstance((byte[])cab["imagen"]);
-                logo.ScaleToFit(70, 40);
+                logo.ScaleToFit(90,60);
 
                 PdfPCell logoCell = new PdfPCell(logo);
                 logoCell.Border = 0;
@@ -674,7 +614,7 @@ namespace Comercial.Clases
             // 🔹 Contenedor SOLO con borde inferior
             PdfPCell leftContainer = new PdfPCell(left);
             leftContainer.Border = Rectangle.TOP_BORDER | Rectangle.BOTTOM_BORDER | Rectangle.LEFT_BORDER;
-            leftContainer.FixedHeight = 70f;
+            //leftContainer.FixedHeight = 70f;
 
             mainTable.AddCell(leftContainer);
 
@@ -780,26 +720,19 @@ namespace Comercial.Clases
             {
                 var ws = wb.Worksheets.Add("Venta");
 
-                // ================= HEADER =================
                 int fila = 1;
-
                 DataRow cab = dt.Rows[0];
 
+                // ================= HEADER =================
                 if (cab["imagen"] != DBNull.Value)
                 {
                     byte[] imageBytes = (byte[])cab["imagen"];
-
                     using (var ms = new MemoryStream(imageBytes))
                     {
-                        var picture = ws.AddPicture(ms)
-                            .MoveTo(ws.Cell("A1"), 5, 5) // 🔹 leve margen
-                            .WithSize(80, 40); // 🔹 tamaño tipo PDF
-
-                        picture.WithPlacement(XLPicturePlacement.FreeFloating);
+                        ws.AddPicture(ms).MoveTo(ws.Cell("A1"), 5, 5).WithSize(80, 40);
                     }
                 }
 
-                // 🔹 Definir ancho de columnas (simula proporción 4-1-5)
                 ws.Column(1).Width = 20;
                 ws.Column(2).Width = 5;
                 ws.Column(3).Width = 30;
@@ -810,56 +743,16 @@ namespace Comercial.Clases
                 ws.Column(8).Width = 15;
                 ws.Column(9).Width = 15;
 
-                // ================= IZQUIERDA =================
-                ws.Range("A1:C5").Merge();
-                ws.Range("A1:C5").Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-
-                var leftCell = ws.Cell("A1");
-                leftCell.Value =
+                ws.Range("A1:C5").Merge().Value =
                     Clases.ClassValidacion.traerEmpresa() + "\n\n" +
                     Clases.ClassValidacion.traerRazonSocial() + "\n" +
                     "Tel: " + Clases.ClassValidacion.traerEmpresaTelefono() + "\n" +
-                    Clases.ClassValidacion.traerEmpresaDireccion() + "\n" +
-                    Clases.ClassValidacion.traerEmpresaCiudad();
+                    Clases.ClassValidacion.traerEmpresaDireccion();
 
-                leftCell.Style.Alignment.WrapText = true;
-                leftCell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                leftCell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-                leftCell.Style.Font.Bold = true;
+                ws.Range("D1:D2").Merge().Value = "X";
+                ws.Range("E1:I5").Merge().Value =
+                    $"NRO. VENTA: {cab["nroVenta"]}\n\nFECHA: {Convert.ToDateTime(cab["fecha"]):dd/MM/yyyy}";
 
-                // ================= CENTRO (X) =================
-                ws.Range("D1:D2").Merge();
-                ws.Range("D1:D2").Value = "X";
-                ws.Range("D1:D2").Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                ws.Range("D1:D2").Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
-                ws.Range("D1:D2").Style.Font.Bold = true;
-                ws.Range("D1:D2").Style.Font.FontSize = 16;
-                ws.Range("D1:D2").Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-
-                // 🔹 Línea vertical (simulada)
-                ws.Range("D3:D5").Style.Border.LeftBorder = XLBorderStyleValues.Thin;
-                ws.Range("D3:D5").Style.Border.RightBorder = XLBorderStyleValues.Thin;
-
-                // 🔹 Línea horizontal inferior
-                ws.Range("D5").Style.Border.BottomBorder = XLBorderStyleValues.Thin;
-
-                // ================= DERECHA =================
-                ws.Range("E1:I5").Merge();
-                ws.Range("E1:I5").Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-
-
-                var rightCell = ws.Cell("E1");
-                rightCell.Value =
-                    $"NRO. VENTA: {cab["nroVenta"]}\n\n" +
-                    $"FECHA: {Convert.ToDateTime(cab["fecha"]):dd/MM/yyyy}\n\n" +
-                    $"CUIT: {cab["cuil"]}\n" +
-                    "DOCUMENTO NO VALIDO COMO FACTURA";
-
-                rightCell.Style.Alignment.WrapText = true;
-                rightCell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-                rightCell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Left;
-
-                // 🔹 Espacio después del header
                 fila = 7;
 
                 // ================= TABLA =================
@@ -872,7 +765,6 @@ namespace Comercial.Clases
                 {
                     ws.Cell(fila, i + 1).Value = headers[i];
                     ws.Cell(fila, i + 1).Style.Font.Bold = true;
-                    ws.Cell(fila, i + 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                 }
 
                 fila++;
@@ -896,7 +788,6 @@ namespace Comercial.Clases
                     ws.Cell(fila, 1).Value = row["codBarras"].ToString();
                     ws.Cell(fila, 2).Value = row["codProveedor"].ToString();
                     ws.Cell(fila, 3).Value = row["descripcion"].ToString();
-
                     ws.Cell(fila, 4).Value = precioSinIva;
                     ws.Cell(fila, 5).Value = porcentaje;
                     ws.Cell(fila, 6).Value = precioAjustado;
@@ -904,7 +795,6 @@ namespace Comercial.Clases
                     ws.Cell(fila, 8).Value = cantidad;
                     ws.Cell(fila, 9).Value = Convert.ToDecimal(row["subtotalIVA"]);
 
-                    // 🔹 formato números
                     for (int col = 4; col <= 9; col++)
                     {
                         ws.Cell(fila, col).Style.NumberFormat.Format = "#,##0.00";
@@ -913,57 +803,83 @@ namespace Comercial.Clases
 
                     totalSinIva += precioAjustado * cantidad;
                     totalConIva += precioConIva * cantidad;
-
                     impuesto = Convert.ToDecimal(row["impuesto"]);
                     IVA = Convert.ToDecimal(row["IVA"]);
 
                     fila++;
                 }
 
-                fila++;
+                fila += 2;
 
-                // ================= TOTALES =================
+                // ================= MEDIOS DE PAGO (IZQUIERDA) =================
+                int filaBase = fila;
+
+                ws.Cell(filaBase, 1).Value = "Medios de Pago:";
+                ws.Cell(filaBase, 1).Style.Font.Bold = true;
+
+                string mp1 = cab["Medio_Pago_1"]?.ToString();
+                string mp2 = cab["Medio_Pago_2"]?.ToString();
+                string mp3 = cab["Medio_Pago_3"]?.ToString();
+
+                List<string> mediosPago = new List<string>();
+
+                if (!string.IsNullOrEmpty(mp1) && mp1 != "Sin Especificar") mediosPago.Add(mp1);
+                if (!string.IsNullOrEmpty(mp2) && mp2 != "Sin Especificar") mediosPago.Add(mp2);
+                if (!string.IsNullOrEmpty(mp3) && mp3 != "Sin Especificar") mediosPago.Add(mp3);
+
+                int filaMP = filaBase + 1;
+
+                foreach (var mp in mediosPago)
+                {
+                    ws.Cell(filaMP, 1).Value = "• " + mp;
+                    filaMP++;
+                }
+
+                if (mediosPago.Count == 0)
+                {
+                    ws.Cell(filaMP, 1).Value = "Sin Medios de Pago";
+                }
+
+                // ================= TOTALES (DERECHA) =================
                 int colInicio = 6;
+                int filaTot = filaBase;
 
                 decimal ivaCalculado = IVA == 0 ? 0 : totalConIva - totalSinIva;
                 decimal percepcion = impuesto == 0 ? 0 : totalSinIva * (impuesto / 100);
                 decimal totalGeneral = totalSinIva + ivaCalculado + percepcion;
 
-                void SetTotalRow(string label, decimal value1, decimal value2, bool bold = false)
+                void SetTotal(string label, decimal v1, decimal v2, bool bold = false)
                 {
-                    ws.Cell(fila, colInicio).Value = label;
-                    ws.Cell(fila, colInicio).Style.Font.Bold = true;
+                    ws.Cell(filaTot, colInicio).Value = label;
+                    ws.Cell(filaTot, colInicio).Style.Font.Bold = true;
 
-                    ws.Cell(fila, colInicio + 1).Value = value1;
-                    ws.Cell(fila, colInicio + 2).Value = value2;
+                    ws.Cell(filaTot, colInicio + 1).Value = v1;
+                    ws.Cell(filaTot, colInicio + 2).Value = v2;
 
-                    ws.Range(fila, colInicio, fila, colInicio + 2).Style.Fill.BackgroundColor = XLColor.LightGray;
+                    ws.Range(filaTot, colInicio, filaTot, colInicio + 2)
+                      .Style.Fill.BackgroundColor = XLColor.LightGray;
 
-                    ws.Range(fila, colInicio + 1, fila, colInicio + 2)
+                    ws.Range(filaTot, colInicio + 1, filaTot, colInicio + 2)
                       .Style.NumberFormat.Format = "#,##0.00";
 
-                    ws.Range(fila, colInicio + 1, fila, colInicio + 2)
+                    ws.Range(filaTot, colInicio + 1, filaTot, colInicio + 2)
                       .Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
 
                     if (bold)
-                        ws.Range(fila, colInicio, fila, colInicio + 2).Style.Font.Bold = true;
+                        ws.Range(filaTot, colInicio, filaTot, colInicio + 2).Style.Font.Bold = true;
 
-                    fila++;
+                    filaTot++;
                 }
 
-                // Total sin IVA
-                ws.Cell(fila, colInicio).Value = "Total Sin IVA";
-                ws.Cell(fila, colInicio).Style.Font.Bold = true;
-                ws.Cell(fila, colInicio + 1).Value = totalSinIva;
-                ws.Range(fila, colInicio + 1, fila, colInicio + 2).Merge();
-                ws.Range(fila, colInicio, fila, colInicio + 2).Style.Fill.BackgroundColor = XLColor.LightGray;
-                fila++;
+                ws.Cell(filaTot, colInicio).Value = "Total Sin IVA";
+                ws.Cell(filaTot, colInicio + 1).Value = totalSinIva;
+                ws.Range(filaTot, colInicio + 1, filaTot, colInicio + 2).Merge();
+                filaTot++;
 
-                SetTotalRow("IVA", IVA, ivaCalculado);
-                SetTotalRow("Percep. IIBB PCIA. Chaco - Misiones", impuesto, percepcion);
-                SetTotalRow("TOTAL GENERAL", 0, totalGeneral, true);
+                SetTotal("IVA", IVA, ivaCalculado);
+                SetTotal("Percepción IIBB", impuesto, percepcion);
+                SetTotal("TOTAL GENERAL", 0, totalGeneral, true);
 
-                // 🔹 auto ajuste columnas
                 ws.Columns().AdjustToContents();
 
                 wb.SaveAs(path);

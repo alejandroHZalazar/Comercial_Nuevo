@@ -147,7 +147,15 @@ namespace Comercial.Formularios.Ventas
             {
                 ((frmVentas)this.llamador).cargarDatosCliente (1,int.Parse(dgvOrden.CurrentRow.Cells["fk_cliente"].Value.ToString()));
                 ((frmVentas)this.llamador).unCliente = int.Parse(dgvOrden.CurrentRow.Cells["fk_cliente"].Value.ToString());
-                ((frmVentas )this.llamador).cargarPedidoPendiente (int.Parse(dgvOrden.CurrentRow.Cells["id"].Value.ToString()),decimal .Parse (dgvOrden .CurrentRow .Cells ["IVA"].Value .ToString ()),decimal .Parse (dgvOrden.CurrentRow.Cells["Descuento"].Value.ToString()),decimal .Parse (dgvOrden.CurrentRow.Cells["Recargo"].Value.ToString()));
+                // Descuento/Recargo pueden ser null (pedidos nuevos con bonificación por línea)
+                decimal? descCab = (dgvOrden.CurrentRow.Cells["Descuento"].Value == DBNull.Value || dgvOrden.CurrentRow.Cells["Descuento"].Value == null)
+                    ? (decimal?)null
+                    : decimal.Parse(dgvOrden.CurrentRow.Cells["Descuento"].Value.ToString());
+                decimal? recCab  = (dgvOrden.CurrentRow.Cells["Recargo"].Value  == DBNull.Value || dgvOrden.CurrentRow.Cells["Recargo"].Value  == null)
+                    ? (decimal?)null
+                    : decimal.Parse(dgvOrden.CurrentRow.Cells["Recargo"].Value.ToString());
+
+                ((frmVentas)this.llamador).cargarPedidoPendiente(int.Parse(dgvOrden.CurrentRow.Cells["id"].Value.ToString()), decimal.Parse(dgvOrden.CurrentRow.Cells["IVA"].Value.ToString()), descCab, recCab);
                 ((frmVentas)this.llamador).filtro = this.filtro;
                 ((frmVentas)this.llamador).pos = dgvOrden.CurrentRow.Index;
                 ((frmVentas)this.llamador).buscoPend = true;

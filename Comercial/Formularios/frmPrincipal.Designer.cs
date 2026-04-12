@@ -69,6 +69,7 @@
             this.notasDePedidoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clientesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aBMClientesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saldosDeClientesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.estadisticasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ventasToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.rankingDeVentasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -82,7 +83,6 @@
             this.facturacionPorLotesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reportesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.saldosDeClientesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -420,9 +420,16 @@
             // aBMClientesToolStripMenuItem
             // 
             this.aBMClientesToolStripMenuItem.Name = "aBMClientesToolStripMenuItem";
-            this.aBMClientesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aBMClientesToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.aBMClientesToolStripMenuItem.Text = "ABM Clientes";
             this.aBMClientesToolStripMenuItem.Click += new System.EventHandler(this.aBMClientesToolStripMenuItem_Click);
+            // 
+            // saldosDeClientesToolStripMenuItem
+            // 
+            this.saldosDeClientesToolStripMenuItem.Name = "saldosDeClientesToolStripMenuItem";
+            this.saldosDeClientesToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.saldosDeClientesToolStripMenuItem.Text = "Saldos de Clientes";
+            this.saldosDeClientesToolStripMenuItem.Click += new System.EventHandler(this.saldosDeClientesToolStripMenuItem_Click);
             // 
             // estadisticasToolStripMenuItem
             // 
@@ -534,13 +541,6 @@
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
             // 
-            // saldosDeClientesToolStripMenuItem
-            // 
-            this.saldosDeClientesToolStripMenuItem.Name = "saldosDeClientesToolStripMenuItem";
-            this.saldosDeClientesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.saldosDeClientesToolStripMenuItem.Text = "Saldos de Clientes";
-            this.saldosDeClientesToolStripMenuItem.Click += new System.EventHandler(this.saldosDeClientesToolStripMenuItem_Click);
-            // 
             // frmPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -554,6 +554,7 @@
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.IsMdiContainer = true;
+            this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "frmPrincipal";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -561,6 +562,7 @@
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.frmPrincipal_Load);
             this.Shown += new System.EventHandler(this.frmPrincipal_Shown);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmPrincipal_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

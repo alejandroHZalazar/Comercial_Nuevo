@@ -137,10 +137,19 @@ namespace Comercial.Formularios.Ventas
         {
             if (dgvOrden .RowCount > 0)
             {
-               ((frmPedidos  )this.llamador).cargarDatosCliente  (1,int.Parse (dgvOrden .CurrentRow .Cells  ["fk_cliente"].Value .ToString ()));
-                ((frmPedidos)this.llamador).unPedActual = int.Parse (dgvOrden.CurrentRow.Cells["id"].Value.ToString());
-                ((frmPedidos)this.llamador).cargarDatosCabecera(dgvOrden.CurrentRow.Cells["Vendedor"].Value.ToString(),rtbObserv .Text, decimal.Parse (dgvOrden.CurrentRow.Cells["Descuento"].Value.ToString()),instPed.traerIdIVA (decimal.Parse (dgvOrden .CurrentRow .Cells ["IVA"].Value.ToString ())));
-               ((frmPedidos)this.llamador).cargarDetallePedidoEditar(int.Parse(dgvOrden.CurrentRow.Cells["id"].Value.ToString()));
+                ((frmPedidos)this.llamador).cargarDatosCliente(1, int.Parse(dgvOrden.CurrentRow.Cells["fk_cliente"].Value.ToString()));
+                ((frmPedidos)this.llamador).unPedActual = int.Parse(dgvOrden.CurrentRow.Cells["id"].Value.ToString());
+
+                // Leer descuento y recargo de cabecera (pueden ser null si el pedido usa bonificación por línea)
+                decimal? descCab = (dgvOrden.CurrentRow.Cells["Descuento"].Value == DBNull.Value || dgvOrden.CurrentRow.Cells["Descuento"].Value == null)
+                    ? (decimal?)null
+                    : decimal.Parse(dgvOrden.CurrentRow.Cells["Descuento"].Value.ToString());
+                decimal? recCab = (dgvOrden.CurrentRow.Cells["Recargo"].Value == DBNull.Value || dgvOrden.CurrentRow.Cells["Recargo"].Value == null)
+                    ? (decimal?)null
+                    : decimal.Parse(dgvOrden.CurrentRow.Cells["Recargo"].Value.ToString());
+
+                ((frmPedidos)this.llamador).cargarDatosCabecera(dgvOrden.CurrentRow.Cells["Vendedor"].Value.ToString(), rtbObserv.Text, descCab, recCab, instPed.traerIdIVA(decimal.Parse(dgvOrden.CurrentRow.Cells["IVA"].Value.ToString())));
+                ((frmPedidos)this.llamador).cargarDetallePedidoEditar(int.Parse(dgvOrden.CurrentRow.Cells["id"].Value.ToString()));
                 this.Close();
             }
         }

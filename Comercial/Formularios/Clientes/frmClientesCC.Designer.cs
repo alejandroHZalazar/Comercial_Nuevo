@@ -37,6 +37,7 @@ namespace Comercial.Formularios.Clientes
             this.label1 = new System.Windows.Forms.Label();
             this.btnND = new System.Windows.Forms.Button();
             this.btnImprimirCC = new System.Windows.Forms.Button();
+            this.rtbDetalleCobro = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCC)).BeginInit();
             this.SuspendLayout();
             // 
@@ -52,6 +53,7 @@ namespace Comercial.Formularios.Clientes
             this.dgvCC.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvCC.Size = new System.Drawing.Size(678, 388);
             this.dgvCC.TabIndex = 0;
+            this.dgvCC.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCC_CellEnter);
             this.dgvCC.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvCC_CellMouseDoubleClick);
             // 
             // btnCobrar
@@ -123,7 +125,7 @@ namespace Comercial.Formularios.Clientes
             this.btnImprimirCC.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnImprimirCC.Image = ((System.Drawing.Image)(resources.GetObject("btnImprimirCC.Image")));
             this.btnImprimirCC.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnImprimirCC.Location = new System.Drawing.Point(746, 375);
+            this.btnImprimirCC.Location = new System.Drawing.Point(721, 375);
             this.btnImprimirCC.Name = "btnImprimirCC";
             this.btnImprimirCC.Size = new System.Drawing.Size(121, 55);
             this.btnImprimirCC.TabIndex = 5;
@@ -132,12 +134,21 @@ namespace Comercial.Formularios.Clientes
             this.btnImprimirCC.UseVisualStyleBackColor = false;
             this.btnImprimirCC.Click += new System.EventHandler(this.btnImprimirCC_Click);
             // 
+            // rtbDetalleCobro
+            // 
+            this.rtbDetalleCobro.Location = new System.Drawing.Point(696, 195);
+            this.rtbDetalleCobro.Name = "rtbDetalleCobro";
+            this.rtbDetalleCobro.Size = new System.Drawing.Size(171, 174);
+            this.rtbDetalleCobro.TabIndex = 6;
+            this.rtbDetalleCobro.Text = "";
+            // 
             // frmClientesCC
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ClientSize = new System.Drawing.Size(879, 440);
+            this.Controls.Add(this.rtbDetalleCobro);
             this.Controls.Add(this.btnImprimirCC);
             this.Controls.Add(this.btnND);
             this.Controls.Add(this.label1);
@@ -170,5 +181,6 @@ namespace Comercial.Formularios.Clientes
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnND;
         private System.Windows.Forms.Button btnImprimirCC;
+        private System.Windows.Forms.RichTextBox rtbDetalleCobro;
     }
 }

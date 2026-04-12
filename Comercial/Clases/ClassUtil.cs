@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -147,6 +148,61 @@ namespace Comercial.Clases
                 FileName = path,
                 UseShellExecute = true
             });
+        }
+
+        public static void CargarRichConFormato(string texto, RichTextBox rich)
+        {
+            rich.Clear();
+
+            Font fontNormal = new Font(rich.Font, FontStyle.Regular);
+            Font fontBold = new Font(rich.Font, FontStyle.Bold);
+
+            int i = 0;
+
+            while (i < texto.Length)
+            {
+                if (texto.Substring(i).StartsWith("<b>"))
+                {
+                    i += 3; // saltar <b>
+                    int fin = texto.IndexOf("</b>", i);
+                    if (fin == -1) break;
+
+                    string contenido = texto.Substring(i, fin - i);
+
+                    int start = rich.TextLength;
+                    rich.AppendText(contenido);
+
+                    // 🔹 aplicar negrita SOLO a este bloque
+                    rich.Select(start, contenido.Length);
+                    rich.SelectionFont = fontBold;
+
+                    // 🔹 volver a normal (CLAVE)
+                    rich.SelectionStart = rich.TextLength;
+                    rich.SelectionLength = 0;
+                    rich.SelectionFont = fontNormal;
+
+                    i = fin + 4; // saltar </b>
+                }
+                else if (texto[i] == '\n')
+                {
+                    rich.AppendText(Environment.NewLine);
+                    i++;
+                }
+                else
+                {
+                    int start = rich.TextLength;
+                    rich.AppendText(texto[i].ToString());
+
+                    // 🔹 asegurar que esto sea normal
+                    rich.Select(start, 1);
+                    rich.SelectionFont = fontNormal;
+
+                    i++;
+                }
+            }
+
+            rich.SelectionStart = rich.TextLength;
+            rich.SelectionLength = 0;
         }
     }
 }

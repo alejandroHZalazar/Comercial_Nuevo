@@ -405,6 +405,27 @@ namespace Comercial.Clases
             return t2;
         }
 
+        public string traerFormaPagoFacturas(long unaVenta)
+        {
+            MySqlCommand nComando = new MySqlCommand(
+                "SELECT fn_Ventas_FormasPagoFactura(@unaVenta)",
+                instDatos.abrirConexion()
+            );
+
+            nComando.Parameters.AddWithValue("@unaVenta", unaVenta);
+
+            object res = nComando.ExecuteScalar();
+
+            string valor = "";
+
+            if (res != null && res != DBNull.Value)
+                valor = res.ToString();
+
+            instDatos.cerrarConexion();
+
+            return valor;
+        }
+
         public DataTable TraerCabeceraNC(long unaDevolucion)
         {
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_Devolucion_TraerCabeceraNotaCredito", instDatos.abrirConexion());
