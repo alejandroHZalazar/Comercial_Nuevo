@@ -90,7 +90,7 @@ namespace Comercial.Clases
             public string cotizacion { get; set; }
             public List<DetalleFactura> detalle { get; set; }
             public decimal total { get; set; }
-            public List<Tributo> tributos { get; set; } 
+            public List<Tributo> tributos { get; set; }
             public List<ComprobanteAsociado> comprobantes_asociados { get; set; }
             public decimal bonificacion { get; set; }
             public Pagos pagos { get; set; }
@@ -240,7 +240,7 @@ namespace Comercial.Clases
             public string text { get; set; }
         }
 
-        public async Task<bool> emitirNotaCredito (long unaDevolucion, int FacturaAsociada, string fechaFacturaAsociada, decimal? unImporte, int? unCliente, decimal? IVA, decimal? iibb)
+        public async Task<bool> emitirNotaCredito(long unaDevolucion, int FacturaAsociada, string fechaFacturaAsociada, decimal? unImporte, int? unCliente, decimal? IVA, decimal? iibb)
         {
             try
             {
@@ -252,19 +252,16 @@ namespace Comercial.Clases
                 {
                     DataTable cabecera = instVentas.TraerCabeceraNC(unaDevolucion);
                     if (cabecera.Rows.Count == 0) return false;
+
                     FacturaRequest facturaRequest = new FacturaRequest();
                     facturaRequest.cliente = new Cliente();
                     facturaRequest.comprobante = new Comprobante();
-                    
 
                     facturaRequest.usertoken = this.userToken;
                     facturaRequest.apikey = this.apiKey;
                     facturaRequest.apitoken = this.apiToken;
-                   
-                    
-                    facturaRequest.cliente = CrearCliente(cabecera.Rows[0],null);
 
-                    //-------------------Comprobante-------------------------
+                    facturaRequest.cliente = CrearCliente(cabecera.Rows[0], null);
 
                     string claveNotaCredito = $"Tipo_Comprobante_NC{cabecera.Rows[0]["letra"].ToString().ToUpper()}";
                     string tipoComprobante = Resource.ResourceManager.GetString(claveNotaCredito);
@@ -273,15 +270,19 @@ namespace Comercial.Clases
                     string tipoComprobanteAsoc = Resource.ResourceManager.GetString(claveComprobanteAsoc);
 
                     facturaRequest.comprobante = CrearComprobante(tipoComprobante);
-                    //facturaRequest.comprobante.bonificacion = Math.Round((decimal)cabecera.Rows[0]["TotalSInIva"] * ((decimal)cabecera.Rows[0]["descuento"] / 100), 2);
+
                     facturaRequest.comprobante.comprobantes_asociados = new List<ComprobanteAsociado>();
-                    var unCOmprobanteAsociado = CrearComprobanteAsociado(tipoComprobanteAsoc, FacturaAsociada, fechaFacturaAsociada, long.Parse(cabecera.Rows[0]["cuil"].ToString()));
+                    var unCOmprobanteAsociado = CrearComprobanteAsociado(
+                        tipoComprobanteAsoc,
+                        FacturaAsociada,
+                        fechaFacturaAsociada,
+                        long.Parse(cabecera.Rows[0]["cuil"].ToString())
+                    );
                     facturaRequest.comprobante.comprobantes_asociados.Add(unCOmprobanteAsociado);
-                    //-------------------Detalle Comprobante-----------------------
 
                     DataTable detalle = instVentas.TraerDetalleNC(unaDevolucion);
                     if (detalle.Rows.Count == 0) return false;
-                    facturaRequest.comprobante.detalle = new List<DetalleFactura>();
+
                     decimal neto = 0m;
                     decimal ivaTotal = 0m;
                     decimal recargoTotal = 0m;
@@ -291,14 +292,13 @@ namespace Comercial.Clases
                     foreach (DataRow fila in detalle.Rows)
                     {
                         decimal cantidad = Math.Round((decimal)fila["cantidad"], 2);
-
                         decimal precioBase = (decimal)fila["precioSinIva"];
 
                         decimal precioUnitario = Math.Round(
                             (decimal)cabecera.Rows[0]["IVA"] == 0
                                 ? precioBase / 1.21m
                                 : precioBase
-                        , 3); // 🔥 3 decimales
+                        , 3);
 
                         decimal bonif = Math.Round((decimal)fila["descuento"], 2);
                         decimal alicuota = (decimal)cabecera.Rows[0]["IVA"] == 0 ? 21 : (decimal)cabecera.Rows[0]["IVA"];
@@ -346,7 +346,6 @@ namespace Comercial.Clases
                     if (recargoTotal > 0)
                     {
                         decimal recargoRedondeado = Math.Round(recargoTotal, 3);
-
                         neto += recargoTotal;
 
                         facturaRequest.comprobante.detalle.Add(new DetalleFactura
@@ -369,10 +368,10 @@ namespace Comercial.Clases
                     }
 
                     decimal totalTributos = 0m;
+
                     if ((decimal)cabecera.Rows[0]["impuesto"] > 0)
                     {
                         decimal alicuotaTributo = Math.Round((decimal)cabecera.Rows[0]["impuesto"], 2);
-
                         decimal totalTributo = Math.Round(neto * (alicuotaTributo / 100m), 2);
 
                         totalTributos = totalTributo;
@@ -383,7 +382,7 @@ namespace Comercial.Clases
                             {
                                 tipo = tributoIIBB,
                                 regimen = regimenIIBB,
-                                base_imponible = neto, // 🔥 CAMBIO CLAVE
+                                base_imponible = neto,
                                 alicuota = alicuotaTributo,
                                 total = totalTributo
                             }
@@ -391,81 +390,86 @@ namespace Comercial.Clases
                     }
 
                     decimal totalFinal = Math.Round(neto + ivaTotal + totalTributos, 2);
-
                     facturaRequest.comprobante.total = totalFinal;
-                    // var response = await emitirComprobante(facturaRequest);
-                    var (ok, jsonRespuesta, error) = await emitirComprobante(facturaRequest);
 
-                    if (!ok)
+                    bool reintento = false;
+
+                    for (int intento = 0; intento < 2; intento++)
                     {
-                        if (!string.IsNullOrEmpty(jsonRespuesta))
-                        {
-                            // error HTTP
-                            string errorHttp = "Error API: " + jsonRespuesta;
+                        var (ok, jsonRespuesta, error) = await emitirComprobante(facturaRequest);
+
+                        if (!ok || string.IsNullOrEmpty(jsonRespuesta))
                             return false;
+
+                        FacturaResponse respuesta = JsonConvert.DeserializeObject<FacturaResponse>(jsonRespuesta);
+
+                        if (respuesta.error == "N")
+                        {
+                            // ✅ éxito
+                            Fiscal unTk = new Fiscal();
+
+                            string cae = respuesta.cae.Trim();
+                            string vencimientoCAE = respuesta.vencimiento_cae;
+                            string numero = respuesta.comprobante_nro;
+                            string pdf = respuesta.comprobante_pdf_url;
+                            string qr = respuesta.afip_qr;
+
+                            ComprobanteFiscal unComprobante = new ComprobanteFiscal
+                            {
+                                TipoComprobante = "Nota de Crédito",
+                                Letra = cabecera.Rows[0]["letra"].ToString(),
+                                PuntoVenta = puntoVenta,
+                                Numero = numero.Split('-')[1].TrimStart('0'),
+                                FechaEmision = DateTime.Now,
+                                CreatedAt = DateTime.Now,
+                                NroReferencia = int.Parse(unaDevolucion.ToString()),
+                                FkCliente = int.Parse(cabecera.Rows[0]["Cliente"].ToString()),
+                                RazonSocial = cabecera.Rows[0]["razonSocial"].ToString(),
+                                Cuit = cabecera.Rows[0]["Cliente"].ToString() == clienteConsumidorFinal.ToString()
+                                            ? "99999999"
+                                            : cabecera.Rows[0]["cuil"].ToString(),
+                                ImporteTotal = totalFinal,
+                                Estado = "Emitido",
+                                Cae = cae,
+                                FechaVencimientoCae = DateTime.ParseExact(vencimientoCAE, "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                                urlComprobante = pdf,
+                                qrAfip = qr
+                            };
+
+                            unTk.almacenarComprobanteFiscal(unComprobante);
+
+                            System.Diagnostics.Process.Start(new ProcessStartInfo
+                            {
+                                FileName = pdf,
+                                UseShellExecute = true
+                            });
+
+                            return true;
                         }
                         else
                         {
-                            // error técnico (timeout, red, etc.)
-                            string errorHttp = "Error técnico: " + error;
+                            string errores = string.Join(" | ", respuesta.errores);
+
+                            // 🔥 REINTENTO SOLO SI ES ERROR DE TOTALES
+                            if (!reintento && errores.Contains("sumatorias finales"))
+                            {
+                                decimal? totalCorrecto = ObtenerTotalDesdeError(errores);
+
+                                if (totalCorrecto.HasValue)
+                                {
+                                    facturaRequest.comprobante.total = totalCorrecto.Value;
+                                    reintento = true;
+                                    continue;
+                                }
+                            }
+
+                            // ❌ error definitivo
+                            new Fiscal().AddErrorFE(unaDevolucion, errores);
+                            return false;
                         }
-
-                        return false;
                     }
-                                       
 
-                    FacturaResponse respuesta = JsonConvert.DeserializeObject<FacturaResponse>(jsonRespuesta);
-
-                    Fiscal unTk = new Fiscal();
-
-                    if (respuesta.error == "N")
-                    {
-                        string cae = respuesta.cae.Trim();
-                        string vencimientoCAE = respuesta.vencimiento_cae;
-                        string numero = respuesta.comprobante_nro;
-                        string pdf = respuesta.comprobante_pdf_url;
-                        string qr = respuesta.afip_qr;
-
-
-                        ComprobanteFiscal unComprobante = new ComprobanteFiscal();
-
-                        unComprobante.TipoComprobante = "Nota de Crédito";
-                        unComprobante.Letra = cabecera.Rows[0]["letra"].ToString();
-                        unComprobante.PuntoVenta = puntoVenta;
-                        unComprobante.Numero = numero.Split('-')[1].TrimStart('0');
-                        unComprobante.FechaEmision = DateTime.Now;
-                        unComprobante.CreatedAt = DateTime.Now;
-                        unComprobante.NroReferencia = int.Parse(unaDevolucion.ToString());
-                        unComprobante.FkCliente = int.Parse(cabecera.Rows[0]["Cliente"].ToString());
-                        unComprobante.RazonSocial = cabecera.Rows[0]["razonSocial"].ToString();
-                        unComprobante.Cuit = cabecera.Rows[0]["Cliente"].ToString() == clienteConsumidorFinal.ToString() ? "99999999" : cabecera.Rows[0]["cuil"].ToString();
-                        unComprobante.ImporteTotal = totalFinal;
-                        unComprobante.Estado = "Emitido";
-                        unComprobante.Cae = cae;
-                        unComprobante.FechaVencimientoCae = DateTime.ParseExact(vencimientoCAE, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                        unComprobante.urlComprobante = pdf;
-                        unComprobante.qrAfip = qr;
-
-                        // guardar en base de datos
-                        unTk.almacenarComprobanteFiscal(unComprobante);
-
-                        System.Diagnostics.Process.Start(new ProcessStartInfo
-                        {
-                            FileName = pdf,
-                            UseShellExecute = true
-                        });
-
-                        return true;
-                    }
-                    else
-                    {
-                        string errores = string.Join(" | ", respuesta.errores);
-
-                        // guardar error en log
-                        unTk.AddErrorFE(unaDevolucion, errores);
-
-                        return false;
-                    }
+                    return false;
                 }
                 else
                 {
@@ -506,7 +510,7 @@ namespace Comercial.Clases
                     var codProvincia = (int)provincia;
                     facturaRequest.cliente.provincia = codProvincia.ToString();
 
-                    facturaRequest.cliente.codigo = "Clie" + Cliente.Rows[0]["Cliente"].ToString();
+                    facturaRequest.cliente.codigo = "Clie" + Cliente.Rows[0]["Cliente"].ToString() == clienteConsumidorFinal.ToString() ? "99999999" : Cliente.Rows[0]["cuil"].ToString();
                     facturaRequest.cliente.envia_por_mail = enviarFacturaMail;
                     if (enviarFacturaMail == "S") facturaRequest.cliente.email = Cliente.Rows[0]["email"].ToString();
                     facturaRequest.cliente.condicion_pago = "201";
@@ -521,7 +525,7 @@ namespace Comercial.Clases
                     string claveComprobanteAsoc = $"Tipo_Comprobante_F{Cliente.Rows[0]["letra"].ToString().ToUpper()}";
                     string tipoComprobanteAsoc = Resource.ResourceManager.GetString(claveComprobanteAsoc);
 
-                    facturaRequest.comprobante = CrearComprobante(tipoComprobante);                    
+                    facturaRequest.comprobante = CrearComprobante(tipoComprobante);
                     facturaRequest.comprobante.comprobantes_asociados = new List<ComprobanteAsociado>();
                     var unCOmprobanteAsociado = CrearComprobanteAsociado(tipoComprobanteAsoc, FacturaAsociada, fechaFacturaAsociada, long.Parse(Cliente.Rows[0]["cuil"].ToString()));
                     facturaRequest.comprobante.comprobantes_asociados.Add(unCOmprobanteAsociado);
@@ -564,7 +568,7 @@ namespace Comercial.Clases
                                 totalSinIVACalculado * ((iibb ?? 0) / 100m),
                                 2
                             )
-                    };
+                        };
 
                         facturaRequest.comprobante.tributos.Add(unTributo);
                     }
@@ -656,12 +660,10 @@ namespace Comercial.Clases
             {
                 ClassVentas instVentas = new ClassVentas();
 
-
                 if (string.IsNullOrEmpty(userToken) || string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiToken)) return false;
                 if (puntoVenta == 0) return false;
 
                 DataTable cabecera = instVentas.TraerCabeceraFactura(unaVenta);
-
                 if (cabecera.Rows.Count == 0) return false;
 
                 FacturaRequest facturaRequest = new FacturaRequest();
@@ -672,21 +674,15 @@ namespace Comercial.Clases
                 facturaRequest.apikey = this.apiKey;
                 facturaRequest.apitoken = this.apiToken;
 
-                //--------Cliente------------------                
-
                 facturaRequest.cliente = CrearCliente(cabecera.Rows[0], unaVenta);
-
-                //-------------------Comprobante-------------------------
 
                 string claveFactura = $"Tipo_Comprobante_F{cabecera.Rows[0]["letra"].ToString().ToUpper()}";
                 string tipoComprobante = Resource.ResourceManager.GetString(claveFactura);
                 facturaRequest.comprobante = CrearComprobante(tipoComprobante);
-               // facturaRequest.comprobante.bonificacion = Math.Round((decimal)cabecera.Rows[0]["TotalSInIva"] * ((decimal)cabecera.Rows[0]["descuento"]/100), 2);
-                //-------------------Detalle Comprobante-----------------------
 
                 DataTable detalle = instVentas.TraerDetalleFactura(unaVenta);
                 if (detalle.Rows.Count == 0) return false;
-                facturaRequest.comprobante.detalle = new List<DetalleFactura>();
+
                 decimal neto = 0m;
                 decimal ivaTotal = 0m;
                 decimal recargoTotal = 0m;
@@ -696,10 +692,8 @@ namespace Comercial.Clases
                 foreach (DataRow fila in detalle.Rows)
                 {
                     decimal cantidad = Math.Round((decimal)fila["cantidad"], 2);
-
                     decimal precioBase = (decimal)fila["precioSinIva"];
 
-                    // 🔑 trabajar con 3 decimales como TusFacturas
                     decimal precioUnitario = Math.Round(
                         (decimal)cabecera.Rows[0]["IVA"] == 0
                             ? precioBase / 1.21m
@@ -709,21 +703,16 @@ namespace Comercial.Clases
                     decimal bonif = Math.Round((decimal)fila["descuento"], 2);
                     decimal alicuota = (decimal)cabecera.Rows[0]["IVA"] == 0 ? 21 : (decimal)cabecera.Rows[0]["IVA"];
 
-                    // subtotal sin redondear
                     decimal subtotal = precioUnitario * cantidad;
 
-                    // aplicar descuento
                     if (bonif > 0)
                         subtotal -= subtotal * (bonif / 100m);
 
-                    // acumular neto (SIN redondear)
                     neto += subtotal;
 
-                    // IVA por línea (redondeado a 2)
                     decimal ivaLinea = Math.Round(subtotal * (alicuota / 100m), 2);
                     ivaTotal += ivaLinea;
 
-                    // recargo
                     if ((decimal)fila["recargo"] > 0)
                     {
                         decimal recargoLinea = subtotal * ((decimal)fila["recargo"] / 100m);
@@ -745,7 +734,7 @@ namespace Comercial.Clases
                                         : codigoDetalle == "CodBarras"
                                             ? fila["codBarras"].ToString()
                                             : fila["Producto"].ToString(),
-                            precio_unitario_sin_iva = precioUnitario, // 🔥 3 decimales
+                            precio_unitario_sin_iva = precioUnitario,
                             alicuota = alicuota,
                             unidad_medida = 7,
                             actualiza_precio = "N",
@@ -757,7 +746,6 @@ namespace Comercial.Clases
                 if (recargoTotal > 0)
                 {
                     decimal recargoRedondeado = Math.Round(recargoTotal, 3);
-
                     neto += recargoTotal;
 
                     facturaRequest.comprobante.detalle.Add(new DetalleFactura
@@ -784,110 +772,155 @@ namespace Comercial.Clases
                 if ((decimal)cabecera.Rows[0]["impuesto"] > 0)
                 {
                     decimal alicuotaTributo = Math.Round((decimal)cabecera.Rows[0]["impuesto"], 2);
-
                     decimal totalTributo = Math.Round(neto * (alicuotaTributo / 100m), 2);
 
                     totalTributos = totalTributo;
 
                     facturaRequest.comprobante.tributos = new List<Tributo>
-                        {
-                            new Tributo
-                            {
-                                tipo = tributoIIBB,
-                                regimen = regimenIIBB,
-                                base_imponible = neto,
-                                alicuota = alicuotaTributo,
-                                total = totalTributo
-                            }
-                        };
+            {
+                new Tributo
+                {
+                    tipo = tributoIIBB,
+                    regimen = regimenIIBB,
+                    base_imponible = neto,
+                    alicuota = alicuotaTributo,
+                    total = totalTributo
+                }
+            };
                 }
 
                 decimal totalFinal = Math.Round(neto + ivaTotal + totalTributos, 2);
-
-                // 🔥 ESTE ES EL ÚNICO TOTAL VÁLIDO
                 facturaRequest.comprobante.total = totalFinal;
 
-                var (ok, jsonRespuesta, error) = await emitirComprobante(facturaRequest);
+                bool reintento = false;
 
-                if (!ok)
+                for (int intento = 0; intento < 2; intento++)
                 {
-                    if (!string.IsNullOrEmpty(jsonRespuesta))
-                    {
-                        // error HTTP
-                        string errorHttp = "Error API: " + jsonRespuesta;
+                    var (ok, jsonRespuesta, error) = await emitirComprobante(facturaRequest);
+
+                    if (!ok || string.IsNullOrEmpty(jsonRespuesta))
                         return false;
+
+                    FacturaResponse respuesta = JsonConvert.DeserializeObject<FacturaResponse>(jsonRespuesta);
+
+                    if (respuesta.error == "N")
+                    {
+                        // ✅ ÉXITO → guardar comprobante
+                        Fiscal unTk = new Fiscal();
+
+                        string cae = respuesta.cae.Trim();
+                        string vencimientoCAE = respuesta.vencimiento_cae;
+                        string numero = respuesta.comprobante_nro;
+                        string pdf = respuesta.comprobante_pdf_url;
+                        string qr = respuesta.afip_qr;
+
+                        ComprobanteFiscal unComprobante = new ComprobanteFiscal
+                        {
+                            TipoComprobante = "Factura",
+                            Letra = cabecera.Rows[0]["letra"].ToString(),
+                            PuntoVenta = puntoVenta,
+                            Numero = numero.Split('-')[1].TrimStart('0'),
+                            FechaEmision = DateTime.Now,
+                            CreatedAt = DateTime.Now,
+                            NroReferencia = int.Parse(unaVenta.ToString()),
+                            FkCliente = int.Parse(cabecera.Rows[0]["Cliente"].ToString()),
+                            RazonSocial = cabecera.Rows[0]["razonSocial"].ToString(),
+                            Cuit = cabecera.Rows[0]["Cliente"].ToString() == clienteConsumidorFinal.ToString()
+                                        ? "99999999"
+                                        : cabecera.Rows[0]["cuil"].ToString(),
+                            ImporteTotal = decimal.Parse(cabecera.Rows[0]["totalVenta"].ToString()),
+                            Estado = "Emitido",
+                            Cae = cae,
+                            FechaVencimientoCae = DateTime.ParseExact(vencimientoCAE, "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                            urlComprobante = pdf,
+                            qrAfip = qr
+                        };
+
+                        unTk.almacenarComprobanteFiscal(unComprobante);
+
+                        System.Diagnostics.Process.Start(new ProcessStartInfo
+                        {
+                            FileName = pdf,
+                            UseShellExecute = true
+                        });
+
+                        return true;
                     }
                     else
                     {
-                        // error técnico (timeout, red, etc.)
-                        string errorHttp = "Error técnico: " + error;
+                        string errores = string.Join(" | ", respuesta.errores);
+
+                        // 🔥 detectar diferencia de totales
+                        if (!reintento && errores.Contains("sumatorias finales"))
+                        {
+                            decimal? totalCorrecto = ObtenerTotalDesdeError(errores);
+
+                            if (totalCorrecto.HasValue)
+                            {
+                                facturaRequest.comprobante.total = totalCorrecto.Value;
+                                reintento = true;
+                                continue; // 🔁 reintenta
+                            }
+                        }
+
+                        // ❌ error definitivo
+                        new Fiscal().AddErrorFE(unaVenta, errores);
+                        MessageBox.Show(errores, "FACTURACION", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return false;
                     }
-
-                    return false;
                 }
 
-                FacturaResponse respuesta = JsonConvert.DeserializeObject<FacturaResponse>(jsonRespuesta);
-
-                Fiscal unTk = new Fiscal();
-
-                if (respuesta.error == "N")
-                {
-                    string cae = respuesta.cae.Trim();
-                    string vencimientoCAE = respuesta.vencimiento_cae;
-                    string numero = respuesta.comprobante_nro;
-                    string pdf = respuesta.comprobante_pdf_url;
-                    string qr = respuesta.afip_qr;
-
-
-                    ComprobanteFiscal unComprobante = new ComprobanteFiscal();
-
-                    unComprobante.TipoComprobante = "Factura";
-                    unComprobante.Letra = cabecera.Rows[0]["letra"].ToString();
-                    unComprobante.PuntoVenta = puntoVenta;
-                    unComprobante.Numero = numero.Split('-')[1].TrimStart('0');
-                    unComprobante.FechaEmision = DateTime.Now;
-                    unComprobante.CreatedAt = DateTime.Now;
-                    unComprobante.NroReferencia = int.Parse(unaVenta.ToString());
-                    unComprobante.FkCliente = int.Parse(cabecera.Rows[0]["Cliente"].ToString());
-                    unComprobante.RazonSocial = cabecera.Rows[0]["razonSocial"].ToString();
-                    unComprobante.Cuit = cabecera.Rows[0]["Cliente"].ToString() == clienteConsumidorFinal.ToString() ? "99999999" : cabecera.Rows[0]["cuil"].ToString();
-                    unComprobante.ImporteTotal = decimal.Parse(cabecera.Rows[0]["totalVenta"].ToString());
-                    unComprobante.Estado = "Emitido";
-                    unComprobante.Cae = cae;
-                    unComprobante.FechaVencimientoCae = DateTime.ParseExact(vencimientoCAE, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                    unComprobante.urlComprobante = pdf;
-                    unComprobante.qrAfip = qr;
-
-                    // guardar en base de datos
-                    unTk.almacenarComprobanteFiscal(unComprobante);
-
-                    System.Diagnostics.Process.Start(new ProcessStartInfo
-                    {
-                        FileName = pdf,
-                        UseShellExecute = true
-                    });
-
-                    return true;
-                }
-                else
-                {
-                    string errores = string.Join(" | ", respuesta.errores);
-
-                    // guardar error en log
-                    unTk.AddErrorFE(unaVenta, errores);
-
-                    MessageBox.Show(errores, "FACTURACION", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                    return false;
-                }
+                return false;
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }
         }
+        private decimal? ObtenerTotalDesdeError(string error)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(error))
+                    return null;
 
-        private ComprobanteAsociado CrearComprobanteAsociado (string tipoComp, int numeroAsoc, string fechaAsociado, long cuitAsoc)
+                // Buscar el texto clave
+                string clave = "sumatorias finales (";
+                int index = error.IndexOf(clave);
+
+                if (index == -1)
+                    return null;
+
+                // Posición donde empieza el número
+                int inicioNumero = index + clave.Length;
+
+                // Buscar cierre de paréntesis
+                int finNumero = error.IndexOf(")", inicioNumero);
+
+                if (finNumero == -1)
+                    return null;
+
+                string numeroStr = error.Substring(inicioNumero, finNumero - inicioNumero);
+
+                // Limpiar posibles espacios
+                numeroStr = numeroStr.Trim();
+
+                if (decimal.TryParse(numeroStr, System.Globalization.NumberStyles.Any,
+                                     System.Globalization.CultureInfo.InvariantCulture,
+                                     out decimal total))
+                {
+                    return total;
+                }
+
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private ComprobanteAsociado CrearComprobanteAsociado(string tipoComp, int numeroAsoc, string fechaAsociado, long cuitAsoc)
         {
             return new ComprobanteAsociado
             {
@@ -913,13 +946,13 @@ namespace Comercial.Clases
                 razon_social = row["razonSocial"].ToString(),
                 domicilio = row["Direccion"].ToString(),
                 provincia = ((int)provincia).ToString(),
-                codigo = "Clie" + row["Cliente"].ToString(),
+                codigo = "Clie" + (esConsumidorFinal ? "99999999" : row["cuil"].ToString()),
                 envia_por_mail = enviarFacturaMail,
                 email = enviarFacturaMail == "S" ? row["email"].ToString() : null,
                 condicion_pago = "214",
-                condicion_pago_otra = unaVenta == null ? "Sin Especificar" : instVentas.traerFormaPagoFacturas(unaVenta ??0),
+                condicion_pago_otra = unaVenta == null ? "Sin Especificar" : instVentas.traerFormaPagoFacturas(unaVenta ?? 0),
                 condicion_iva = row["abrevFE"].ToString(),
-                rg5329 = "N"                
+                rg5329 = "N"
             };
         }
 
@@ -941,7 +974,7 @@ namespace Comercial.Clases
                 periodo_facturado_desde = fecha,
                 periodo_facturado_hasta = fecha,
                 rubro = rubroFE,
-                rubro_grupo_contable = $"{now.Month}/{now.Year}"                
+                rubro_grupo_contable = $"{now.Month}/{now.Year}"
             };
         }
     }
