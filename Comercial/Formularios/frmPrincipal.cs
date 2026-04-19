@@ -155,6 +155,12 @@ namespace Comercial.Formularios
             unFrmProd.ShowDialog();
         }
 
+        private void promocionesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Formularios.Productos.frmABMPromociones unFrmPromo = new Productos.frmABMPromociones();
+            unFrmPromo.ShowDialog();
+        }
+
         private void aBMProveedoresToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Formularios.Proveedores.frmGestionProveedores unFrmGestProv = new Proveedores.frmGestionProveedores();

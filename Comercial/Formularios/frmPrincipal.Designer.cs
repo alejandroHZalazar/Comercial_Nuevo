@@ -54,6 +54,7 @@
             this.reportesDevolucionesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.productosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aBMProductosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.promocionesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ingresoDeMercaderiaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.altaMasivaDeProductosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.listaDePreciosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -288,6 +289,7 @@
             // 
             this.productosToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.aBMProductosToolStripMenuItem,
+            this.promocionesToolStripMenuItem,
             this.ingresoDeMercaderiaToolStripMenuItem,
             this.altaMasivaDeProductosToolStripMenuItem,
             this.listaDePreciosToolStripMenuItem,
@@ -303,14 +305,21 @@
             this.productosToolStripMenuItem.Name = "productosToolStripMenuItem";
             this.productosToolStripMenuItem.Size = new System.Drawing.Size(91, 20);
             this.productosToolStripMenuItem.Text = "Productos";
-            // 
+            //
             // aBMProductosToolStripMenuItem
-            // 
+            //
             this.aBMProductosToolStripMenuItem.Name = "aBMProductosToolStripMenuItem";
             this.aBMProductosToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
             this.aBMProductosToolStripMenuItem.Text = "ABM Productos";
             this.aBMProductosToolStripMenuItem.Click += new System.EventHandler(this.aBMProductosToolStripMenuItem_Click);
-            // 
+            //
+            // promocionesToolStripMenuItem
+            //
+            this.promocionesToolStripMenuItem.Name = "promocionesToolStripMenuItem";
+            this.promocionesToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
+            this.promocionesToolStripMenuItem.Text = "Promociones / Combos";
+            this.promocionesToolStripMenuItem.Click += new System.EventHandler(this.promocionesToolStripMenuItem_Click);
+            //
             // ingresoDeMercaderiaToolStripMenuItem
             // 
             this.ingresoDeMercaderiaToolStripMenuItem.Name = "ingresoDeMercaderiaToolStripMenuItem";
@@ -585,6 +594,7 @@
         private System.Windows.Forms.ToolStripMenuItem aToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem productosToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aBMProductosToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem promocionesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem proveedoresToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aBMProveedoresToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clientesToolStripMenuItem;

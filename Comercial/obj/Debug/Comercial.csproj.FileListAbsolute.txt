@@ -237,10 +237,7 @@ C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Properties.Resources.resources
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Reportes.frmReport.resources
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.csproj.GenerateResource.cache
-C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\RdlCompile.cache
-C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\RdlCompile.compiled
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.csproj.CoreCompileInputs.cache
-C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.csproj.CopyComplete
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.exe
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.pdb
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.csproj.AssemblyReference.cache
@@ -280,3 +277,9 @@ C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\bin\Debug\SixLabors.
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Clientes.frmClientesConSaldo.resources
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Estadisticas.frmDashboardProveedores.resources
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Estadisticas.frmDashboardClientes.resources
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Productos.frmABMPromociones.resources
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Productos.frmAltaModifPromocion.resources
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Ventas.frmSeleccionarProductosPromo.resources
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\RdlCompile.cache
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\RdlCompile.compiled
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.csproj.CopyComplete

@@ -144,6 +144,28 @@ namespace Comercial.Clases
             instDatos.cerrarConexion();
         }
 
+        public void actualizarEsPromocion(int idProducto, bool esPromocion)
+        {
+            MySqlCommand cmd = new MySqlCommand(
+                "UPDATE Productos SET esPromocion = @val WHERE id = @id",
+                instDatos.abrirConexion());
+            cmd.Parameters.AddWithValue("@val", esPromocion ? 1 : 0);
+            cmd.Parameters.AddWithValue("@id", idProducto);
+            cmd.ExecuteNonQuery();
+            instDatos.cerrarConexion();
+        }
+
+        public bool traerEsPromocion(int idProducto)
+        {
+            MySqlCommand cmd = new MySqlCommand(
+                "SELECT COALESCE(esPromocion, 0) FROM Productos WHERE id = @id",
+                instDatos.abrirConexion());
+            cmd.Parameters.AddWithValue("@id", idProducto);
+            object val = cmd.ExecuteScalar();
+            instDatos.cerrarConexion();
+            return val != null && val.ToString() == "1";
+        }
+
         public void actualizarEstadoProducto(string unProducto, bool baja)
         {
             MySqlCommand nComando = new MySqlCommand("update Productos set baja = " + baja.ToString() + " where id = " + unProducto, instDatos.abrirConexion());
@@ -219,7 +241,7 @@ namespace Comercial.Clases
         }
 
         public int ABMProductos(string unCodProveedor, string unCodBarras, int unRubro, string unaDescripcion, int unProveedor, decimal unCosto,
-                                decimal unPrecio, decimal unStock, decimal unaCantMinima, int unaAccion, int unProducto, decimal unPrecioProveedor, bool esFraccionado, bool esDolarizado)
+                                decimal unPrecio, decimal unStock, decimal unaCantMinima, int unaAccion, int unProducto, decimal unPrecioProveedor, bool esFraccionado, bool esDolarizado, bool esPromocion)
         {
             try
             {
@@ -242,6 +264,7 @@ namespace Comercial.Clases
                 cmd.Parameters.AddWithValue("unPrecioProveedor", unPrecioProveedor);
                 cmd.Parameters.AddWithValue("esFraccionado", esFraccionado);
                 cmd.Parameters.AddWithValue("esDolarizado", esDolarizado);
+                cmd.Parameters.AddWithValue("esUnaPromocion", esPromocion);
 
 
                 MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int32);

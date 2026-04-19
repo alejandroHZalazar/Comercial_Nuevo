@@ -81,11 +81,11 @@ namespace Comercial.Formularios.Productos
                 int resul;
                 if (unAccion == 1)
                 {
-                    resul = instProd.ABMProductos(txtCodProveedor.Text.Trim(), txtCodBarras.Text.Trim(), int.Parse(cboRubro.SelectedValue.ToString()), txtDescripcion.Text.Trim(), int.Parse(cboProveedor.SelectedValue.ToString()), nudCosto.Value, nudLista.Value, nudStock.Value, nudMinima.Value, 1, 0,nudProveedor .Value,cbFraccionado.Checked, cbDolarizado.Checked);
+                    resul = instProd.ABMProductos(txtCodProveedor.Text.Trim(), txtCodBarras.Text.Trim(), int.Parse(cboRubro.SelectedValue.ToString()), txtDescripcion.Text.Trim(), int.Parse(cboProveedor.SelectedValue.ToString()), nudCosto.Value, nudLista.Value, nudStock.Value, nudMinima.Value, 1, 0,nudProveedor .Value,cbFraccionado.Checked, cbDolarizado.Checked, chkEsPromocion.Checked);
                 }
                 else
                 {
-                    resul = instProd .ABMProductos( txtCodProveedor.Text.Trim(), txtCodBarras.Text.Trim(), int.Parse(cboRubro.SelectedValue.ToString()),  txtDescripcion.Text.Trim(), int.Parse(cboProveedor.SelectedValue.ToString()), nudCosto.Value, nudLista.Value, nudStock.Value, nudMinima.Value, 2,unProducto,nudProveedor .Value, cbFraccionado.Checked, cbDolarizado.Checked);
+                    resul = instProd .ABMProductos( txtCodProveedor.Text.Trim(), txtCodBarras.Text.Trim(), int.Parse(cboRubro.SelectedValue.ToString()),  txtDescripcion.Text.Trim(), int.Parse(cboProveedor.SelectedValue.ToString()), nudCosto.Value, nudLista.Value, nudStock.Value, nudMinima.Value, 2,unProducto,nudProveedor .Value, cbFraccionado.Checked, cbDolarizado.Checked, chkEsPromocion.Checked);
                 }
 
                 if (resul == -1)
@@ -167,6 +167,10 @@ namespace Comercial.Formularios.Productos
             nudProveedor.Value = decimal.Parse(producto.Rows[0]["P_Proveedor"].ToString());
             cbFraccionado.Checked = Convert.ToBoolean(producto.Rows[0]["fraccionado"]);
             cbDolarizado.Checked = Clases.ClassParametros.buscarParametro("productos", "dolarizaProductos") != "1" ? false : producto.Rows[0]["dolarizado"].ToString() == ""?false: Convert.ToBoolean(producto.Rows[0]["dolarizado"]);
+
+            bool esPromo = instProd.traerEsPromocion(unProducto);
+            chkEsPromocion.Checked = esPromo;
+            btnConfigurarPromocion.Enabled = esPromo;
         }
 
         private void cargarCombos()
@@ -304,6 +308,50 @@ namespace Comercial.Formularios.Productos
             {
                 e.KeyChar = ',';
             }
+        }
+
+        private void chkEsPromocion_CheckedChanged(object sender, EventArgs e)
+        {
+            btnConfigurarPromocion.Enabled = chkEsPromocion.Checked;
+
+            if (!chkEsPromocion.Checked && unAccion == 2)
+            {
+                if (MessageBox.Show("¿Desea quitar la configuración de promoción de este producto?",
+                    "Productos", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                {
+                    chkEsPromocion.Checked = true;
+                }
+            }
+        }
+
+        private void btnConfigurarPromocion_Click(object sender, EventArgs e)
+        {
+            if (unAccion == 1 && unProducto == 0)
+            {
+                MessageBox.Show("Primero grabe el producto antes de configurar la promoción.",
+                    "Productos", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            Formularios.Productos.frmAltaModifPromocion frm = new Formularios.Productos.frmAltaModifPromocion();
+            Clases.ClassPromociones instPromo = new Clases.ClassPromociones();
+
+            bool existePromo = instPromo.esPromocionActiva(unProducto) || unAccion == 1;
+            if (unAccion == 2 && instPromo.obtenerPromocionCompleta(unProducto).Tables[0].Rows.Count > 0)
+            {
+                // Editar existente
+                System.Data.DataSet ds = instPromo.obtenerPromocionCompleta(unProducto);
+                frm.unAccion = 2;
+                frm.unFkProducto = unProducto;
+                frm.unIdPromocion = int.Parse(ds.Tables[0].Rows[0]["idPromocion"].ToString());
+            }
+            else
+            {
+                frm.unAccion = 1;
+                frm.unFkProducto = unProducto;
+            }
+
+            frm.ShowDialog();
         }
     }
 }

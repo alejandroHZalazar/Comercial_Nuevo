@@ -64,6 +64,11 @@ namespace Comercial.Formularios.Ventas
         int bonificacionPorLinea  = Clases.ClassParametros.buscarParametro("ventas", "bonificacionesPorDetalle") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "bonificacionesPorDetalle"));
 
         bool ordenFacturar = false;
+
+        // Componentes de promociones pendientes de guardar tras grabarVenta.
+        // Clave = fk_producto del producto promo. Valor = string detalle para sp_VentasAddPromoComponentes.
+        private Dictionary<int, string> _componentesPromo = new Dictionary<int, string>();
+
         public frmVentas()
         {
             InitializeComponent();
@@ -136,6 +141,7 @@ namespace Comercial.Formularios.Ventas
         }
         private void estadoInicial()
         {
+            _componentesPromo.Clear();
             lblDescripcion.Text = string.Empty;
             lblClienteNombre.Text = string.Empty;
             dgvProductos.Rows.Clear();
@@ -699,6 +705,20 @@ namespace Comercial.Formularios.Ventas
 
         private void agregarProducto()
         {
+            // Verificar si el producto es una promoción antes de agregar
+            if (instProd.traerEsPromocion(unProducto))
+            {
+                Formularios.Ventas.frmSeleccionarProductosPromo frmPromo = new Formularios.Ventas.frmSeleccionarProductosPromo();
+                frmPromo.fkProducto = unProducto;
+                frmPromo.ShowDialog(this);
+
+                if (frmPromo.DialogResult != DialogResult.OK)
+                    return; // El operador canceló la selección
+
+                // Guardar componentes para procesar al grabar la venta
+                _componentesPromo[unProducto] = frmPromo.construirDetalleComponentes();
+            }
+
             bool band = false;
             foreach (DataGridViewRow fila in dgvProductos.Rows)
             {
@@ -1123,6 +1143,18 @@ namespace Comercial.Formularios.Ventas
                 }
 
                 salida = instVentas.grabarVenta(decimal.Parse(txtTotGeneral.Text), unCosto, unCliente, int.Parse(Environment.GetEnvironmentVariable("idUser")), decimal.Parse(cboIVA.Text),null, null, int.Parse(cboVendedores.SelectedValue.ToString()), nudComision.Value / 100, decimal.Parse(cboIngBrutos.Text), detalle, llevaCC, imputaEnVenta, tieneMediosPagos, imputacion, detalleFormasPago, tieneCaja, CajaId);
+
+                // Guardar componentes de promociones
+                if (salida != -1 && _componentesPromo.Count > 0)
+                {
+                    foreach (var kvp in _componentesPromo)
+                    {
+                        long lineaDetalle = instVentas.traerLineaDetalleVenta(salida, kvp.Key);
+                        if (lineaDetalle > 0)
+                            instVentas.guardarComponentesPromocion(lineaDetalle, kvp.Value);
+                    }
+                    _componentesPromo.Clear();
+                }
 
                 if (salida != -1)
                 {

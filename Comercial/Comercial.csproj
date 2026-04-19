@@ -244,6 +244,7 @@
     <Compile Include="Clases\ClassPedidos.cs" />
     <Compile Include="Clases\ClassProductos.cs" />
     <Compile Include="Clases\ClassProductosBalanza.cs" />
+    <Compile Include="Clases\ClassPromociones.cs" />
     <Compile Include="Clases\ClassProveedores.cs" />
     <Compile Include="Clases\ClassReportesFiscal.cs" />
     <Compile Include="Clases\ClassReportesITextSharp.cs" />
@@ -531,6 +532,21 @@
     <Compile Include="Formularios\Productos\frmAltaMasiva.Designer.cs">
       <DependentUpon>frmAltaMasiva.cs</DependentUpon>
     </Compile>
+    <Compile Include="Formularios\Productos\frmPickProducto.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Productos\frmABMPromociones.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Productos\frmABMPromociones.Designer.cs">
+      <DependentUpon>frmABMPromociones.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Productos\frmAltaModifPromocion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Productos\frmAltaModifPromocion.Designer.cs">
+      <DependentUpon>frmAltaModifPromocion.cs</DependentUpon>
+    </Compile>
     <Compile Include="Formularios\Productos\frmAltaModifProductos.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -680,6 +696,12 @@
     </Compile>
     <Compile Include="Formularios\Ventas\frmPedidosReport.Designer.cs">
       <DependentUpon>frmPedidosReport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Ventas\frmSeleccionarProductosPromo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Ventas\frmSeleccionarProductosPromo.Designer.cs">
+      <DependentUpon>frmSeleccionarProductosPromo.cs</DependentUpon>
     </Compile>
     <Compile Include="Formularios\Ventas\frmVentas.cs">
       <SubType>Form</SubType>
@@ -856,6 +878,9 @@
     <EmbeddedResource Include="Formularios\frmPrincipal.resx">
       <DependentUpon>frmPrincipal.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Productos\frmABMPromociones.resx">
+      <DependentUpon>frmABMPromociones.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Productos\frmAjusteStock.resx">
       <DependentUpon>frmAjusteStock.cs</DependentUpon>
     </EmbeddedResource>
@@ -864,6 +889,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Productos\frmAltaModifProductos.resx">
       <DependentUpon>frmAltaModifProductos.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Productos\frmAltaModifPromocion.resx">
+      <DependentUpon>frmAltaModifPromocion.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Productos\frmCambioDePreciosMasivo.resx">
       <DependentUpon>frmCambioDePreciosMasivo.cs</DependentUpon>
@@ -936,6 +964,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Ventas\frmPedidosReport.resx">
       <DependentUpon>frmPedidosReport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Ventas\frmSeleccionarProductosPromo.resx">
+      <DependentUpon>frmSeleccionarProductosPromo.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Ventas\frmVentas.resx">
       <DependentUpon>frmVentas.cs</DependentUpon>

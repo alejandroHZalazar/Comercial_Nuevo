@@ -101,7 +101,7 @@ namespace Comercial.Formularios.Productos
             foreach (DataGridViewRow fila in dgvProductos.Rows)
             {
                 int result;
-                result = instProd.ABMProductos(fila.Cells[0].Value.ToString(), fila.Cells[1].Value.ToString(), int.Parse(fila.Cells[3].Value.ToString()), fila.Cells[2].Value.ToString().ToUpper().Trim(), int.Parse(fila.Cells[5].Value.ToString()), decimal.Parse(fila.Cells[7].Value.ToString()), decimal.Parse(fila.Cells[8].Value.ToString()), decimal.Parse(fila.Cells[9].Value.ToString()), decimal.Parse(fila.Cells[10].Value.ToString()), 1, 0, decimal.Parse(fila.Cells[6].Value.ToString()), bool.Parse(fila.Cells[7].Value.ToString()), bool.Parse(fila.Cells[8].Value.ToString()));
+                result = instProd.ABMProductos(fila.Cells[0].Value.ToString(), fila.Cells[1].Value.ToString(), int.Parse(fila.Cells[3].Value.ToString()), fila.Cells[2].Value.ToString().ToUpper().Trim(), int.Parse(fila.Cells[5].Value.ToString()), decimal.Parse(fila.Cells[7].Value.ToString()), decimal.Parse(fila.Cells[8].Value.ToString()), decimal.Parse(fila.Cells[9].Value.ToString()), decimal.Parse(fila.Cells[10].Value.ToString()), 1, 0, decimal.Parse(fila.Cells[6].Value.ToString()), bool.Parse(fila.Cells[7].Value.ToString()), bool.Parse(fila.Cells[8].Value.ToString()),false);
 
                 if (result == -1)
                 {

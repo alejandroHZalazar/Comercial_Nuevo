@@ -60,6 +60,8 @@
             this.nudGanancia = new System.Windows.Forms.NumericUpDown();
             this.cbFraccionado = new System.Windows.Forms.CheckBox();
             this.cbDolarizado = new System.Windows.Forms.CheckBox();
+            this.chkEsPromocion = new System.Windows.Forms.CheckBox();
+            this.btnConfigurarPromocion = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.nudCosto)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudLista)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudStock)).BeginInit();
@@ -81,7 +83,7 @@
             // 
             // txtCodBarras
             // 
-            this.txtCodBarras.Location = new System.Drawing.Point(107, 53);
+            this.txtCodBarras.Location = new System.Drawing.Point(107, 52);
             this.txtCodBarras.Name = "txtCodBarras";
             this.txtCodBarras.Size = new System.Drawing.Size(133, 23);
             this.txtCodBarras.TabIndex = 1;
@@ -90,7 +92,7 @@
             // cboRubro
             // 
             this.cboRubro.FormattingEnabled = true;
-            this.cboRubro.Location = new System.Drawing.Point(107, 131);
+            this.cboRubro.Location = new System.Drawing.Point(107, 128);
             this.cboRubro.Name = "cboRubro";
             this.cboRubro.Size = new System.Drawing.Size(172, 23);
             this.cboRubro.TabIndex = 3;
@@ -98,7 +100,7 @@
             // nudCosto
             // 
             this.nudCosto.DecimalPlaces = 2;
-            this.nudCosto.Location = new System.Drawing.Point(107, 249);
+            this.nudCosto.Location = new System.Drawing.Point(107, 242);
             this.nudCosto.Maximum = new decimal(new int[] {
             999999999,
             0,
@@ -121,7 +123,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 57);
+            this.label2.Location = new System.Drawing.Point(12, 56);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(67, 15);
             this.label2.TabIndex = 5;
@@ -130,7 +132,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 96);
+            this.label3.Location = new System.Drawing.Point(12, 94);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(69, 15);
             this.label3.TabIndex = 6;
@@ -138,7 +140,7 @@
             // 
             // txtDescripcion
             // 
-            this.txtDescripcion.Location = new System.Drawing.Point(107, 92);
+            this.txtDescripcion.Location = new System.Drawing.Point(107, 90);
             this.txtDescripcion.Name = "txtDescripcion";
             this.txtDescripcion.Size = new System.Drawing.Size(314, 23);
             this.txtDescripcion.TabIndex = 2;
@@ -147,7 +149,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 135);
+            this.label4.Location = new System.Drawing.Point(12, 132);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(39, 15);
             this.label4.TabIndex = 8;
@@ -156,7 +158,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(12, 175);
+            this.label6.Location = new System.Drawing.Point(12, 170);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(61, 15);
             this.label6.TabIndex = 11;
@@ -165,7 +167,7 @@
             // cboProveedor
             // 
             this.cboProveedor.FormattingEnabled = true;
-            this.cboProveedor.Location = new System.Drawing.Point(107, 171);
+            this.cboProveedor.Location = new System.Drawing.Point(107, 166);
             this.cboProveedor.Name = "cboProveedor";
             this.cboProveedor.Size = new System.Drawing.Size(181, 23);
             this.cboProveedor.TabIndex = 4;
@@ -174,7 +176,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(12, 253);
+            this.label7.Location = new System.Drawing.Point(12, 246);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(51, 15);
             this.label7.TabIndex = 13;
@@ -183,7 +185,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(12, 292);
+            this.label8.Location = new System.Drawing.Point(12, 284);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(44, 15);
             this.label8.TabIndex = 14;
@@ -192,7 +194,7 @@
             // nudLista
             // 
             this.nudLista.DecimalPlaces = 2;
-            this.nudLista.Location = new System.Drawing.Point(107, 288);
+            this.nudLista.Location = new System.Drawing.Point(107, 280);
             this.nudLista.Maximum = new decimal(new int[] {
             999999999,
             0,
@@ -209,7 +211,7 @@
             this.btnCancelar.BackColor = System.Drawing.Color.Silver;
             this.btnCancelar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCancelar.Image = global::Comercial.Properties.Resources.back_arrow;
-            this.btnCancelar.Location = new System.Drawing.Point(321, 405);
+            this.btnCancelar.Location = new System.Drawing.Point(321, 438);
             this.btnCancelar.Name = "btnCancelar";
             this.btnCancelar.Size = new System.Drawing.Size(111, 35);
             this.btnCancelar.TabIndex = 15;
@@ -223,7 +225,7 @@
             this.btnGrabar.BackColor = System.Drawing.Color.Silver;
             this.btnGrabar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnGrabar.Image = global::Comercial.Properties.Resources.save__1_;
-            this.btnGrabar.Location = new System.Drawing.Point(172, 405);
+            this.btnGrabar.Location = new System.Drawing.Point(172, 438);
             this.btnGrabar.Name = "btnGrabar";
             this.btnGrabar.Size = new System.Drawing.Size(111, 35);
             this.btnGrabar.TabIndex = 14;
@@ -235,7 +237,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(12, 331);
+            this.label9.Location = new System.Drawing.Point(12, 322);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(36, 15);
             this.label9.TabIndex = 15;
@@ -244,7 +246,7 @@
             // nudStock
             // 
             this.nudStock.DecimalPlaces = 2;
-            this.nudStock.Location = new System.Drawing.Point(107, 327);
+            this.nudStock.Location = new System.Drawing.Point(107, 318);
             this.nudStock.Maximum = new decimal(new int[] {
             999999999,
             0,
@@ -264,7 +266,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(12, 370);
+            this.label10.Location = new System.Drawing.Point(12, 360);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(79, 15);
             this.label10.TabIndex = 17;
@@ -273,7 +275,7 @@
             // nudMinima
             // 
             this.nudMinima.DecimalPlaces = 2;
-            this.nudMinima.Location = new System.Drawing.Point(107, 366);
+            this.nudMinima.Location = new System.Drawing.Point(107, 356);
             this.nudMinima.Maximum = new decimal(new int[] {
             999999999,
             0,
@@ -293,7 +295,7 @@
             // 
             this.btnCalcularPrecio.BackColor = System.Drawing.Color.Silver;
             this.btnCalcularPrecio.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCalcularPrecio.Location = new System.Drawing.Point(244, 286);
+            this.btnCalcularPrecio.Location = new System.Drawing.Point(244, 278);
             this.btnCalcularPrecio.Name = "btnCalcularPrecio";
             this.btnCalcularPrecio.Size = new System.Drawing.Size(150, 27);
             this.btnCalcularPrecio.TabIndex = 8;
@@ -305,7 +307,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(12, 214);
+            this.label11.Location = new System.Drawing.Point(12, 208);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(74, 15);
             this.label11.TabIndex = 18;
@@ -314,7 +316,7 @@
             // nudProveedor
             // 
             this.nudProveedor.DecimalPlaces = 2;
-            this.nudProveedor.Location = new System.Drawing.Point(107, 210);
+            this.nudProveedor.Location = new System.Drawing.Point(107, 204);
             this.nudProveedor.Maximum = new decimal(new int[] {
             999999999,
             0,
@@ -329,7 +331,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(231, 214);
+            this.label12.Location = new System.Drawing.Point(231, 208);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(63, 15);
             this.label12.TabIndex = 20;
@@ -338,7 +340,7 @@
             // nudDescuento
             // 
             this.nudDescuento.DecimalPlaces = 2;
-            this.nudDescuento.Location = new System.Drawing.Point(300, 210);
+            this.nudDescuento.Location = new System.Drawing.Point(300, 204);
             this.nudDescuento.Maximum = new decimal(new int[] {
             999999999,
             0,
@@ -353,7 +355,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(231, 253);
+            this.label13.Location = new System.Drawing.Point(231, 246);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(56, 15);
             this.label13.TabIndex = 22;
@@ -362,7 +364,7 @@
             // nudGanancia
             // 
             this.nudGanancia.DecimalPlaces = 2;
-            this.nudGanancia.Location = new System.Drawing.Point(300, 249);
+            this.nudGanancia.Location = new System.Drawing.Point(300, 242);
             this.nudGanancia.Maximum = new decimal(new int[] {
             999999999,
             0,
@@ -377,7 +379,7 @@
             // cbFraccionado
             // 
             this.cbFraccionado.AutoSize = true;
-            this.cbFraccionado.Location = new System.Drawing.Point(234, 329);
+            this.cbFraccionado.Location = new System.Drawing.Point(234, 320);
             this.cbFraccionado.Name = "cbFraccionado";
             this.cbFraccionado.Size = new System.Drawing.Size(143, 19);
             this.cbFraccionado.TabIndex = 12;
@@ -387,19 +389,43 @@
             // cbDolarizado
             // 
             this.cbDolarizado.AutoSize = true;
-            this.cbDolarizado.Location = new System.Drawing.Point(234, 354);
+            this.cbDolarizado.Location = new System.Drawing.Point(234, 358);
             this.cbDolarizado.Name = "cbDolarizado";
             this.cbDolarizado.Size = new System.Drawing.Size(134, 19);
             this.cbDolarizado.TabIndex = 23;
             this.cbDolarizado.Text = "Producto Dolarizado";
             this.cbDolarizado.UseVisualStyleBackColor = true;
             // 
+            // chkEsPromocion
+            // 
+            this.chkEsPromocion.AutoSize = true;
+            this.chkEsPromocion.Location = new System.Drawing.Point(12, 398);
+            this.chkEsPromocion.Name = "chkEsPromocion";
+            this.chkEsPromocion.Size = new System.Drawing.Size(99, 19);
+            this.chkEsPromocion.TabIndex = 24;
+            this.chkEsPromocion.Text = "Es Promoción";
+            this.chkEsPromocion.UseVisualStyleBackColor = true;
+            this.chkEsPromocion.CheckedChanged += new System.EventHandler(this.chkEsPromocion_CheckedChanged);
+            // 
+            // btnConfigurarPromocion
+            // 
+            this.btnConfigurarPromocion.Enabled = false;
+            this.btnConfigurarPromocion.Location = new System.Drawing.Point(159, 394);
+            this.btnConfigurarPromocion.Name = "btnConfigurarPromocion";
+            this.btnConfigurarPromocion.Size = new System.Drawing.Size(150, 26);
+            this.btnConfigurarPromocion.TabIndex = 25;
+            this.btnConfigurarPromocion.Text = "Configurar Promoción";
+            this.btnConfigurarPromocion.UseVisualStyleBackColor = true;
+            this.btnConfigurarPromocion.Click += new System.EventHandler(this.btnConfigurarPromocion_Click);
+            // 
             // frmAltaModifProductos
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(444, 448);
+            this.ClientSize = new System.Drawing.Size(444, 480);
+            this.Controls.Add(this.btnConfigurarPromocion);
+            this.Controls.Add(this.chkEsPromocion);
             this.Controls.Add(this.cbDolarizado);
             this.Controls.Add(this.cbFraccionado);
             this.Controls.Add(this.nudGanancia);
@@ -486,5 +512,7 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.CheckBox cbFraccionado;
         private System.Windows.Forms.CheckBox cbDolarizado;
+        private System.Windows.Forms.CheckBox chkEsPromocion;
+        private System.Windows.Forms.Button btnConfigurarPromocion;
     }
 }

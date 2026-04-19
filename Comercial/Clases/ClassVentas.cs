@@ -343,6 +343,39 @@ namespace Comercial.Clases
             }
         }
 
+        /// <summary>
+        /// Obtiene el 'linea' (PK) de la fila de ventasDetalle para el producto dado en la venta dada.
+        /// Útil para relacionar la línea de una promo con sus componentes.
+        /// </summary>
+        public long traerLineaDetalleVenta(long idVenta, int idProducto)
+        {
+            try
+            {
+                MySqlCommand cmd = new MySqlCommand(
+                    "SELECT linea FROM ventasDetalle WHERE fk_venta = @venta AND fk_producto = @prod ORDER BY linea DESC LIMIT 1",
+                    instDatos.abrirConexion());
+                cmd.Parameters.AddWithValue("@venta", idVenta);
+                cmd.Parameters.AddWithValue("@prod", idProducto);
+                object res = cmd.ExecuteScalar();
+                instDatos.cerrarConexion();
+                return res != null ? long.Parse(res.ToString()) : -1;
+            }
+            catch
+            {
+                instDatos.cerrarConexion();
+                return -1;
+            }
+        }
+
+        /// <summary>
+        /// Guarda los componentes elegidos de una promo al vender y descuenta stock.
+        /// </summary>
+        public int guardarComponentesPromocion(long fkVentaDetalle, string detalleComponentes)
+        {
+            ClassPromociones instPromo = new ClassPromociones();
+            return instPromo.guardarComponentesVenta(fkVentaDetalle, detalleComponentes);
+        }
+
         public DataTable traerPlanesPago()
         {
             MySqlDataAdapter rows = new MySqlDataAdapter("select id Nro, nombre Nombre, recargo Recargo from planes_pago", instDatos.abrirConexion());
@@ -538,5 +571,13 @@ namespace Comercial.Clases
     {
         public string Descripcion { get; set; }
         public int IdProveedor { get; set; }
+    }
+
+    // Componentes de promo pendientes de guardar: clave = idProducto (columna 'id' del grid)
+    // valor = string detalle para sp_VentasAddPromoComponentes
+    public class PromoVentaPendiente
+    {
+        public int IdProducto { get; set; }
+        public string DetalleComponentes { get; set; }
     }
 }

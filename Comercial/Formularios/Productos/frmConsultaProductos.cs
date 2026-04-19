@@ -120,7 +120,7 @@ namespace Comercial.Formularios.Productos
 
         private void btnEliminar_Click(object sender, EventArgs e)
         {
-            instProd.ABMProductos("", "", 0, "", 0, 0, 0, 0, 0, 3, int.Parse(dgvProductos.CurrentRow.Cells["ID"].Value.ToString()),0,false,false);
+            instProd.ABMProductos("", "", 0, "", 0, 0, 0, 0, 0, 3, int.Parse(dgvProductos.CurrentRow.Cells["ID"].Value.ToString()),0,false,false,false);
             estadoInicial();
             
         }
