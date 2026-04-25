@@ -4,6 +4,7 @@ using System.Data;
 
 namespace Comercial.Clases
 {
+
     public class ClassPromociones
     {
         classDatos instDatos = new classDatos();
@@ -130,6 +131,21 @@ namespace Comercial.Clases
             {
                 instDatos.cerrarConexion();
             }
+        }
+
+        /// <summary>
+        /// Devuelve un DataSet con 3 tablas: [0] cabeceras de promos activas y vigentes,
+        /// [1] slots, [2] productos elegibles por slot.
+        /// Usado por el motor de detección automática en frmVentas.
+        /// </summary>
+        public DataSet obtenerTodasPromocionesActivas()
+        {
+            MySqlDataAdapter da = new MySqlDataAdapter("sp_PromocionesTraerTodas", instDatos.abrirConexion());
+            da.SelectCommand.CommandType = CommandType.StoredProcedure;
+            DataSet ds = new DataSet();
+            da.Fill(ds);
+            instDatos.cerrarConexion();
+            return ds;
         }
 
         /// <summary>

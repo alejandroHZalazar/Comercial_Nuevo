@@ -851,7 +851,8 @@ namespace Comercial.Clases
                         string errores = string.Join(" | ", respuesta.errores);
 
                         // 🔥 detectar diferencia de totales
-                        if (!reintento && errores.Contains("sumatorias finales"))
+                        if ((errores.Contains("sumatorias finales") ||
+                            errores.Contains("El total a enviar a AFIP")))
                         {
                             decimal? totalCorrecto = ObtenerTotalDesdeError(errores);
 
@@ -884,32 +885,48 @@ namespace Comercial.Clases
                 if (string.IsNullOrEmpty(error))
                     return null;
 
-                // Buscar el texto clave
-                string clave = "sumatorias finales (";
-                int index = error.IndexOf(clave);
+                // 🔹 CASO 1: sumatorias finales (YA EXISTENTE)
+                string clave1 = "sumatorias finales (";
+                int index1 = error.IndexOf(clave1);
 
-                if (index == -1)
-                    return null;
-
-                // Posición donde empieza el número
-                int inicioNumero = index + clave.Length;
-
-                // Buscar cierre de paréntesis
-                int finNumero = error.IndexOf(")", inicioNumero);
-
-                if (finNumero == -1)
-                    return null;
-
-                string numeroStr = error.Substring(inicioNumero, finNumero - inicioNumero);
-
-                // Limpiar posibles espacios
-                numeroStr = numeroStr.Trim();
-
-                if (decimal.TryParse(numeroStr, System.Globalization.NumberStyles.Any,
-                                     System.Globalization.CultureInfo.InvariantCulture,
-                                     out decimal total))
+                if (index1 != -1)
                 {
-                    return total;
+                    int inicioNumero = index1 + clave1.Length;
+                    int finNumero = error.IndexOf(")", inicioNumero);
+
+                    if (finNumero != -1)
+                    {
+                        string numeroStr = error.Substring(inicioNumero, finNumero - inicioNumero).Trim();
+
+                        if (decimal.TryParse(numeroStr, System.Globalization.NumberStyles.Any,
+                                             System.Globalization.CultureInfo.InvariantCulture,
+                                             out decimal total))
+                        {
+                            return total;
+                        }
+                    }
+                }
+
+                // 🔹 CASO 2: El total a enviar a AFIP (NUEVO)
+                string clave2 = "El total a enviar a AFIP (";
+                int index2 = error.IndexOf(clave2);
+
+                if (index2 != -1)
+                {
+                    int inicioNumero = index2 + clave2.Length;
+                    int finNumero = error.IndexOf(")", inicioNumero);
+
+                    if (finNumero != -1)
+                    {
+                        string numeroStr = error.Substring(inicioNumero, finNumero - inicioNumero).Trim();
+
+                        if (decimal.TryParse(numeroStr, System.Globalization.NumberStyles.Any,
+                                             System.Globalization.CultureInfo.InvariantCulture,
+                                             out decimal total))
+                        {
+                            return total;
+                        }
+                    }
                 }
 
                 return null;

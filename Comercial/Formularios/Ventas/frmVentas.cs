@@ -65,9 +65,10 @@ namespace Comercial.Formularios.Ventas
 
         bool ordenFacturar = false;
 
-        // Componentes de promociones pendientes de guardar tras grabarVenta.
-        // Clave = fk_producto del producto promo. Valor = string detalle para sp_VentasAddPromoComponentes.
-        private Dictionary<int, string> _componentesPromo = new Dictionary<int, string>();
+        // Promociones detectadas automáticamente al presionar Vender.
+        // Se persisten en BD después de grabarVenta exitoso.
+        private System.Collections.Generic.List<Clases.PromoAplicacion> _promosAplicadas =
+            new System.Collections.Generic.List<Clases.PromoAplicacion>();
 
         public frmVentas()
         {
@@ -141,7 +142,7 @@ namespace Comercial.Formularios.Ventas
         }
         private void estadoInicial()
         {
-            _componentesPromo.Clear();
+            _promosAplicadas.Clear();
             lblDescripcion.Text = string.Empty;
             lblClienteNombre.Text = string.Empty;
             dgvProductos.Rows.Clear();
@@ -705,20 +706,6 @@ namespace Comercial.Formularios.Ventas
 
         private void agregarProducto()
         {
-            // Verificar si el producto es una promoción antes de agregar
-            if (instProd.traerEsPromocion(unProducto))
-            {
-                Formularios.Ventas.frmSeleccionarProductosPromo frmPromo = new Formularios.Ventas.frmSeleccionarProductosPromo();
-                frmPromo.fkProducto = unProducto;
-                frmPromo.ShowDialog(this);
-
-                if (frmPromo.DialogResult != DialogResult.OK)
-                    return; // El operador canceló la selección
-
-                // Guardar componentes para procesar al grabar la venta
-                _componentesPromo[unProducto] = frmPromo.construirDetalleComponentes();
-            }
-
             bool band = false;
             foreach (DataGridViewRow fila in dgvProductos.Rows)
             {
@@ -898,10 +885,18 @@ namespace Comercial.Formularios.Ventas
 
         private void btnGrabar_Click(object sender, EventArgs e)
         {
-
-
             if (formularioValido())
             {
+                // Detección automática de promociones
+                if (Clases.ClassParametros.buscarParametro("promociones", "activo") == "1")
+                {
+                    if (!verificarYAplicarPromociones())
+                    {
+                        ordenFacturar = false;
+                        return; // el operador eligió "Volver a la venta"
+                    }
+                }
+
                 vender();
                 ordenFacturar = false;
                 if (buscoPend)
@@ -910,6 +905,139 @@ namespace Comercial.Formularios.Ventas
                 }
             }
             ordenFacturar = false;
+        }
+
+        /// <summary>
+        /// Detecta las promociones que se pueden armar con los productos del carrito,
+        /// muestra el diálogo de confirmación y aplica los cambios en la grilla.
+        /// Retorna false si el operador elige "Volver a la venta".
+        /// </summary>
+        private bool verificarYAplicarPromociones()
+        {
+            try
+            {
+                // 1. Construir el carrito desde la grilla
+                var carrito = new System.Collections.Generic.Dictionary<int, decimal>();
+                foreach (DataGridViewRow fila in dgvProductos.Rows)
+                {
+                    int idProd = int.Parse(fila.Cells["id"].Value.ToString());
+                    decimal cant = decimal.Parse(fila.Cells["Cantidad"].Value.ToString());
+                    if (carrito.ContainsKey(idProd))
+                        carrito[idProd] += cant;
+                    else
+                        carrito[idProd] = cant;
+                }
+
+                // 2. Cargar promos activas desde la BD
+                Clases.ClassPromociones instPromo = new Clases.ClassPromociones();
+                DataSet dsPromos = instPromo.obtenerTodasPromocionesActivas();
+                System.Collections.Generic.List<Clases.PromoInfo> promos =
+                    Clases.ClassPromoEngine.MapearDesdeDataSet(dsPromos);
+
+                if (promos == null || promos.Count == 0)
+                    return true; // sin promos configuradas, continuar normal
+
+                // 3. Ejecutar el motor de detección
+                Clases.ResultadoPromos resultado = Clases.ClassPromoEngine.Calcular(promos, carrito);
+
+                if (resultado.Aplicaciones.Count == 0 && resultado.Alertas.Count == 0)
+                    return true; // nada que hacer
+
+                // Si solo hay alertas (ninguna promo se pudo armar), también avisan
+                // pero no hay nada para aplicar. Mostramos el diálogo de todas formas
+                // para que el operador vea las alertas.
+
+                // 4. Mostrar diálogo de confirmación
+                Formularios.Ventas.frmAvisoPromociones dlg = new Formularios.Ventas.frmAvisoPromociones();
+                dlg.Resultado = resultado;
+                DialogResult dr = dlg.ShowDialog(this);
+
+                if (dr != DialogResult.OK)
+                    return false; // operador canceló
+
+                if (resultado.Aplicaciones.Count == 0)
+                    return true; // solo había alertas; confirma sin cambios en grilla
+
+                // 5. Aplicar en grilla
+                aplicarPromosEnGrilla(resultado.Aplicaciones);
+                _promosAplicadas = resultado.Aplicaciones;
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al verificar promociones: " + ex.Message,
+                    "Promociones", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return true; // ante error, continuar con la venta normal
+            }
+        }
+
+        /// <summary>
+        /// Modifica la grilla: descuenta los componentes usados y agrega las líneas de promo.
+        /// </summary>
+        private void aplicarPromosEnGrilla(System.Collections.Generic.List<Clases.PromoAplicacion> aplicaciones)
+        {
+            foreach (var ap in aplicaciones)
+            {
+                // A. Descontar componentes de la grilla
+                var filasAEliminar = new System.Collections.Generic.List<DataGridViewRow>();
+
+                foreach (var comp in ap.Componentes)
+                {
+                    foreach (DataGridViewRow fila in dgvProductos.Rows)
+                    {
+                        if (int.Parse(fila.Cells["id"].Value.ToString()) == comp.IdProducto)
+                        {
+                            decimal actual = decimal.Parse(fila.Cells["Cantidad"].Value.ToString());
+                            decimal nueva  = actual - comp.Cantidad;
+                            if (nueva <= 0)
+                                filasAEliminar.Add(fila);
+                            else
+                                fila.Cells["Cantidad"].Value = Math.Round(nueva, cantStock);
+                            break;
+                        }
+                    }
+                }
+
+                foreach (DataGridViewRow fila in filasAEliminar)
+                    dgvProductos.Rows.Remove(fila);
+
+                // B. Agregar línea del producto-promo
+                DataTable dtProd = instProd.traerProductosParaEditar(ap.Promo.IdProducto);
+                if (dtProd.Rows.Count > 0)
+                {
+                    DataRow r = dtProd.Rows[0];
+                    bool esDol = productosDolarizados == 1 && Convert.ToBoolean(r["dolarizado"]);
+                    decimal costo  = !esDol
+                        ? Math.Round(decimal.Parse(r["costo"].ToString()), cantDec)
+                        : Math.Round(decimal.Parse(r["costo"].ToString()) * valorDolar, cantDec);
+                    decimal precio = !esDol
+                        ? Math.Round(decimal.Parse(r["precio"].ToString()), cantDec)
+                        : Math.Round(decimal.Parse(r["precio"].ToString()) * valorDolar, cantDec);
+
+                    dgvProductos.Rows.Add(
+                        false,
+                        r["codBarras"],
+                        r["codProveedor"],
+                        r["descripcion"],
+                        Math.Round(decimal.Parse(r["cantidad"].ToString()), cantStock),
+                        precio,
+                        0,
+                        precio,
+                        precio,
+                        ap.Veces,
+                        0,
+                        precio,
+                        ap.Promo.IdProducto,
+                        0,
+                        costo,
+                        Convert.ToBoolean(r["fraccionado"]),
+                        esDol
+                    );
+                }
+            }
+
+            procesoTotales();
         }
 
         private void imprimirVenta(long unaVenta)
@@ -1144,16 +1272,22 @@ namespace Comercial.Formularios.Ventas
 
                 salida = instVentas.grabarVenta(decimal.Parse(txtTotGeneral.Text), unCosto, unCliente, int.Parse(Environment.GetEnvironmentVariable("idUser")), decimal.Parse(cboIVA.Text),null, null, int.Parse(cboVendedores.SelectedValue.ToString()), nudComision.Value / 100, decimal.Parse(cboIngBrutos.Text), detalle, llevaCC, imputaEnVenta, tieneMediosPagos, imputacion, detalleFormasPago, tieneCaja, CajaId);
 
-                // Guardar componentes de promociones
-                if (salida != -1 && _componentesPromo.Count > 0)
+                // Guardar componentes de promociones detectadas automáticamente
+                if (salida != -1 && _promosAplicadas.Count > 0)
                 {
-                    foreach (var kvp in _componentesPromo)
+                    foreach (var ap in _promosAplicadas)
                     {
-                        long lineaDetalle = instVentas.traerLineaDetalleVenta(salida, kvp.Key);
+                        long lineaDetalle = instVentas.traerLineaDetalleVenta(salida, ap.Promo.IdProducto);
                         if (lineaDetalle > 0)
-                            instVentas.guardarComponentesPromocion(lineaDetalle, kvp.Value);
+                        {
+                            string detalleComp = string.Join(";",
+                                System.Linq.Enumerable.Select(ap.Componentes,
+                                    c => c.IdSlot + "#" + c.IdProducto + "*" +
+                                         c.Cantidad.ToString(System.Globalization.CultureInfo.InvariantCulture)));
+                            instVentas.guardarComponentesPromocion(lineaDetalle, detalleComp);
+                        }
                     }
-                    _componentesPromo.Clear();
+                    _promosAplicadas.Clear();
                 }
 
                 if (salida != -1)

@@ -283,3 +283,4 @@ C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\RdlCompile.cache
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\RdlCompile.compiled
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.csproj.CopyComplete
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Ventas.frmAvisoPromociones.resources

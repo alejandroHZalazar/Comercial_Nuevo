@@ -185,20 +185,25 @@ namespace Comercial.Formularios.Productos
             frmPickProducto frmBuscar = new frmPickProducto();
             frmBuscar.ShowDialog(this);
 
-            if (frmBuscar.DialogResult == System.Windows.Forms.DialogResult.OK && frmBuscar.IdProductoSeleccionado > 0)
-            {
-                int idProd = frmBuscar.IdProductoSeleccionado;
+            if (frmBuscar.DialogResult != System.Windows.Forms.DialogResult.OK) return;
 
+            int agregados = 0;
+            int duplicados = 0;
+
+            foreach (int idProd in frmBuscar.IdsSeleccionados)
+            {
                 // Verificar duplicado
+                bool existe = false;
                 foreach (DataRow r in dtSlotProductos.Rows)
                 {
                     if (int.Parse(r["slotIndex"].ToString()) == slotIndex &&
                         int.Parse(r["fk_producto"].ToString()) == idProd)
                     {
-                        MessageBox.Show("El producto ya está en este slot.", "Promociones", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
+                        existe = true;
+                        break;
                     }
                 }
+                if (existe) { duplicados++; continue; }
 
                 DataTable prod = instProd.traerProductosParaEditar(idProd);
                 if (prod.Rows.Count > 0)
@@ -206,10 +211,17 @@ namespace Comercial.Formularios.Productos
                     dtSlotProductos.Rows.Add(slotIndex, idProd,
                         prod.Rows[0]["descripcion"].ToString(),
                         prod.Rows[0]["codBarras"].ToString());
+                    agregados++;
                 }
-
-                refrescarGridSlotProductos(slotIndex);
             }
+
+            if (duplicados > 0)
+                MessageBox.Show(
+                    duplicados + " producto(s) ya estaban en el slot y no se agregaron.",
+                    "Promociones", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            if (agregados > 0)
+                refrescarGridSlotProductos(slotIndex);
         }
 
         private void btnQuitarProductoSlot_Click(object sender, EventArgs e)

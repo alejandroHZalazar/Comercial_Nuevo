@@ -26,7 +26,7 @@ namespace Comercial.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Server=72.61.47.240;Database=ale;Uid=remoto;Pwd=0315061;SslMode=None;\n")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Server=72.61.47.240;Database=loDeOva;Uid=remoto;Pwd=0315061;SslMode=None;\n")]
         public string sistemaConnectionString {
             get {
                 return ((string)(this["sistemaConnectionString"]));

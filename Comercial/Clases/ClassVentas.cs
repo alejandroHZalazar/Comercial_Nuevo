@@ -573,11 +573,4 @@ namespace Comercial.Clases
         public int IdProveedor { get; set; }
     }
 
-    // Componentes de promo pendientes de guardar: clave = idProducto (columna 'id' del grid)
-    // valor = string detalle para sp_VentasAddPromoComponentes
-    public class PromoVentaPendiente
-    {
-        public int IdProducto { get; set; }
-        public string DetalleComponentes { get; set; }
-    }
 }

@@ -244,6 +244,7 @@
     <Compile Include="Clases\ClassPedidos.cs" />
     <Compile Include="Clases\ClassProductos.cs" />
     <Compile Include="Clases\ClassProductosBalanza.cs" />
+    <Compile Include="Clases\ClassPromoEngine.cs" />
     <Compile Include="Clases\ClassPromociones.cs" />
     <Compile Include="Clases\ClassProveedores.cs" />
     <Compile Include="Clases\ClassReportesFiscal.cs" />
@@ -697,6 +698,9 @@
     <Compile Include="Formularios\Ventas\frmPedidosReport.Designer.cs">
       <DependentUpon>frmPedidosReport.cs</DependentUpon>
     </Compile>
+    <Compile Include="Formularios\Ventas\frmAvisoPromociones.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Formularios\Ventas\frmSeleccionarProductosPromo.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -940,6 +944,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Usuarios\frmABMUsuarios.resx">
       <DependentUpon>frmABMUsuarios.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Ventas\frmAvisoPromociones.resx">
+      <DependentUpon>frmAvisoPromociones.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Ventas\frmDevolucion.resx">
       <DependentUpon>frmDevolucion.cs</DependentUpon>
