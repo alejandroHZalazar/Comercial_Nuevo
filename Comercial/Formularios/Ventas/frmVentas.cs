@@ -586,6 +586,10 @@ namespace Comercial.Formularios.Ventas
 
             bool productoDeBalanzaEncontrado = false;
 
+            // Cantidad ingresada por el usuario mediante el separador '*' (ej: "3*7790001234567")
+            decimal cantidadPorAsterisco = 1;
+            bool    usoCantidadPorAsterisco = false;
+
             if (txtFiltro.Text != string.Empty)
             {
                 if (cboFiltro.SelectedIndex == 0)
@@ -596,7 +600,29 @@ namespace Comercial.Formularios.Ventas
                 {
                     if (tieneProductosBalanza == 0)
                     {
-                        producto = instProd.traeProductosPpal(" where baja = 0 and codBarras = " + txtFiltro.Text.Trim());
+                        // Soporte de formato "cantidad*codBarras" (ej: "3*7790001234567")
+                        string textoBusqueda = txtFiltro.Text.Trim();
+                        int posAsterisco = textoBusqueda.IndexOf('*');
+
+                        if (posAsterisco > 0)
+                        {
+                            string parteIzquierda  = textoBusqueda.Substring(0, posAsterisco).Trim();
+                            string codigoBarrasParte = textoBusqueda.Substring(posAsterisco + 1).Trim();
+
+                            decimal cantParsed;
+                            if (decimal.TryParse(parteIzquierda,
+                                    System.Globalization.NumberStyles.Any,
+                                    System.Globalization.CultureInfo.CurrentCulture,
+                                    out cantParsed) && cantParsed > 0)
+                            {
+                                cantidadPorAsterisco    = cantParsed;
+                                usoCantidadPorAsterisco = true;
+                            }
+
+                            textoBusqueda = codigoBarrasParte;
+                        }
+
+                        producto = instProd.traeProductosPpal(" where baja = 0 and codBarras = " + textoBusqueda);
                     }
                     else
                     {
@@ -636,11 +662,13 @@ namespace Comercial.Formularios.Ventas
                 {
                     if (tieneLectoraCB == 0)
                     {
+                        if (usoCantidadPorAsterisco)
+                            nudCantidad.Value = cantidadPorAsterisco;
                         nudCantidad.Focus();
                     }
                     else
                     {
-                        nudCantidad.Value = 1;
+                        nudCantidad.Value = usoCantidadPorAsterisco ? cantidadPorAsterisco : 1;
                         btnAgregar_Click(null, null);
                     }
 
