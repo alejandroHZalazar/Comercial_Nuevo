@@ -182,7 +182,16 @@ namespace Comercial.Formularios.Productos
             }
             int slotIndex = dgvSlots.CurrentRow.Index;
 
+            // Recopilar IDs ya asignados a este slot para pre-marcarlos en el picker
+            var idsEnSlot = new System.Collections.Generic.List<int>();
+            foreach (DataRow r in dtSlotProductos.Rows)
+            {
+                if (int.Parse(r["slotIndex"].ToString()) == slotIndex)
+                    idsEnSlot.Add(int.Parse(r["fk_producto"].ToString()));
+            }
+
             frmPickProducto frmBuscar = new frmPickProducto();
+            frmBuscar.IdsPreseleccionados = idsEnSlot;
             frmBuscar.ShowDialog(this);
 
             if (frmBuscar.DialogResult != System.Windows.Forms.DialogResult.OK) return;

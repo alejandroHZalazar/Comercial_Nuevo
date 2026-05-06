@@ -157,23 +157,12 @@ namespace Comercial.Clases
                 y += lineHeight;
             }
 
-            // Total
-            Font fontTotal = new Font("Consolas", 10, FontStyle.Bold);
+            // Total — mismo tamaño que el detalle para que el alineado por caracteres
+            // coincida exactamente con los importes de arriba (Bold solo para destacar)
+            Font fontTotal = new Font("Consolas", 9, FontStyle.Bold);
 
-            string textoTotal = "TOTAL:";
-            string importeTotal = total.ToString(formatoImporte, culturaAR);
-
-            // Dibujar etiqueta a la izquierda
-            e.Graphics.DrawString(textoTotal, fontTotal, Brushes.Black, 0, y);
-
-            // Medir ancho del importe
-            SizeF sizeImporte = e.Graphics.MeasureString(importeTotal, fontTotal);
-            
-
-            // Posicionar importe alineado a la derecha del ticket
-            float xImporte = anchoTicket - sizeImporte.Width;
-
-            e.Graphics.DrawString(importeTotal, fontTotal, Brushes.Black, xImporte, y);
+            string lineaTotal = AlinearTexto("TOTAL:", total.ToString(formatoImporte, culturaAR));
+            e.Graphics.DrawString(lineaTotal, fontTotal, Brushes.Black, 0, y);
 
             y += lineHeight;
 

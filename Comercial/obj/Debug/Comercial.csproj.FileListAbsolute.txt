@@ -240,7 +240,6 @@ C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.csproj.CoreCompileInputs.cache
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.exe
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.pdb
-C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.csproj.AssemblyReference.cache
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Configuracion.frmABMEmpresa.resources
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Facturacion.frmFacturacionLotes.resources
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Facturacion.frmReporteFacturacion.resources
@@ -280,7 +279,9 @@ C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Productos.frmABMPromociones.resources
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Productos.frmAltaModifPromocion.resources
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Ventas.frmSeleccionarProductosPromo.resources
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Ventas.frmAvisoPromociones.resources
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.csproj.AssemblyReference.cache
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Productos.frmPickProducto.resources
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\RdlCompile.cache
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\RdlCompile.compiled
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.csproj.CopyComplete
-C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Ventas.frmAvisoPromociones.resources

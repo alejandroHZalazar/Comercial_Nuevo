@@ -203,6 +203,22 @@ namespace Comercial.Clases
         }
 
 
+        /// <summary>
+        /// Actualiza precio proveedor, precio de lista y/o costo de un producto directamente
+        /// (por codProveedor). Solo actualiza las tablas cuyo valor sea mayor a cero.
+        /// </summary>
+        public void actualizarPreciosDirectos(string codProveedor, decimal precioProv, decimal precioSIVA, decimal costo)
+        {
+            MySqlCommand nComando = new MySqlCommand("sp_ProductosCambiarPreciosDirectos", instDatos.abrirConexion());
+            nComando.CommandType = CommandType.StoredProcedure;
+            nComando.Parameters.AddWithValue("@unCodProveedor", codProveedor);
+            nComando.Parameters.AddWithValue("@unPrecioProv",   precioProv);
+            nComando.Parameters.AddWithValue("@unPrecioSIVA",   precioSIVA);
+            nComando.Parameters.AddWithValue("@unCosto",        costo);
+            nComando.ExecuteNonQuery();
+            instDatos.cerrarConexion();
+        }
+
         public void ajustarStock(int unProducto, decimal unStock, decimal unaDif)
         {
             MySqlCommand nComando = new MySqlCommand("sp_Productos_AjusteStock", instDatos.abrirConexion());
@@ -271,7 +287,7 @@ namespace Comercial.Clases
                 salida.Direction = ParameterDirection.Output;
                 cmd.Parameters.Add(salida);
 
-                cmd.ExecuteScalar();
+                cmd.ExecuteNonQuery(); 
                 int valor = Int32.Parse(cmd.Parameters["salida"].Value.ToString());
                 return valor;
             }

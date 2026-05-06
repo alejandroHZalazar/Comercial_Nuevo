@@ -46,8 +46,8 @@ namespace Comercial.Formularios.Ventas
         int tieneProductosBalanza = Clases.ClassParametros.buscarParametro("productos", "tieneProductosBalanza") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("productos", "tieneProductosBalanza"));
         string prefijoBalanza = Clases.ClassParametros.buscarParametro("productos", "prefijoBalanza");
         string posicionProductoBalanza = Clases.ClassParametros.buscarParametro("productos", "posicionProducto");
-        string posicionPeso = Clases.ClassParametros.buscarParametro("productos", "posicionPeso");
-        string divisorPeso = Clases.ClassParametros.buscarParametro("productos", "divisorPeso");
+        string posicionPrecio = Clases.ClassParametros.buscarParametro("productos", "posicionPrecio");
+        string divisorPrecio = Clases.ClassParametros.buscarParametro("productos", "divisorPrecio");
         int tieneCaja = Clases.ClassParametros.buscarParametro("caja", "haceCaja") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("caja", "haceCaja"));
         int CajaId = 0;
         int facturaEnVenta = Clases.ClassParametros.buscarParametro("ventas", "facturaEnVenta") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "facturaEnVenta"));
@@ -70,16 +70,30 @@ namespace Comercial.Formularios.Ventas
         private System.Collections.Generic.List<Clases.PromoAplicacion> _promosAplicadas =
             new System.Collections.Generic.List<Clases.PromoAplicacion>();
 
+        // Subtotal forzado para productos fraccionados con formato "total*codBarras":
+        // el valor antes del '*' es el importe total, no la cantidad.
+        decimal _subtotalForzado = 0;
+
+        // BackgroundWorker para cargar las listas grandes (productos y clientes) en segundo plano.
+        // cargarCombos() sigue siendo sincrónica porque estadoInicial() la necesita al abrir.
+        private BackgroundWorker backgroundWorkerTarea;
+
         public frmVentas()
         {
             InitializeComponent();
+
+            backgroundWorkerTarea = new BackgroundWorker();
+            backgroundWorkerTarea.WorkerReportsProgress = true;
+            backgroundWorkerTarea.DoWork          += backgroundWorkerTarea_DoWork;
+            backgroundWorkerTarea.ProgressChanged += backgroundWorkerTarea_ProgressChanged;
         }
 
         private void frmVentas_Load(object sender, EventArgs e)
         {
-            cargarClientes();
-            cargarProductos();
+            // Combos primero (pequeños, los necesita estadoInicial al mostrar el form).
             cargarCombos();
+            // El worker se lanza en frmVentas_Shown, DESPUÉS de estadoInicial(),
+            // para evitar que comparta la conexión MySQL con verificarParametros().
         }
 
         private void verificarParametros()
@@ -112,10 +126,7 @@ namespace Comercial.Formularios.Ventas
                 txtCliente.Focus();
             }
 
-            if (tieneMediosPagos == 0)
-            {
-                lblMedioPago.Visible = cboMedioPago.Visible = false;
-            }
+            lblMedioPago.Visible = cboMedioPago.Visible = false;
 
             if (tieneCaja == 1)
             {
@@ -143,6 +154,7 @@ namespace Comercial.Formularios.Ventas
         private void estadoInicial()
         {
             _promosAplicadas.Clear();
+            _subtotalForzado = 0;
             lblDescripcion.Text = string.Empty;
             lblClienteNombre.Text = string.Empty;
             dgvProductos.Rows.Clear();
@@ -154,7 +166,6 @@ namespace Comercial.Formularios.Ventas
             dgvProductos.Enabled = false;
             nudDescuento.Enabled = false;
             nudRecargo.Enabled = false;
-            cboMedioPago.Enabled = false;
             btnGrabar.Enabled = false;
             cboFiltro.SelectedIndex = Clases.ClassParametros.indiceBusqNotaPed();
             txtCliente.Text = string.Empty;
@@ -183,7 +194,6 @@ namespace Comercial.Formularios.Ventas
             txtIB.Text = "0";
             txtTotGeneral.Text = "0";
             cboVendedores.SelectedIndex = -1;
-            cboMedioPago.SelectedIndex = (tieneMediosPagos == 1 ? 0 : -1);
             dgvProductos.Columns["Sel"].Visible = bonificacionPorLinea == 1;
             panelSelGrilla.Visible = bonificacionPorLinea == 1;
             verificarParametros();
@@ -191,29 +201,23 @@ namespace Comercial.Formularios.Ventas
 
         private void cargarCombos()
         {
-            cboIVA.DataSource = instProv.traePorcentajeIVA();
-            cboIVA.ValueMember = "id";
-            cboIVA.DisplayMember = "valor";
+            cboIVA.DataSource     = instProv.traePorcentajeIVA();
+            cboIVA.ValueMember    = "id";
+            cboIVA.DisplayMember  = "valor";
 
-            cboVendedores.DataSource = instUser.traerTodosUsuarios();
-            cboVendedores.ValueMember = "id";
+            cboVendedores.DataSource    = instUser.traerTodosUsuarios();
+            cboVendedores.ValueMember   = "id";
             cboVendedores.DisplayMember = "nombre";
             cboVendedores.SelectedIndex = -1;
 
-            cboIngBrutos.DataSource = instProv.traerPorcentajeImpuestos();
-            cboIngBrutos.ValueMember = "id";
+            cboIngBrutos.DataSource    = instProv.traerPorcentajeImpuestos();
+            cboIngBrutos.ValueMember   = "id";
             cboIngBrutos.DisplayMember = "valor";
-
-            Clases.ClassConfiguracion instConfig = new Clases.ClassConfiguracion();
-
-            cboMedioPago.DataSource = instVentas.traerPlanesPago();
-            cboMedioPago.ValueMember = "Recargo";
-            cboMedioPago.DisplayMember = "Nombre";
 
             cbProveedor.Visible = cboProveedor.Visible = filtraPorProveedor == 1;
 
-            cboProveedor.DataSource = instProv.traeProveedoresCabecera();
-            cboProveedor.ValueMember = "Cod";
+            cboProveedor.DataSource    = instProv.traeProveedoresCabecera();
+            cboProveedor.ValueMember   = "Cod";
             cboProveedor.DisplayMember = "Proveedor";
             cboProveedor.SelectedIndex = 0;
 
@@ -316,6 +320,14 @@ namespace Comercial.Formularios.Ventas
                     }
 
                     dgvProductos.Rows.Add(false, fila["Cod_Barras"].ToString(), fila["Cod_Proveedor"].ToString(), fila["Descripcion"].ToString(), Math.Round(decimal.Parse(fila["Stock"].ToString()), cantStock), Math.Round(decimal.Parse(fila["Precio S/IVA"].ToString()), cantDec), descRec, "", Math.Round(decimal.Parse(fila["Precio C/IVA"].ToString()), cantDec), Math.Round(decimal.Parse(fila["Cantidad"].ToString()), cantStock), Math.Round(decimal.Parse(fila["Subtotal"].ToString()), cantDec), Math.Round(decimal.Parse(fila["precioOrig"].ToString()), cantDec), fila["fk_producto"].ToString(), unPedido, Math.Round(decimal.Parse(fila["costo"].ToString()), cantDec), Convert.ToBoolean(fila["fraccionado"]), Convert.ToBoolean(fila["dolarizado"]));
+
+                    if (Convert.ToBoolean(fila["fraccionado"]) && fila["Subtotal"] != DBNull.Value)
+                    {
+                        int idx = dgvProductos.RowCount - 1;
+                        dgvProductos.Rows[idx].Tag = "subtotalManual";
+                        dgvProductos.Rows[idx].Cells["Subtotal"].Value =
+                            Math.Round(decimal.Parse(fila["Subtotal"].ToString()), cantDec);
+                    }
                 }
             }
             unPedido = 0;
@@ -414,7 +426,6 @@ namespace Comercial.Formularios.Ventas
             dgvProductos.Enabled = true;
             nudDescuento.Enabled = true;
             nudRecargo.Enabled = true;
-            cboMedioPago.Enabled = true;
             btnGrabar.Enabled = true;
             cboIVA.SelectedIndex = 0;
             cboIngBrutos.SelectedIndex = 0;
@@ -527,13 +538,23 @@ namespace Comercial.Formularios.Ventas
                 fila.Cells["precioConIva"].Value = precioConIva;
 
                 // 🔹 5. Subtotal final
-                decimal subtotal = Math.Round(
-                    precioConIva * cantidad,
-                    cantDec,
-                    MidpointRounding.AwayFromZero
-                );
-
-                fila.Cells["Subtotal"].Value = subtotal;
+                // Para productos fraccionados con importe ingresado manualmente (formato total*cb)
+                // el subtotal fue fijado directamente en la grilla; no se recalcula.
+                bool subtotalManual = fila.Tag != null && fila.Tag.ToString() == "subtotalManual";
+                decimal subtotal;
+                if (subtotalManual)
+                {
+                    subtotal = decimal.Parse(fila.Cells["Subtotal"].Value.ToString());
+                }
+                else
+                {
+                    subtotal = Math.Round(
+                        precioConIva * cantidad,
+                        cantDec,
+                        MidpointRounding.AwayFromZero
+                    );
+                    fila.Cells["Subtotal"].Value = subtotal;
+                }
 
                 // 🔹 ACUMULAR (SIEMPRE desde valores ya redondeados)
                 totalSIVA += precioSinIva * cantidad;
@@ -626,7 +647,7 @@ namespace Comercial.Formularios.Ventas
                     }
                     else
                     {
-                        if (prefijoBalanza == string.Empty || posicionProductoBalanza == string.Empty || posicionPeso == string.Empty || divisorPeso == string.Empty)
+                        if (prefijoBalanza == string.Empty || posicionProductoBalanza == string.Empty || posicionPrecio == string.Empty || divisorPrecio == string.Empty)
                         {
                             MessageBox.Show(this, "Para operar con productos de balanza debe parametrizar: Prefijo, Posición de Producto, Posicion de Importe y divisior de importe", "VENTAS", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
@@ -638,7 +659,30 @@ namespace Comercial.Formularios.Ventas
                             if (productoBalanzaId == null) return;
 
                             producto = instProd.traeProductosPpal(" where baja = 0 and codBarras = " + productoBalanzaId.Trim());
-                            if (producto.Rows.Count > 0) productoDeBalanzaEncontrado = true;
+                            if (producto.Rows.Count > 0)
+                            {
+                                productoDeBalanzaEncontrado = true;
+
+                                // Extraer el TOTAL del código de barras de balanza
+                                // (precio del paquete pesado, ya pre-calculado por la balanza).
+                                // Se divide por divisorPrecio para obtener los decimales.
+                                var precioStr = Clases.ClassProductosBalanza.ExtraerPorPosicion(txtFiltro.Text.Trim(), posicionPrecio);
+                                if (!string.IsNullOrEmpty(precioStr))
+                                {
+                                    decimal precioBalanza;
+                                    if (decimal.TryParse(precioStr, System.Globalization.NumberStyles.Any,
+                                            System.Globalization.CultureInfo.InvariantCulture, out precioBalanza))
+                                    {
+                                        decimal divisor;
+                                        if (decimal.TryParse(divisorPrecio, System.Globalization.NumberStyles.Any,
+                                                System.Globalization.CultureInfo.InvariantCulture, out divisor) && divisor > 0)
+                                            precioBalanza = precioBalanza / divisor;
+
+                                        if (precioBalanza > 0)
+                                            _subtotalForzado = precioBalanza;
+                                    }
+                                }
+                            }
                         }
                         else
                         {
@@ -668,18 +712,29 @@ namespace Comercial.Formularios.Ventas
                     }
                     else
                     {
-                        nudCantidad.Value = usoCantidadPorAsterisco ? cantidadPorAsterisco : 1;
+                        // Fraccionado + asterisco: el valor antes del '*' es el TOTAL (importe),
+                        // no la cantidad. Se guarda en _subtotalForzado y agregarProducto()
+                        // calcula la cantidad equivalente y fija ese importe en la grilla.
+                        if (esfraccionado && usoCantidadPorAsterisco)
+                        {
+                            _subtotalForzado = cantidadPorAsterisco;
+                            nudCantidad.Value = 1; // placeholder; se recalcula en agregarProducto
+                        }
+                        else
+                        {
+                            nudCantidad.Value = usoCantidadPorAsterisco ? cantidadPorAsterisco : 1;
+                        }
                         btnAgregar_Click(null, null);
                     }
 
                 }
                 else
                 {
-                    var pesoProductoBalanza = Clases.ClassProductosBalanza.ExtraerPorPosicion(txtFiltro.Text.Trim(), posicionPeso);
-                    if (pesoProductoBalanza == null) return;
-                    var importeProductoCalculado = Math.Round((decimal.Parse(pesoProductoBalanza) / decimal.Parse(divisorPeso)) * decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec);
-                    if (importeProductoCalculado == 0) return;
-                    nudCantidad.Value = importeProductoCalculado;
+                    // _subtotalForzado fue cargado al detectar el código de balanza.
+                    // agregarProducto() derivará la cantidad a partir del precio total
+                    // y fijará ese importe exacto en la columna Subtotal de la grilla.
+                    if (_subtotalForzado <= 0) return;
+                    nudCantidad.Value = 1; // placeholder; se recalcula en agregarProducto()
                     btnAgregar_Click(null, null);
                 }
 
@@ -750,12 +805,27 @@ namespace Comercial.Formularios.Ventas
                     }
                     else
                     {
-                        //var cantidad = Math.Round(nudCantidad.Value / decimal.Parse(fila.Cells["precioSinIva"].Value.ToString()), cantStock);
-                        //fila.Cells["cantidad"].Value = decimal.Parse(fila.Cells["cantidad"].Value.ToString()) + cantidad;
-                        //var precio = !esDolarizado ? decimal.Parse(fila.Cells["Subtotal"].Value.ToString()) + nudCantidad.Value : decimal.Parse(fila.Cells["Subtotal"].Value.ToString()) + Math.Round(nudCantidad.Value * valorDolar, cantDec);
-                        //fila.Cells["precioSinIva"].Value = precio;
-                        //fila.Cells["Subtotal"].Value = precio;
-                        band = false;
+                        if (_subtotalForzado > 0)
+                        {
+                            // Fraccionado con subtotal forzado: acumular el importe en la fila
+                            // existente y recalcular la cantidad equivalente.
+                            // Marcar Tag ANTES de tocar Subtotal para que procesoTotales() no lo pise.
+                            decimal precioConIvaFila = decimal.Parse(fila.Cells["precioConIva"].Value.ToString());
+                            decimal subtotalActual   = decimal.Parse(fila.Cells["Subtotal"].Value.ToString());
+                            decimal nuevoSubtotal    = subtotalActual + _subtotalForzado;
+                            decimal nuevaCantidad    = precioConIvaFila > 0
+                                ? Math.Round(nuevoSubtotal / precioConIvaFila, cantStock)
+                                : 0;
+                            fila.Tag = "subtotalManual";
+                            fila.Cells["cantidad"].Value = nuevaCantidad;
+                            fila.Cells["Subtotal"].Value = nuevoSubtotal;
+                            _subtotalForzado = 0;
+                            band = true;
+                        }
+                        else
+                        {
+                            band = false;
+                        }
                         break;
                     }
 
@@ -769,18 +839,39 @@ namespace Comercial.Formularios.Ventas
                 if (producto.Rows.Count > 0)
                 {
                     bool esDolarizado = productosDolarizados == 1 && Convert.ToBoolean(producto.Rows[0]["dolarizado"]);
-                    var costo = !esDolarizado ? Math.Round(decimal.Parse(producto.Rows[0]["costo"].ToString()), cantDec) : Math.Round(decimal.Parse(producto.Rows[0]["costo"].ToString()) * valorDolar, cantDec);
-                    // if (!esfraccionado)
-                    //   {
-                    var precio = !esDolarizado ? Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec) : Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()) * valorDolar, cantDec);
-                    dgvProductos.Rows.Add(false,producto.Rows[0]["codBarras"].ToString(), producto.Rows[0]["codProveedor"].ToString(), producto.Rows[0]["descripcion"].ToString(), Math.Round(decimal.Parse(producto.Rows[0]["cantidad"].ToString()), cantStock), precio,0, precio, precio, Math.Round(nudCantidad.Value, cantStock), 0, precio, unProducto, 0, costo, esfraccionado);
-                    // }
-                    //else
-                    //{
-                    //    var cantidad = Math.Round(nudCantidad.Value / decimal.Parse(producto.Rows[0]["precio"].ToString()), cantStock);
-                    //    var precio = !esDolarizado ? Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec) : Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()) * valorDolar, cantDec);
-                    //    dgvProductos.Rows.Add(producto.Rows[0]["codBarras"].ToString(), producto.Rows[0]["codProveedor"].ToString(), producto.Rows[0]["descripcion"].ToString(), Math.Round(decimal.Parse(producto.Rows[0]["cantidad"].ToString()), cantStock), precio, precio, cantidad, precio, precio, unProducto, 0, costo, esfraccionado);
-                    //}
+                    var costo  = !esDolarizado
+                        ? Math.Round(decimal.Parse(producto.Rows[0]["costo"].ToString()), cantDec)
+                        : Math.Round(decimal.Parse(producto.Rows[0]["costo"].ToString()) * valorDolar, cantDec);
+                    var precio = !esDolarizado
+                        ? Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()), cantDec)
+                        : Math.Round(decimal.Parse(producto.Rows[0]["precio"].ToString()) * valorDolar, cantDec);
+
+                    // Derivar cantidad cuando hay subtotal forzado (producto fraccionado + '*')
+                    decimal iva = decimal.TryParse(cboIVA.Text, out decimal ivaVal) ? ivaVal : 0;
+                    decimal precioConIva = Math.Round(precio * (1 + iva / 100), cantDec);
+                    decimal cantidad = _subtotalForzado > 0 && precioConIva > 0
+                        ? Math.Round(_subtotalForzado / precioConIva, cantStock)
+                        : Math.Round(nudCantidad.Value, cantStock);
+
+                    int nuevoIdx = dgvProductos.Rows.Add(
+                        false,
+                        producto.Rows[0]["codBarras"].ToString(),
+                        producto.Rows[0]["codProveedor"].ToString(),
+                        producto.Rows[0]["descripcion"].ToString(),
+                        Math.Round(decimal.Parse(producto.Rows[0]["cantidad"].ToString()), cantStock),
+                        precio, 0, precio, precio,
+                        cantidad,
+                        0,
+                        precio, unProducto, 0, costo, esfraccionado);
+
+                    // Forzar subtotal DESPUÉS de agregar la fila y marcar Tag ANTES de escribir
+                    // la celda, para que CellValueChanged → procesoTotales() no lo sobreescriba.
+                    if (_subtotalForzado > 0)
+                    {
+                        dgvProductos.Rows[nuevoIdx].Tag = "subtotalManual";
+                        dgvProductos.Rows[nuevoIdx].Cells["Subtotal"].Value = _subtotalForzado;
+                        _subtotalForzado = 0;
+                    }
                 }
             }
 
@@ -902,11 +993,6 @@ namespace Comercial.Formularios.Ventas
                 return false;
             }
 
-            if (tieneMediosPagos == 1 && cboMedioPago.SelectedIndex < 0)
-            {
-                errorProvider1.SetError(cboMedioPago, "Debe seleccionar medio de pago");
-                return false;
-            }
             return true;
         }
 
@@ -1214,7 +1300,8 @@ namespace Comercial.Formularios.Ventas
 
         private void backgroundWorkerTarea_DoWork(object sender, DoWorkEventArgs e)
         {
-
+            cargarProductos();  // llena resgProducto — solo lista, sin acceso a UI
+            cargarClientes();   // llena resgClientes — solo lista, sin acceso a UI
         }
 
         private async void vender()
@@ -1236,31 +1323,39 @@ namespace Comercial.Formularios.Ventas
                 }
 
                 string detalleFormasPago = string.Empty;
-                if (tieneMediosPagos == 1)
-                {
-                    planPagoId = instVentas.traerIdPlanPagoporNombre(cboMedioPago.Text);
-                }
-                else
+
+                // Resolver plan predeterminado (efectivo) para usarlo como default en el modal
                 {
                     Clases.ClassConfiguracion instConfig = new Clases.ClassConfiguracion();
-                    var planPagoDT = instConfig.traerPlanesPagoPorId(int.Parse(Clases.ClassParametros.buscarParametro("Cobros", "idPlanEfectivo")));
+                    var planPagoDT = instConfig.traerPlanesPagoPorId(
+                        int.Parse(Clases.ClassParametros.buscarParametro("Cobros", "idPlanEfectivo")));
                     if (planPagoDT.Rows.Count == 0) return;
                     planPagoId = int.Parse(planPagoDT.Rows[0]["id"].ToString());
                 }
 
-                if (imputaEnVenta == 1 || llevaCC == 1)
+                if (tieneMediosPagos == 1 || imputaEnVenta == 1 || llevaCC == 1)
                 {
-                    frmImputacionVenta unFrmImputacion = new frmImputacionVenta(decimal.Parse(txtTotGeneral.Text), planPagoId ?? 0);
+                    frmImputacionVenta unFrmImputacion = new frmImputacionVenta(
+                        decimal.Parse(txtTotGeneral.Text), planPagoId ?? 0, llevaCC);
                     unFrmImputacion.ShowDialog();
                     dtFormasPAgo = unFrmImputacion.unDT;
 
                     if (unFrmImputacion.DialogResult == DialogResult.OK)
                     {
-                        imputacion = dtFormasPAgo.Sum(x => x.Importe);
+                        // imputacion = solo lo cobrado en efectivo/tarjeta (excluye ítem CC, idPlan==0)
+                        // El saldo CC lo maneja grabarVenta() con el parámetro llevaCC
+                        imputacion = System.Linq.Enumerable
+                            .Where(dtFormasPAgo, x => x.idPlan != 0)
+                            .Sum(x => x.Importe);
+
                         if (tieneMediosPagos == 1)
                         {
+                            // detalleFormasPago solo incluye planes reales (excluye ítem CC)
+                            var pagosReales = System.Linq.Enumerable
+                                .Where(dtFormasPAgo, x => x.idPlan != 0)
+                                .ToList();
 
-                            foreach (Clases.ClassVentas.CobroFormasPago item in dtFormasPAgo)
+                            foreach (Clases.ClassVentas.CobroFormasPago item in pagosReales)
                             {
                                 detalleFormasPago += item.idMedio + "#";
                                 detalleFormasPago += item.idPlan + "*";
@@ -1270,13 +1365,15 @@ namespace Comercial.Formularios.Ventas
                                 detalleFormasPago += item.Referencia3 + "¿";
                                 detalleFormasPago = detalleFormasPago.Replace(',', '.');
                             }
+                            // Aplicar recargo del primer plan real al nudRecargo
+                            if (pagosReales.Count > 0)
+                                nudRecargo.Value = pagosReales[0].Recargo;
                         }
                     }
                     else
                     {
                         return;
                     }
-
                 }
 
                 // salida = instVentas.grabarCabeceraVenta(decimal.Parse(txtTotGeneral.Text), unCosto, unCliente, int.Parse(Environment.GetEnvironmentVariable("idUser")), decimal.Parse(cboIVA.Text), nudDescuento.Value, nudRecargo.Value,int.Parse (cboVendedores .SelectedValue .ToString ()),nudComision.Value  /100, decimal.Parse(cboIngBrutos .Text));
@@ -1383,7 +1480,7 @@ namespace Comercial.Formularios.Ventas
                             {
                                 imprimirVenta(salida);
                             }
-                            else
+                            else 
                             {
                                 imprimirNotaVentaTk(salida);
                             }
@@ -1506,14 +1603,17 @@ namespace Comercial.Formularios.Ventas
         {
             estadoInicial();
             Control.CheckForIllegalCrossThreadCalls = false;
+
+            // Recién ahora arrancamos la carga en segundo plano de productos y clientes.
+            // estadoInicial() ya terminó de usar la conexión MySQL en el hilo UI,
+            // por lo que el worker puede tomarla sin colisionar.
+            if (!backgroundWorkerTarea.IsBusy)
+                backgroundWorkerTarea.RunWorkerAsync();
         }
 
         private void cboMedioPago_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cargado && tieneMediosPagos == 1)
-            {
-                nudRecargo.Value = decimal.Parse(cboMedioPago.SelectedValue.ToString());
-            }
+            // Combo eliminado del flujo — recargo lo gestiona frmImputacionVenta
         }
 
         private void cbProveedor_CheckedChanged(object sender, EventArgs e)

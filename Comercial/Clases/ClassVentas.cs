@@ -560,6 +560,13 @@ namespace Comercial.Clases
                 set { _necesitaDatos = value; OnPropertyChanged(nameof(necesitaDatos)); }
             }
 
+            private decimal _Recargo;
+            public decimal Recargo
+            {
+                get => _Recargo;
+                set { _Recargo = value; OnPropertyChanged(nameof(Recargo)); }
+            }
+
             private void OnPropertyChanged(string nombre)
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nombre));

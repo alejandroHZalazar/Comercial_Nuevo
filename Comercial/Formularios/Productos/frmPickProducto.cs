@@ -2,147 +2,304 @@ using Comercial.Clases;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Comercial.Formularios.Productos
 {
     /// <summary>
-    /// Diálogo para seleccionar uno o varios productos de la lista.
-    /// Permite selección múltiple con Ctrl/Shift.
-    /// Retorna los ids seleccionados en IdsSeleccionados (y el primero en IdProductoSeleccionado).
+    /// Diálogo para seleccionar uno o varios productos mediante checkbox.
+    /// Busca por descripción, código de barras y código de proveedor.
     /// </summary>
     public class frmPickProducto : Form
     {
-        /// <summary>Primer producto seleccionado (compatibilidad con código existente).</summary>
+        /// <summary>Primer id seleccionado (compatibilidad con código existente).</summary>
         public int IdProductoSeleccionado { get; private set; } = 0;
 
-        /// <summary>Todos los productos seleccionados.</summary>
+        /// <summary>Todos los ids seleccionados (marcados con el check).</summary>
         public List<int> IdsSeleccionados { get; private set; } = new List<int>();
 
+        /// <summary>
+        /// IDs que deben aparecer pre-chequeados al abrir el diálogo.
+        /// Asignar antes de llamar a ShowDialog().
+        /// </summary>
+        public List<int> IdsPreseleccionados { get; set; } = new List<int>();
+
         private DataGridView dgv;
-        private TextBox txtFiltro;
-        private Label lblSeleccionados;
-        private Button btnOK;
-        private Button btnCancelar;
-        private DataTable dtProductos;
+        private TextBox      txtFiltro;
+        private Label        lblSeleccionados;
+        private Button       btnOK;
+        private Button       btnCancelar;
+        private DataTable    dtProductos;
+
+        private const string COL_SEL = "Sel";
 
         public frmPickProducto()
         {
-            Text = "Seleccionar Productos";
-            Width = 620; Height = 480;
-            StartPosition = FormStartPosition.CenterParent;
+            Text            = "Seleccionar Productos";
+            Width           = 900;
+            Height          = 540;
+            StartPosition   = FormStartPosition.CenterParent;
             FormBorderStyle = FormBorderStyle.FixedDialog;
-            MaximizeBox = false; MinimizeBox = false;
-            KeyPreview = true;
+            MaximizeBox     = false;
+            MinimizeBox     = false;
+            KeyPreview      = true;
             KeyDown += (s, e) => { if (e.KeyCode == Keys.Enter) confirmar(); };
 
-            Label lbl = new Label { Text = "Buscar:", Location = new System.Drawing.Point(10, 12), AutoSize = true };
-
-            txtFiltro = new TextBox { Location = new System.Drawing.Point(65, 9), Width = 300 };
+            // — Barra de búsqueda —
+            var lblBuscar = new Label
+            {
+                Text     = "Buscar:",
+                Location = new Point(10, 13),
+                AutoSize = true,
+                Font     = new Font("Segoe UI", 9, FontStyle.Bold)
+            };
+            txtFiltro = new TextBox
+            {
+                Location = new Point(65, 10),
+                Width    = 500,
+                Font     = new Font("Segoe UI", 10)
+            };
             txtFiltro.TextChanged += (s, e) => filtrar();
 
-            Label lblHint = new Label
+            var lblHint = new Label
             {
-                Text = "Ctrl+clic o Shift+clic para seleccionar varios",
-                Location = new System.Drawing.Point(375, 12),
-                AutoSize = true,
-                ForeColor = System.Drawing.Color.Gray,
-                Font = new System.Drawing.Font("Segoe UI", 7.5f)
+                Text      = "Busca en descripción · cód. barras · cód. proveedor  |  ✓ clic para marcar",
+                Location  = new Point(572, 13),
+                AutoSize  = true,
+                ForeColor = Color.Gray,
+                Font      = new Font("Segoe UI", 7.5f)
             };
 
+            // — Grid —
             dgv = new DataGridView
             {
-                Location = new System.Drawing.Point(10, 38),
-                Size = new System.Drawing.Size(585, 350),
-                AllowUserToAddRows = false, AllowUserToDeleteRows = false,
-                ReadOnly = true,
-                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
-                MultiSelect = true,
-                RowHeadersVisible = false,
-                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+                Location                    = new Point(10, 38),
+                Size                        = new Size(864, 395),
+                AllowUserToAddRows          = false,
+                AllowUserToDeleteRows       = false,
+                ReadOnly                    = false,
+                SelectionMode               = DataGridViewSelectionMode.FullRowSelect,
+                MultiSelect                 = false,
+                RowHeadersVisible           = false,
+                AutoGenerateColumns         = false,
+                AutoSizeColumnsMode         = DataGridViewAutoSizeColumnsMode.None,
+                ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize,
+                BackgroundColor             = SystemColors.Window,
+                BorderStyle                 = BorderStyle.Fixed3D
             };
-            dgv.DoubleClick += (s, e) => confirmar();
-            dgv.SelectionChanged += (s, e) => actualizarContador();
 
+            // Columnas (orden visual)
+            dgv.Columns.Add(new DataGridViewCheckBoxColumn
+            {
+                DataPropertyName = COL_SEL,
+                Name             = COL_SEL,
+                HeaderText       = "✓",
+                Width            = 32,
+                Resizable        = DataGridViewTriState.False
+            });
+            dgv.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "id",
+                Name             = "id",
+                Visible          = false
+            });
+            dgv.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "descripcion",
+                Name             = "descripcion",
+                HeaderText       = "Descripción",
+                ReadOnly         = true
+            });
+            dgv.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "codBarras",
+                Name             = "codBarras",
+                HeaderText       = "Cód. Barras",
+                ReadOnly         = true
+            });
+            dgv.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "codProveedor",
+                Name             = "codProveedor",
+                HeaderText       = "Cód. Proveedor",
+                ReadOnly         = true
+            });
+            dgv.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName   = "precio",
+                Name               = "precio",
+                HeaderText         = "Precio",
+                ReadOnly           = true,
+                DefaultCellStyle   = new DataGridViewCellStyle
+                {
+                    Alignment = DataGridViewContentAlignment.MiddleRight,
+                    Format    = "N2"
+                }
+            });
+
+            // Confirmar el check inmediatamente al hacer clic en la celda checkbox
+            dgv.CurrentCellDirtyStateChanged += (s, e) =>
+            {
+                if (dgv.IsCurrentCellDirty &&
+                    dgv.CurrentCell?.OwningColumn?.Name == COL_SEL)
+                    dgv.CommitEdit(DataGridViewDataErrorContexts.Commit);
+            };
+
+            // Clic en cualquier celda de datos → toggle del check de esa fila
+            dgv.CellClick += (s, e) =>
+            {
+                if (e.RowIndex < 0) return;
+                if (e.ColumnIndex != dgv.Columns[COL_SEL].Index)
+                {
+                    DataRow dr = ((DataRowView)dgv.Rows[e.RowIndex].DataBoundItem).Row;
+                    dr[COL_SEL] = !(dr[COL_SEL] as bool? ?? false);
+                }
+                actualizarContador();
+            };
+
+            dgv.CellValueChanged += (s, e) =>
+            {
+                if (e.RowIndex >= 0 &&
+                    dgv.Columns[e.ColumnIndex].Name == COL_SEL)
+                    actualizarContador();
+            };
+
+            // — Pie de formulario —
             lblSeleccionados = new Label
             {
-                Text = "0 producto(s) seleccionado(s)",
-                Location = new System.Drawing.Point(10, 398),
-                Size = new System.Drawing.Size(260, 20),
-                ForeColor = System.Drawing.Color.DimGray
+                Text      = "0 producto(s) seleccionado(s)",
+                Location  = new Point(10, 443),
+                Size      = new Size(500, 22),
+                ForeColor = Color.DimGray,
+                Font      = new Font("Segoe UI", 9)
             };
 
             btnOK = new Button
             {
-                Text = "Agregar seleccionados",
-                Location = new System.Drawing.Point(390, 393),
-                Width = 130, Height = 28
+                Text     = "Agregar seleccionados",
+                Location = new Point(630, 440),
+                Width    = 155,
+                Height   = 30,
+                Font     = new Font("Segoe UI", 9, FontStyle.Bold),
+                BackColor = Color.SteelBlue,
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
             };
             btnOK.Click += (s, e) => confirmar();
 
             btnCancelar = new Button
             {
-                Text = "Cancelar",
-                Location = new System.Drawing.Point(528, 393),
-                Width = 70, Height = 28,
+                Text         = "Cancelar",
+                Location     = new Point(793, 440),
+                Width        = 81,
+                Height       = 30,
+                Font         = new Font("Segoe UI", 9),
                 DialogResult = DialogResult.Cancel
             };
             btnCancelar.Click += (s, e) => Close();
 
-            Controls.AddRange(new Control[] { lbl, txtFiltro, lblHint, dgv, lblSeleccionados, btnOK, btnCancelar });
+            Controls.AddRange(new Control[]
+            {
+                lblBuscar, txtFiltro, lblHint,
+                dgv,
+                lblSeleccionados, btnOK, btnCancelar
+            });
 
             Load += (s, e) => cargarProductos();
         }
 
+        // ── Carga inicial ─────────────────────────────────────────────────────
         private void cargarProductos()
         {
             ClassProductos instProd = new ClassProductos();
-            dtProductos = instProd.traeProductosPpal(" where baja = 0 order by descripcion");
-            filtrar();
+            dtProductos = instProd.traeProductosPpal(
+                " where baja = 0 and IFNULL(p.esPromocion, 0) = 0 order by descripcion");
+
+            // Columna de selección en el DataTable (persiste al filtrar)
+            if (!dtProductos.Columns.Contains(COL_SEL))
+                dtProductos.Columns.Add(COL_SEL, typeof(bool));
+            foreach (DataRow row in dtProductos.Rows)
+            {
+                int idFila = int.Parse(row["id"].ToString());
+                row[COL_SEL] = IdsPreseleccionados != null && IdsPreseleccionados.Contains(idFila);
+            }
+
+            dgv.DataSource = dtProductos.DefaultView;
+
+            ajustarAnchoColumnas();
+            actualizarContador();
+            txtFiltro.Focus();
         }
 
+        // ── Filtrado ──────────────────────────────────────────────────────────
         private void filtrar()
         {
             if (dtProductos == null) return;
-            string f = txtFiltro.Text.Trim();
-            DataView dv = dtProductos.DefaultView;
-            dv.RowFilter = string.IsNullOrEmpty(f) ? "" :
-                string.Format("descripcion LIKE '%{0}%' OR codBarras LIKE '%{0}%' OR codProveedor LIKE '%{0}%'", f);
-            dgv.DataSource = dv;
+            string f = txtFiltro.Text.Trim().Replace("'", "''");
+            dtProductos.DefaultView.RowFilter = string.IsNullOrEmpty(f)
+                ? ""
+                : $"descripcion LIKE '%{f}%' OR codBarras LIKE '%{f}%' OR codProveedor LIKE '%{f}%'";
+        }
 
-            if (dgv.Columns.Contains("id"))           dgv.Columns["id"].Visible = false;
-            if (dgv.Columns.Contains("descripcion"))  dgv.Columns["descripcion"].HeaderText = "Descripción";
-            if (dgv.Columns.Contains("codBarras"))    dgv.Columns["codBarras"].HeaderText = "Cód. Barras";
-            if (dgv.Columns.Contains("codProveedor")) dgv.Columns["codProveedor"].HeaderText = "Cód. Proveedor";
-            if (dgv.Columns.Contains("precio"))       dgv.Columns["precio"].HeaderText = "Precio";
-
+        // ── Auto-ancho de columnas según contenido ────────────────────────────
+        private void ajustarAnchoColumnas()
+        {
             foreach (DataGridViewColumn col in dgv.Columns)
             {
-                string n = col.Name.ToLower();
-                if (n == "cantidad" || n == "cantidadminima" || n == "costo" || n == "fraccionado" ||
-                    n == "dolarizado" || n == "baja" || n == "fk_rubro" || n == "fk_proveedor" ||
-                    n == "p_proveedor" || n == "espromocion")
-                    col.Visible = false;
+                if (col.Name == COL_SEL || !col.Visible) continue;
+                dgv.AutoResizeColumn(col.Index, DataGridViewAutoSizeColumnMode.AllCells);
+                // Mínimo razonable para descripción
+                if (col.Name == "descripcion" && col.Width < 280)
+                    col.Width = 280;
             }
+            dgv.Columns[COL_SEL].Width = 32;
         }
 
+        // ── Contador de marcados (sobre todo el DataTable, no solo los visibles) ──
         private void actualizarContador()
         {
-            int n = dgv.SelectedRows.Count;
-            lblSeleccionados.Text = n + " producto(s) seleccionado(s)";
+            if (dtProductos == null) return;
+            int n = dtProductos.Rows.Cast<DataRow>()
+                                    .Count(r => r[COL_SEL] as bool? == true);
+            lblSeleccionados.Text = $"{n} producto(s) seleccionado(s)";
+            lblSeleccionados.ForeColor = n > 0 ? Color.DarkGreen : Color.DimGray;
         }
 
+        // ── Confirmar selección ───────────────────────────────────────────────
         private void confirmar()
         {
-            if (dgv.SelectedRows.Count == 0) return;
+            if (dtProductos == null) return;
 
             IdsSeleccionados.Clear();
-            foreach (DataGridViewRow row in dgv.SelectedRows)
-                IdsSeleccionados.Add(int.Parse(row.Cells["id"].Value.ToString()));
+            foreach (DataRow row in dtProductos.Rows)
+                if (row[COL_SEL] as bool? == true)
+                    IdsSeleccionados.Add(int.Parse(row["id"].ToString()));
+
+            if (IdsSeleccionados.Count == 0) return;
 
             IdProductoSeleccionado = IdsSeleccionados[0];
             DialogResult = DialogResult.OK;
             Close();
+        }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // frmPickProducto
+            // 
+            this.ClientSize = new System.Drawing.Size(300, 261);
+            this.Name = "frmPickProducto";
+            this.Load += new System.EventHandler(this.frmPickProducto_Load);
+            this.ResumeLayout(false);
+
+        }
+
+        private void frmPickProducto_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

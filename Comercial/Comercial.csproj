@@ -918,6 +918,9 @@
     <EmbeddedResource Include="Formularios\Productos\frmMovimientoProductos.resx">
       <DependentUpon>frmMovimientoProductos.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Productos\frmPickProducto.resx">
+      <DependentUpon>frmPickProducto.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Productos\frmReporteIngreso.resx">
       <DependentUpon>frmReporteIngreso.cs</DependentUpon>
     </EmbeddedResource>

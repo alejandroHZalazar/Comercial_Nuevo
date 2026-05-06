@@ -144,7 +144,7 @@
             // 
             this.lblCliente.FormattingEnabled = true;
             this.lblCliente.ItemHeight = 15;
-            this.lblCliente.Location = new System.Drawing.Point(61, 32);
+            this.lblCliente.Location = new System.Drawing.Point(61, 29);
             this.lblCliente.Name = "lblCliente";
             this.lblCliente.Size = new System.Drawing.Size(475, 169);
             this.lblCliente.TabIndex = 18;

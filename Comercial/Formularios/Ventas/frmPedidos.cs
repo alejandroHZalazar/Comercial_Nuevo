@@ -39,9 +39,13 @@ namespace Comercial.Formularios.Ventas
         int tieneProductosBalanza = Clases.ClassParametros.buscarParametro("productos", "tieneProductosBalanza") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("productos", "tieneProductosBalanza"));
         string prefijoBalanza = Clases.ClassParametros.buscarParametro("productos", "prefijoBalanza");
         string posicionProductoBalanza = Clases.ClassParametros.buscarParametro("productos", "posicionProducto");
-        string posicionPeso = Clases.ClassParametros.buscarParametro("productos", "posicionPeso");
-        string divisorPeso = Clases.ClassParametros.buscarParametro("productos", "divisorPeso");
+        string posicionPrecio = Clases.ClassParametros.buscarParametro("productos", "posicionPrecio");
+        string divisorPrecio = Clases.ClassParametros.buscarParametro("productos", "divisorPrecio");
         int tieneLectoraCB = Clases.ClassParametros.buscarParametro("productos", "MecanismoLectora") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("productos", "MecanismoLectora"));
+        int tieneConsumidorFinal = Clases.ClassParametros.buscarParametro("ventas", "tieneConsumidorFinal") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "tieneConsumidorFinal"));
+        int clienteConsumidorFinal = Clases.ClassParametros.buscarParametro("ventas", "clienteConsumidorFinal") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "clienteConsumidorFinal"));
+        // Subtotal forzado para productos fraccionados con formato "total*codBarras"
+        decimal _subtotalForzado = 0;
         public frmPedidos()
         {
             InitializeComponent();
@@ -83,13 +87,21 @@ namespace Comercial.Formularios.Ventas
 
         private void frmPedidos_Load(object sender, EventArgs e)
         {
-            
             cargarClientes();
             cargarProductos();
             cargarCombos();
             estadoInicial();
             Control.CheckForIllegalCrossThreadCalls = false;
-           
+            backgroundWorkerTarea.RunWorkerCompleted += backgroundWorkerTarea_RunWorkerCompleted;
+        }
+
+        private void verificarParametros()
+        {
+            if (tieneConsumidorFinal == 1)
+            {
+                cargarDatosCliente(1, clienteConsumidorFinal);
+                this.ActiveControl = txtFiltro;
+            }
         }
 
         private void cargarCombos()
@@ -141,6 +153,7 @@ namespace Comercial.Formularios.Ventas
             _recargoCabecera = null;
             dgvPedido.Columns["Sel"].Visible = bonificacionPorLinea == 1;
             panelSelGrilla.Visible = bonificacionPorLinea == 1;
+            verificarParametros();
         }
 
         private void cargarProductos()
@@ -310,6 +323,8 @@ namespace Comercial.Formularios.Ventas
 
             foreach (DataGridViewRow fila in dgvPedido.Rows)
             {
+                bool subtotalManual = fila.Tag != null && fila.Tag.ToString() == "subtotalManual";
+
                 decimal precioSinIva = decimal.Parse(fila.Cells["PrecioSinIVA"].Value.ToString());
                 decimal cantidad     = decimal.Parse(fila.Cells["Cantidad"].Value.ToString());
                 decimal iva          = decimal.Parse(cboIVA.Text);
@@ -328,11 +343,21 @@ namespace Comercial.Formularios.Ventas
                     cantDec, MidpointRounding.AwayFromZero);
                 fila.Cells["PrecioConIva"].Value = precioConIva;
 
-                // Subtotal = Precio C/IVA * Cantidad
-                decimal subtotal = Math.Round(
-                    precioConIva * cantidad,
-                    cantDec, MidpointRounding.AwayFromZero);
-                fila.Cells["Subtotal"].Value = subtotal;
+                decimal subtotal;
+                if (subtotalManual)
+                {
+                    // Producto fraccionado con total ingresado por el usuario (formato total*cb):
+                    // se respeta el subtotal exacto en lugar de recalcularlo.
+                    subtotal = decimal.Parse(fila.Cells["Subtotal"].Value.ToString());
+                }
+                else
+                {
+                    // Subtotal = Precio C/IVA * Cantidad
+                    subtotal = Math.Round(
+                        precioConIva * cantidad,
+                        cantDec, MidpointRounding.AwayFromZero);
+                    fila.Cells["Subtotal"].Value = subtotal;
+                }
 
                 totalSinIva  += Math.Round(subSinIVA * cantidad, cantDec, MidpointRounding.AwayFromZero);
                 totalConIVA  += subtotal;
@@ -350,6 +375,9 @@ namespace Comercial.Formularios.Ventas
             DataTable producto = null;
             bool productoDeBalanzaEncontrado = false;
 
+            // Cantidad especificada con el formato "cantidad*codigoBarras" (solo en búsqueda por CB)
+            decimal cantidadForzada = 0;
+
             if (txtFiltro.Text != string.Empty)
             {
                 if (cboFiltro.SelectedIndex == 0)
@@ -358,29 +386,63 @@ namespace Comercial.Formularios.Ventas
                 }
                 else if (cboFiltro.SelectedIndex == 1)
                 {
+                    // Formato cantidad*codBarras
+                    string textoBusqueda = txtFiltro.Text.Trim();
+                    if (textoBusqueda.Contains("*"))
+                    {
+                        int pos = textoBusqueda.IndexOf('*');
+                        string parteQty = textoBusqueda.Substring(0, pos).Trim();
+                        textoBusqueda  = textoBusqueda.Substring(pos + 1).Trim();
+                        decimal qty;
+                        cantidadForzada = (decimal.TryParse(parteQty, out qty) && qty > 0) ? qty : 1;
+                    }
+
                     if (tieneProductosBalanza == 0)
                     {
-                        producto = instProd.traeProductosPpal(" where baja = 0 and codBarras = " + txtFiltro.Text.Trim());
+                        producto = instProd.traeProductosPpal(" where baja = 0 and codBarras = " + textoBusqueda);
                     }
                     else
                     {
-                        if (prefijoBalanza == string.Empty || posicionProductoBalanza == string.Empty || posicionPeso == string.Empty || divisorPeso == string.Empty)
+                        if (prefijoBalanza == string.Empty || posicionProductoBalanza == string.Empty || posicionPrecio == string.Empty || divisorPrecio == string.Empty)
                         {
                             MessageBox.Show(this, "Para operar con productos de balanza debe parametrizar: Prefijo, Posición de Producto, Posicion de Importe y divisior de importe", "VENTAS", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
                         }
-                        if (Clases.ClassProductosBalanza.esCodigoBalanza(txtFiltro.Text.Trim(), prefijoBalanza))
+                        if (Clases.ClassProductosBalanza.esCodigoBalanza(textoBusqueda, prefijoBalanza))
                         {
-                            var productoBalanzaId = Clases.ClassProductosBalanza.ExtraerPorPosicion(txtFiltro.Text.Trim(), posicionProductoBalanza);
+                            var productoBalanzaId = Clases.ClassProductosBalanza.ExtraerPorPosicion(textoBusqueda, posicionProductoBalanza);
 
                             if (productoBalanzaId == null) return;
 
                             producto = instProd.traeProductosPpal(" where baja = 0 and codBarras = " + productoBalanzaId.Trim());
-                            if (producto.Rows.Count > 0) productoDeBalanzaEncontrado = true;
+                            if (producto.Rows.Count > 0)
+                            {
+                                productoDeBalanzaEncontrado = true;
+
+                                // Extraer el TOTAL del código de barras de balanza
+                                // (precio del paquete pesado, ya pre-calculado por la balanza).
+                                // Se divide por divisorPrecio para obtener los decimales.
+                                var precioStr = Clases.ClassProductosBalanza.ExtraerPorPosicion(textoBusqueda, posicionPrecio);
+                                if (!string.IsNullOrEmpty(precioStr))
+                                {
+                                    decimal precioBalanza;
+                                    if (decimal.TryParse(precioStr, System.Globalization.NumberStyles.Any,
+                                            System.Globalization.CultureInfo.InvariantCulture, out precioBalanza))
+                                    {
+                                        decimal divisor;
+                                        if (decimal.TryParse(divisorPrecio, System.Globalization.NumberStyles.Any,
+                                                System.Globalization.CultureInfo.InvariantCulture, out divisor) && divisor > 0)
+                                            precioBalanza = precioBalanza / divisor;
+
+                                        if (precioBalanza > 0)
+                                            cantidadForzada = precioBalanza;
+                                    }
+                                }
+                            }
                         }
                         else
                         {
-                            producto = instProd.traeProductosPpal(" where baja = 0 and codBarras = " + txtFiltro.Text.Trim());
+                            producto = instProd.traeProductosPpal(" where baja = 0 and codBarras = " + textoBusqueda);
                         }
 
                     }
@@ -396,7 +458,32 @@ namespace Comercial.Formularios.Ventas
                 unProducto = int.Parse(producto.Rows[0]["ID"].ToString());
                 lblDescripcion.Text = producto.Rows[0]["Descripcion"].ToString();
                 esfraccionado = bool.Parse(producto.Rows[0]["fraccionado"].ToString());
-                nudCantidad.Focus();
+
+                // Subtotal forzado:
+                //   - Producto fraccionado con formato "total*codBarras" (usuario tipea el total)
+                //   - Producto leído por código de balanza (el total viene en el propio CB)
+                // En ambos casos cantidadForzada contiene el TOTAL; la qty la calcula agregarProducto().
+                if (cantidadForzada > 0 && (esfraccionado || productoDeBalanzaEncontrado))
+                {
+                    _subtotalForzado = cantidadForzada;
+                    cantidadForzada  = 0;
+                }
+
+                if (tieneLectoraCB == 1)
+                {
+                    // Lectora de código de barras: agregar directamente (cantidad forzada o 1)
+                    nudCantidad.Value = cantidadForzada > 0 ? cantidadForzada : 1;
+                    agregarProducto();
+                    nudCantidad.Value = 0;
+                    unProducto = 0;
+                    txtFiltro.Focus();
+                }
+                else
+                {
+                    if (cantidadForzada > 0)
+                        nudCantidad.Value = cantidadForzada;
+                    nudCantidad.Focus();
+                }
             }
             else
             {
@@ -448,6 +535,44 @@ namespace Comercial.Formularios.Ventas
 
         private void agregarProducto()
         {
+            // Si es lectora de CB: buscar si el producto ya existe en la grilla y acumular
+            if (tieneLectoraCB == 1)
+            {
+                foreach (DataGridViewRow fila in dgvPedido.Rows)
+                {
+                    if (int.Parse(fila.Cells["id"].Value.ToString()) == unProducto)
+                    {
+                        if (_subtotalForzado > 0)
+                        {
+                            // Fraccionado con total ingresado: acumular subtotal exacto
+                            // y recalcular cantidad equivalente. Marcar fila como manual
+                            // ANTES de tocar las celdas para que procesoTotalesyColorear
+                            // no recalcule el Subtotal.
+                            decimal precioConIvaFila = decimal.Parse(fila.Cells["PrecioConIva"].Value.ToString());
+                            decimal subtotalActual   = decimal.Parse(fila.Cells["Subtotal"].Value.ToString());
+                            decimal nuevoSubtotal    = subtotalActual + _subtotalForzado;
+                            decimal nuevaCantidad    = precioConIvaFila > 0
+                                ? Math.Round(nuevoSubtotal / precioConIvaFila, cantStock)
+                                : 0;
+
+                            fila.Tag = "subtotalManual";
+                            fila.Cells["Cantidad"].Value = nuevaCantidad;
+                            fila.Cells["Subtotal"].Value = nuevoSubtotal;
+                            _subtotalForzado = 0;
+                        }
+                        else
+                        {
+                            decimal cantActual = decimal.Parse(fila.Cells["Cantidad"].Value.ToString());
+                            fila.Cells["Cantidad"].Value = Math.Round(cantActual + nudCantidad.Value, cantStock);
+                        }
+
+                        dgvPedido.FirstDisplayedScrollingRowIndex = fila.Index;
+                        procesoTotalesyColorear();
+                        return;
+                    }
+                }
+            }
+
             DataTable producto = instProd.traerProductosParaEditar(unProducto);
             if (producto.Rows.Count > 0)
             {
@@ -459,8 +584,24 @@ namespace Comercial.Formularios.Ventas
                     ? Math.Round(decimal.Parse(producto.Rows[0]["costo"].ToString()) * valorDolar, cantDec)
                     : Math.Round(decimal.Parse(producto.Rows[0]["costo"].ToString()), cantDec);
 
+                // Calcular precioConIva para poder derivar la cantidad si es fraccionado con total
+                decimal iva = decimal.TryParse(cboIVA.Text, out decimal ivaVal) ? ivaVal : 0;
+                decimal precioConIva = Math.Round(precio * (1 + iva / 100), cantDec);
+
+                decimal cantidad;
+                if (_subtotalForzado > 0)
+                {
+                    cantidad = precioConIva > 0
+                        ? Math.Round(_subtotalForzado / precioConIva, cantStock)
+                        : 1;
+                }
+                else
+                {
+                    cantidad = Math.Round(nudCantidad.Value, cantStock);
+                }
+
                 // Sel | CodBarras | CodProv | Desc | Observ | Stock | PrecioSinIVA | DescRec | subtotalSIVA | PrecioConIva | Cantidad | Subtotal | PrecioOrig | id | costo | fraccionado
-                dgvPedido.Rows.Add(
+                int nuevoIdx = dgvPedido.Rows.Add(
                     false,
                     producto.Rows[0]["codBarras"].ToString(),
                     producto.Rows[0]["codProveedor"].ToString(),
@@ -470,13 +611,22 @@ namespace Comercial.Formularios.Ventas
                     precio,
                     0,
                     precio,
-                    precio,
-                    Math.Round(nudCantidad.Value, cantStock),
+                    precioConIva,
+                    cantidad,
                     0,
                     precio,
                     unProducto,
                     costo,
                     Convert.ToBoolean(producto.Rows[0]["fraccionado"]));
+
+                if (_subtotalForzado > 0)
+                {
+                    // Marcar como manual ANTES de imponer el subtotal: así el recálculo
+                    // gatillado por CellValueChanged respeta el valor exacto.
+                    dgvPedido.Rows[nuevoIdx].Tag = "subtotalManual";
+                    dgvPedido.Rows[nuevoIdx].Cells["Subtotal"].Value = _subtotalForzado;
+                    _subtotalForzado = 0;
+                }
             }
 
             dgvPedido.FirstDisplayedScrollingRowIndex = dgvPedido.RowCount - 1;
@@ -532,6 +682,16 @@ namespace Comercial.Formularios.Ventas
                         fila["fk_producto"].ToString(),
                         Math.Round(decimal.Parse(fila["costo"].ToString()), cantDec),
                         Convert.ToBoolean(fila["fraccionado"]));
+
+                    // Para productos fraccionados, el subtotal exacto guardado en la BD
+                    // debe preservarse tal cual; no debe recalcularse por procesoTotalesyColorear.
+                    if (Convert.ToBoolean(fila["fraccionado"]) && fila["subtotal"] != DBNull.Value)
+                    {
+                        int idx = dgvPedido.RowCount - 1;
+                        dgvPedido.Rows[idx].Tag = "subtotalManual";
+                        dgvPedido.Rows[idx].Cells["Subtotal"].Value =
+                            Math.Round(decimal.Parse(fila["subtotal"].ToString()), cantDec);
+                    }
                 }
 
                 dgvPedido.FirstDisplayedScrollingRowIndex = dgvPedido.RowCount - 1;
@@ -787,6 +947,17 @@ namespace Comercial.Formularios.Ventas
         private void backgroundWorkerTarea_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             pbProceso.Value = (e.ProgressPercentage);
+        }
+
+        // Corre en el hilo de UI: es el momento seguro para establecer el foco
+        // después de que el worker termina (estadoInicial se llama desde el hilo worker,
+        // donde Focus() no tiene efecto confiable en WinForms).
+        private void backgroundWorkerTarea_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (tieneConsumidorFinal == 1)
+                txtFiltro.Focus();
+            else
+                txtCliente.Focus();
         }
 
         private void btnAltaCliente_Click(object sender, EventArgs e)
