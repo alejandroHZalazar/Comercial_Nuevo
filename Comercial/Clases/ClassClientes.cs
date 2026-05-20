@@ -271,7 +271,7 @@ namespace Comercial.Clases
             }
         }
 
-        public int NC_Cliente(int unCliente, decimal importeCobrar, string unaObserv)
+        public int NC_Cliente(int unCliente, decimal importeCobrar, string unaObserv, int haceCaja, int CajaId)
         {
             try
             {
@@ -282,7 +282,9 @@ namespace Comercial.Clases
 
                 cmd.Parameters.AddWithValue("unCliente", unCliente);
                 cmd.Parameters.AddWithValue("ImporteCobro", importeCobrar);
-                cmd.Parameters.AddWithValue("observ", unaObserv);
+                cmd.Parameters.AddWithValue("observ", unaObserv);                
+                cmd.Parameters.AddWithValue("haceCaja", haceCaja);
+                cmd.Parameters.AddWithValue("CajaId", CajaId);
 
 
                 MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int32);

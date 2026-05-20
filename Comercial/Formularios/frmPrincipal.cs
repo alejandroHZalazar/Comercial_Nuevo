@@ -59,7 +59,7 @@ namespace Comercial.Formularios
         {
             Formularios.Configuracion.frmABMTipoUsuarios unFrmTipoUsuarios = new Configuracion.frmABMTipoUsuarios();
             unFrmTipoUsuarios.ShowDialog();
-            Clases.classUsuarios.setPermisosMenu(int.Parse(Environment.GetEnvironmentVariable("idUser")), this, menuStrip1);
+            Clases.classUsuarios.setPermisosMenu(int.Parse(Environment.GetEnvironmentVariable("tipoUser")), this, menuStrip1);
         }
 
         private void aToolStripMenuItem_Click(object sender, EventArgs e)
@@ -72,7 +72,7 @@ namespace Comercial.Formularios
         {
             
             this.Text = "Sistema de Gestión Comercial - Usuario: " + Environment.GetEnvironmentVariable("nombreUser");
-            Clases.classUsuarios.setPermisosMenu(int.Parse(Environment.GetEnvironmentVariable("idUser")),this,menuStrip1 );
+            Clases.classUsuarios.setPermisosMenu(int.Parse(Environment.GetEnvironmentVariable("tipoUser")),this,menuStrip1 );
             facturacionPorLotesToolStripMenuItem.Visible = false;
             if (tieneNotificaciones == 0) return;
             timerNotificaciones = new Timer();

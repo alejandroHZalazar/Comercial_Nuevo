@@ -392,84 +392,49 @@ namespace Comercial.Clases
                     decimal totalFinal = Math.Round(neto + ivaTotal + totalTributos, 2);
                     facturaRequest.comprobante.total = totalFinal;
 
-                    bool reintento = false;
+                    FacturaResponse respuesta = await emitirConReintentos(facturaRequest, unaDevolucion);
+                    if (respuesta == null) return false;
 
-                    for (int intento = 0; intento < 2; intento++)
+                    // ✅ ÉXITO → guardar comprobante
+                    Fiscal unTk = new Fiscal();
+
+                    string cae = respuesta.cae.Trim();
+                    string vencimientoCAE = respuesta.vencimiento_cae;
+                    string numero = respuesta.comprobante_nro;
+                    string pdf = respuesta.comprobante_pdf_url;
+                    string qr = respuesta.afip_qr;
+
+                    ComprobanteFiscal unComprobante = new ComprobanteFiscal
                     {
-                        var (ok, jsonRespuesta, error) = await emitirComprobante(facturaRequest);
+                        TipoComprobante = "Nota de Crédito",
+                        Letra = cabecera.Rows[0]["letra"].ToString(),
+                        PuntoVenta = puntoVenta,
+                        Numero = numero.Split('-')[1].TrimStart('0'),
+                        FechaEmision = DateTime.Now,
+                        CreatedAt = DateTime.Now,
+                        NroReferencia = int.Parse(unaDevolucion.ToString()),
+                        FkCliente = int.Parse(cabecera.Rows[0]["Cliente"].ToString()),
+                        RazonSocial = cabecera.Rows[0]["razonSocial"].ToString(),
+                        Cuit = cabecera.Rows[0]["Cliente"].ToString() == clienteConsumidorFinal.ToString()
+                                    ? "99999999"
+                                    : cabecera.Rows[0]["cuil"].ToString(),
+                        ImporteTotal = totalFinal,
+                        Estado = "Emitido",
+                        Cae = cae,
+                        FechaVencimientoCae = DateTime.ParseExact(vencimientoCAE, "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                        urlComprobante = pdf,
+                        qrAfip = qr
+                    };
 
-                        if (!ok || string.IsNullOrEmpty(jsonRespuesta))
-                            return false;
+                    unTk.almacenarComprobanteFiscal(unComprobante);
 
-                        FacturaResponse respuesta = JsonConvert.DeserializeObject<FacturaResponse>(jsonRespuesta);
+                    System.Diagnostics.Process.Start(new ProcessStartInfo
+                    {
+                        FileName = pdf,
+                        UseShellExecute = true
+                    });
 
-                        if (respuesta.error == "N")
-                        {
-                            // ✅ éxito
-                            Fiscal unTk = new Fiscal();
-
-                            string cae = respuesta.cae.Trim();
-                            string vencimientoCAE = respuesta.vencimiento_cae;
-                            string numero = respuesta.comprobante_nro;
-                            string pdf = respuesta.comprobante_pdf_url;
-                            string qr = respuesta.afip_qr;
-
-                            ComprobanteFiscal unComprobante = new ComprobanteFiscal
-                            {
-                                TipoComprobante = "Nota de Crédito",
-                                Letra = cabecera.Rows[0]["letra"].ToString(),
-                                PuntoVenta = puntoVenta,
-                                Numero = numero.Split('-')[1].TrimStart('0'),
-                                FechaEmision = DateTime.Now,
-                                CreatedAt = DateTime.Now,
-                                NroReferencia = int.Parse(unaDevolucion.ToString()),
-                                FkCliente = int.Parse(cabecera.Rows[0]["Cliente"].ToString()),
-                                RazonSocial = cabecera.Rows[0]["razonSocial"].ToString(),
-                                Cuit = cabecera.Rows[0]["Cliente"].ToString() == clienteConsumidorFinal.ToString()
-                                            ? "99999999"
-                                            : cabecera.Rows[0]["cuil"].ToString(),
-                                ImporteTotal = totalFinal,
-                                Estado = "Emitido",
-                                Cae = cae,
-                                FechaVencimientoCae = DateTime.ParseExact(vencimientoCAE, "dd/MM/yyyy", CultureInfo.InvariantCulture),
-                                urlComprobante = pdf,
-                                qrAfip = qr
-                            };
-
-                            unTk.almacenarComprobanteFiscal(unComprobante);
-
-                            System.Diagnostics.Process.Start(new ProcessStartInfo
-                            {
-                                FileName = pdf,
-                                UseShellExecute = true
-                            });
-
-                            return true;
-                        }
-                        else
-                        {
-                            string errores = string.Join(" | ", respuesta.errores);
-
-                            // 🔥 REINTENTO SOLO SI ES ERROR DE TOTALES
-                            if (!reintento && errores.Contains("sumatorias finales"))
-                            {
-                                decimal? totalCorrecto = ObtenerTotalDesdeError(errores);
-
-                                if (totalCorrecto.HasValue)
-                                {
-                                    facturaRequest.comprobante.total = totalCorrecto.Value;
-                                    reintento = true;
-                                    continue;
-                                }
-                            }
-
-                            // ❌ error definitivo
-                            new Fiscal().AddErrorFE(unaDevolucion, errores);
-                            return false;
-                        }
-                    }
-
-                    return false;
+                    return true;
                 }
                 else
                 {
@@ -496,26 +461,16 @@ namespace Comercial.Clases
                     DataTable Cliente = instClie.traerDatosFiscales(unCliente ?? 0);
                     if (Cliente.Rows.Count == 0) return false;
 
-                    //--------Cliente------------------
-                    facturaRequest.cliente.documento_tipo = Cliente.Rows[0]["Cliente"].ToString() == clienteConsumidorFinal.ToString() ? "DNI" : "CUIT";
-                    facturaRequest.cliente.documento_nro = Cliente.Rows[0]["Cliente"].ToString() == clienteConsumidorFinal.ToString() ? "99999999" : Cliente.Rows[0]["cuil"].ToString();
-                    facturaRequest.cliente.razon_social = Cliente.Rows[0]["razonSocial"].ToString();
-                    facturaRequest.cliente.domicilio = Cliente.Rows[0]["Direccion"].ToString();
-                    var provinciaDb = Cliente.Rows[0]["Provincia"].ToString();
+                    //--------Cliente (reutiliza CrearCliente y sobrescribe los campos propios de NC sin venta)------------------
+                    // CrearCliente espera columna "Cliente" como id del cliente; el DataTable de traerDatosFiscales la trae igual.
+                    // Validación de provincia previa para mantener el return false ante valor inválido.
+                    if (!Enum.TryParse(Cliente.Rows[0]["Provincia"].ToString().Replace(" ", "_"), out ProvinciasEnum _provNC)) return false;
 
-                    ProvinciasEnum provincia;
-
-                    if (!Enum.TryParse(provinciaDb.Replace(" ", "_"), out provincia)) return false;
-
-                    var codProvincia = (int)provincia;
-                    facturaRequest.cliente.provincia = codProvincia.ToString();
-
-                    facturaRequest.cliente.codigo = "Clie" + Cliente.Rows[0]["Cliente"].ToString() == clienteConsumidorFinal.ToString() ? "99999999" : Cliente.Rows[0]["cuil"].ToString();
-                    facturaRequest.cliente.envia_por_mail = enviarFacturaMail;
-                    if (enviarFacturaMail == "S") facturaRequest.cliente.email = Cliente.Rows[0]["email"].ToString();
-                    facturaRequest.cliente.condicion_pago = "201";
-                    facturaRequest.cliente.condicion_iva = Cliente.Rows[0]["abrevFE"].ToString();
-                    facturaRequest.cliente.rg5329 = "N";
+                    facturaRequest.cliente = CrearCliente(Cliente.Rows[0], null);
+                    // En NC sin venta original se usa condicion_pago "201" y sin condicion_pago_otra
+                    // (CrearCliente setea "214" y "Sin Especificar" cuando unaVenta == null).
+                    facturaRequest.cliente.condicion_pago      = "201";
+                    facturaRequest.cliente.condicion_pago_otra = null;
 
                     //-------------------Comprobante-------------------------
 
@@ -573,79 +528,49 @@ namespace Comercial.Clases
                         facturaRequest.comprobante.tributos.Add(unTributo);
                     }
 
-                    var (ok, jsonRespuesta, error) = await emitirComprobante(facturaRequest);
+                    FacturaResponse respuesta = await emitirConReintentos(facturaRequest, unaDevolucion);
+                    if (respuesta == null) return false;
 
-                    if (!ok)
-                    {
-                        if (!string.IsNullOrEmpty(jsonRespuesta))
-                        {
-                            // error HTTP
-                            string errorHttp = "Error API: " + jsonRespuesta;
-                            return false;
-                        }
-                        else
-                        {
-                            // error técnico (timeout, red, etc.)
-                            string errorHttp = "Error técnico: " + error;
-                        }
-
-                        return false;
-                    }
-
-                    FacturaResponse respuesta = JsonConvert.DeserializeObject<FacturaResponse>(jsonRespuesta);
-
+                    // ✅ ÉXITO → guardar comprobante
                     Fiscal unTk = new Fiscal();
 
-                    if (respuesta.error == "N")
+                    string cae = respuesta.cae.Trim();
+                    string vencimientoCAE = respuesta.vencimiento_cae;
+                    string numero = respuesta.comprobante_nro;
+                    string pdf = respuesta.comprobante_pdf_url;
+                    string qr = respuesta.afip_qr;
+
+                    ComprobanteFiscal unComprobante = new ComprobanteFiscal
                     {
-                        string cae = respuesta.cae.Trim();
-                        string vencimientoCAE = respuesta.vencimiento_cae;
-                        string numero = respuesta.comprobante_nro;
-                        string pdf = respuesta.comprobante_pdf_url;
-                        string qr = respuesta.afip_qr;
+                        TipoComprobante = "Nota de Crédito",
+                        Letra = Cliente.Rows[0]["letra"].ToString(),
+                        PuntoVenta = puntoVenta,
+                        Numero = numero.Split('-')[1].TrimStart('0'),
+                        FechaEmision = DateTime.Now,
+                        CreatedAt = DateTime.Now,
+                        NroReferencia = int.Parse(unaDevolucion.ToString()),
+                        FkCliente = int.Parse(Cliente.Rows[0]["Cliente"].ToString()),
+                        RazonSocial = Cliente.Rows[0]["razonSocial"].ToString(),
+                        Cuit = Cliente.Rows[0]["Cliente"].ToString() == clienteConsumidorFinal.ToString()
+                                    ? "99999999"
+                                    : Cliente.Rows[0]["cuil"].ToString(),
+                        ImporteTotal = unImporte ?? 0,
+                        Estado = "Emitido",
+                        Cae = cae,
+                        FechaVencimientoCae = DateTime.ParseExact(vencimientoCAE, "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                        urlComprobante = pdf,
+                        qrAfip = qr
+                    };
 
+                    unTk.almacenarComprobanteFiscal(unComprobante);
 
-                        ComprobanteFiscal unComprobante = new ComprobanteFiscal();
-
-                        unComprobante.TipoComprobante = "Nota de Crédito";
-                        unComprobante.Letra = Cliente.Rows[0]["letra"].ToString();
-                        unComprobante.PuntoVenta = puntoVenta;
-                        unComprobante.Numero = numero.Split('-')[1].TrimStart('0');
-                        unComprobante.FechaEmision = DateTime.Now;
-                        unComprobante.CreatedAt = DateTime.Now;
-                        unComprobante.NroReferencia = int.Parse(unaDevolucion.ToString());
-                        unComprobante.FkCliente = int.Parse(Cliente.Rows[0]["Cliente"].ToString());
-                        unComprobante.RazonSocial = Cliente.Rows[0]["razonSocial"].ToString();
-                        unComprobante.Cuit = Cliente.Rows[0]["Cliente"].ToString() == clienteConsumidorFinal.ToString() ? "99999999" : Cliente.Rows[0]["cuil"].ToString();
-                        unComprobante.ImporteTotal = unImporte ?? 0;
-                        unComprobante.Estado = "Emitido";
-                        unComprobante.Cae = cae;
-                        unComprobante.FechaVencimientoCae = DateTime.ParseExact(vencimientoCAE, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                        unComprobante.urlComprobante = pdf;
-                        unComprobante.qrAfip = qr;
-
-                        // guardar en base de datos
-                        unTk.almacenarComprobanteFiscal(unComprobante);
-
-                        System.Diagnostics.Process.Start(new ProcessStartInfo
-                        {
-                            FileName = pdf,
-                            UseShellExecute = true
-                        });
-
-                        return true;
-
-                    }
-
-                    else
+                    System.Diagnostics.Process.Start(new ProcessStartInfo
                     {
-                        string errores = string.Join(" | ", respuesta.errores);
+                        FileName = pdf,
+                        UseShellExecute = true
+                    });
 
-                        // guardar error en log
-                        unTk.AddErrorFE(unaDevolucion, errores);
-
-                        return false;
-                    }
+                    return true;
                 }
             }
             catch (Exception u)
@@ -792,92 +717,108 @@ namespace Comercial.Clases
                 decimal totalFinal = Math.Round(neto + ivaTotal + totalTributos, 2);
                 facturaRequest.comprobante.total = totalFinal;
 
-                bool reintento = false;
+                FacturaResponse respuesta = await emitirConReintentos(facturaRequest, unaVenta, mostrarMensajeError: true);
+                if (respuesta == null) return false;
 
-                for (int intento = 0; intento < 2; intento++)
+                // ✅ ÉXITO → guardar comprobante
+                Fiscal unTk = new Fiscal();
+
+                string cae = respuesta.cae.Trim();
+                string vencimientoCAE = respuesta.vencimiento_cae;
+                string numero = respuesta.comprobante_nro;
+                string pdf = respuesta.comprobante_pdf_url;
+                string qr = respuesta.afip_qr;
+
+                ComprobanteFiscal unComprobante = new ComprobanteFiscal
                 {
-                    var (ok, jsonRespuesta, error) = await emitirComprobante(facturaRequest);
+                    TipoComprobante = "Factura",
+                    Letra = cabecera.Rows[0]["letra"].ToString(),
+                    PuntoVenta = puntoVenta,
+                    Numero = numero.Split('-')[1].TrimStart('0'),
+                    FechaEmision = DateTime.Now,
+                    CreatedAt = DateTime.Now,
+                    NroReferencia = int.Parse(unaVenta.ToString()),
+                    FkCliente = int.Parse(cabecera.Rows[0]["Cliente"].ToString()),
+                    RazonSocial = cabecera.Rows[0]["razonSocial"].ToString(),
+                    Cuit = cabecera.Rows[0]["Cliente"].ToString() == clienteConsumidorFinal.ToString()
+                                ? "99999999"
+                                : cabecera.Rows[0]["cuil"].ToString(),
+                    ImporteTotal = decimal.Parse(cabecera.Rows[0]["totalVenta"].ToString()),
+                    Estado = "Emitido",
+                    Cae = cae,
+                    FechaVencimientoCae = DateTime.ParseExact(vencimientoCAE, "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                    urlComprobante = pdf,
+                    qrAfip = qr
+                };
 
-                    if (!ok || string.IsNullOrEmpty(jsonRespuesta))
-                        return false;
+                unTk.almacenarComprobanteFiscal(unComprobante);
 
-                    FacturaResponse respuesta = JsonConvert.DeserializeObject<FacturaResponse>(jsonRespuesta);
+                System.Diagnostics.Process.Start(new ProcessStartInfo
+                {
+                    FileName = pdf,
+                    UseShellExecute = true
+                });
 
-                    if (respuesta.error == "N")
-                    {
-                        // ✅ ÉXITO → guardar comprobante
-                        Fiscal unTk = new Fiscal();
-
-                        string cae = respuesta.cae.Trim();
-                        string vencimientoCAE = respuesta.vencimiento_cae;
-                        string numero = respuesta.comprobante_nro;
-                        string pdf = respuesta.comprobante_pdf_url;
-                        string qr = respuesta.afip_qr;
-
-                        ComprobanteFiscal unComprobante = new ComprobanteFiscal
-                        {
-                            TipoComprobante = "Factura",
-                            Letra = cabecera.Rows[0]["letra"].ToString(),
-                            PuntoVenta = puntoVenta,
-                            Numero = numero.Split('-')[1].TrimStart('0'),
-                            FechaEmision = DateTime.Now,
-                            CreatedAt = DateTime.Now,
-                            NroReferencia = int.Parse(unaVenta.ToString()),
-                            FkCliente = int.Parse(cabecera.Rows[0]["Cliente"].ToString()),
-                            RazonSocial = cabecera.Rows[0]["razonSocial"].ToString(),
-                            Cuit = cabecera.Rows[0]["Cliente"].ToString() == clienteConsumidorFinal.ToString()
-                                        ? "99999999"
-                                        : cabecera.Rows[0]["cuil"].ToString(),
-                            ImporteTotal = decimal.Parse(cabecera.Rows[0]["totalVenta"].ToString()),
-                            Estado = "Emitido",
-                            Cae = cae,
-                            FechaVencimientoCae = DateTime.ParseExact(vencimientoCAE, "dd/MM/yyyy", CultureInfo.InvariantCulture),
-                            urlComprobante = pdf,
-                            qrAfip = qr
-                        };
-
-                        unTk.almacenarComprobanteFiscal(unComprobante);
-
-                        System.Diagnostics.Process.Start(new ProcessStartInfo
-                        {
-                            FileName = pdf,
-                            UseShellExecute = true
-                        });
-
-                        return true;
-                    }
-                    else
-                    {
-                        string errores = string.Join(" | ", respuesta.errores);
-
-                        // 🔥 detectar diferencia de totales
-                        if ((errores.Contains("sumatorias finales") ||
-                            errores.Contains("El total a enviar a AFIP")))
-                        {
-                            decimal? totalCorrecto = ObtenerTotalDesdeError(errores);
-
-                            if (totalCorrecto.HasValue)
-                            {
-                                facturaRequest.comprobante.total = totalCorrecto.Value;
-                                reintento = true;
-                                continue; // 🔁 reintenta
-                            }
-                        }
-
-                        // ❌ error definitivo
-                        new Fiscal().AddErrorFE(unaVenta, errores);
-                        MessageBox.Show(errores, "FACTURACION", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return false;
-                    }
-                }
-
-                return false;
+                return true;
             }
             catch
             {
                 return false;
             }
         }
+        /// <summary>
+        /// Emite el comprobante con hasta 2 intentos. Si AFIP/API responde
+        /// "sumatorias finales (...)" o "El total a enviar a AFIP (...)",
+        /// se extrae el total correcto vía <see cref="ObtenerTotalDesdeError"/>
+        /// y se reintenta una sola vez. En cualquier error definitivo se
+        /// registra con <see cref="Fiscal.AddErrorFE"/> y retorna null.
+        /// </summary>
+        /// <param name="facturaRequest">payload a enviar (se ajusta el total en el reintento)</param>
+        /// <param name="idReferencia">id de venta o devolución, usado al registrar errores</param>
+        /// <param name="mostrarMensajeError">si true, muestra MessageBox con el detalle del error definitivo</param>
+        /// <returns>FacturaResponse en caso de éxito; null si falló definitivamente</returns>
+        private async Task<FacturaResponse> emitirConReintentos(
+            FacturaRequest facturaRequest,
+            long idReferencia,
+            bool mostrarMensajeError = false)
+        {
+            for (int intento = 0; intento < 2; intento++)
+            {
+                var (ok, jsonRespuesta, error) = await emitirComprobante(facturaRequest);
+
+                if (!ok || string.IsNullOrEmpty(jsonRespuesta))
+                    return null;
+
+                FacturaResponse respuesta = JsonConvert.DeserializeObject<FacturaResponse>(jsonRespuesta);
+
+                if (respuesta.error == "N")
+                    return respuesta;
+
+                string errores = string.Join(" | ", respuesta.errores);
+
+                // 🔁 reintento sólo en el primer intento ante diferencias de totales
+                if (intento == 0 &&
+                    (errores.Contains("sumatorias finales") ||
+                     errores.Contains("El total a enviar a AFIP")))
+                {
+                    decimal? totalCorrecto = ObtenerTotalDesdeError(errores);
+                    if (totalCorrecto.HasValue)
+                    {
+                        facturaRequest.comprobante.total = totalCorrecto.Value;
+                        continue;
+                    }
+                }
+
+                // ❌ error definitivo
+                new Fiscal().AddErrorFE(idReferencia, errores);
+                if (mostrarMensajeError)
+                    MessageBox.Show(errores, "FACTURACION", MessageBoxButton.OK, MessageBoxImage.Error);
+                return null;
+            }
+
+            return null;
+        }
+
         private decimal? ObtenerTotalDesdeError(string error)
         {
             try

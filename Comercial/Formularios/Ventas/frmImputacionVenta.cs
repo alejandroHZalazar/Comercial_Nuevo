@@ -34,6 +34,12 @@ namespace Comercial.Formularios.Ventas
         private Button          _btnAgregar;
         private Button          _btnCC;       // solo visible si llevaCC
         private Button          _btnCancelar;
+
+        // Datos del pago (in-form, reemplazan a frmImputacionFormasPagos)
+        private Label   _lblDatosTit;
+        private Label   _lblDato1, _lblDato2, _lblDato3;
+        private TextBox _txtDato1, _txtDato2, _txtDato3;
+        private bool    _planSelNecesitaDatos;
         // dgvFormasPago y btnCobrar vienen del Designer
 
         // ── Constructor ─────────────────────────────────────────────────────
@@ -55,7 +61,7 @@ namespace Comercial.Formularios.Ventas
         // ── Construcción programática de la UI ───────────────────────────────
         private void construirUI()
         {
-            this.ClientSize = new Size(730, 430);
+            this.ClientSize = new Size(730, 478);
 
             // — Título total —
             var lblTotalTit = new Label
@@ -118,11 +124,38 @@ namespace Comercial.Formularios.Ventas
             };
             _txtImporte.KeyDown += txtImporte_KeyDown;
 
+            // — Datos del pago (3 campos inline, ocultos cuando el plan no los requiere) —
+            _lblDatosTit = new Label
+            {
+                Text      = "Datos del pago:",
+                Font      = new Font("Segoe UI", 9, FontStyle.Bold),
+                ForeColor = Color.DarkSlateBlue,
+                Location  = new Point(368, 122),
+                AutoSize  = true,
+                Visible   = false
+            };
+
+            int yDatos = 144;
+            _lblDato1 = new Label { Text = "Ref. 1:", Font = new Font("Segoe UI", 9), Location = new Point(368, yDatos + 3), AutoSize = true, Visible = false };
+            _txtDato1 = new TextBox { Font = new Font("Segoe UI", 10), Location = new Point(425, yDatos), Size = new Size(291, 24), Visible = false };
+
+            _lblDato2 = new Label { Text = "Ref. 2:", Font = new Font("Segoe UI", 9), Location = new Point(368, yDatos + 33), AutoSize = true, Visible = false };
+            _txtDato2 = new TextBox { Font = new Font("Segoe UI", 10), Location = new Point(425, yDatos + 30), Size = new Size(291, 24), Visible = false };
+
+            _lblDato3 = new Label { Text = "Ref. 3:", Font = new Font("Segoe UI", 9), Location = new Point(368, yDatos + 63), AutoSize = true, Visible = false };
+            _txtDato3 = new TextBox { Font = new Font("Segoe UI", 10), Location = new Point(425, yDatos + 60), Size = new Size(291, 24), Visible = false };
+
+            // Navegación con Enter entre los campos de datos:
+            // Ref1 → Ref2, Ref2 → Ref3, Ref3 → confirma agregando el pago.
+            _txtDato1.KeyDown += datoCampo_KeyDown;
+            _txtDato2.KeyDown += datoCampo_KeyDown;
+            _txtDato3.KeyDown += datoCampo_KeyDown;
+
             _btnAgregar = new Button
             {
                 Text      = "Agregar  [Enter]",
                 Font      = new Font("Segoe UI", 9, FontStyle.Bold),
-                Location  = new Point(368, 122),
+                Location  = new Point(368, 232),
                 Size      = new Size(348, 34),
                 BackColor = Color.SteelBlue,
                 ForeColor = Color.White,
@@ -135,20 +168,20 @@ namespace Comercial.Formularios.Ventas
                 Text      = "",
                 Font      = new Font("Segoe UI", 9, FontStyle.Bold),
                 ForeColor = Color.DarkOrange,
-                Location  = new Point(368, 166),
+                Location  = new Point(368, 274),
                 AutoSize  = true
             };
 
             // — Grid (viene del Designer, se reposiciona) —
-            dgvFormasPago.Location = new Point(12, 210);
-            dgvFormasPago.Size     = new Size(706, 130);
+            dgvFormasPago.Location = new Point(12, 300);
+            dgvFormasPago.Size     = new Size(706, 90);
 
             var lblGridTip = new Label
             {
                 Text      = "Doble clic para editar   |   [Supr] para eliminar la fila seleccionada",
                 Font      = new Font("Segoe UI", 8, FontStyle.Italic),
                 ForeColor = Color.Gray,
-                Location  = new Point(12, 344),
+                Location  = new Point(12, 394),
                 AutoSize  = true
             };
 
@@ -157,7 +190,7 @@ namespace Comercial.Formularios.Ventas
             {
                 Text      = "Cancelar  [Esc]",
                 Font      = new Font("Segoe UI", 10, FontStyle.Bold),
-                Location  = new Point(12, 370),
+                Location  = new Point(12, 420),
                 Size      = new Size(180, 44),
                 BackColor = Color.IndianRed,
                 ForeColor = Color.White,
@@ -176,7 +209,7 @@ namespace Comercial.Formularios.Ventas
                 {
                     Text      = "Saldo a Cuenta Corriente  [F5]",
                     Font      = new Font("Segoe UI", 10, FontStyle.Bold),
-                    Location  = new Point(200, 370),
+                    Location  = new Point(200, 420),
                     Size      = new Size(280, 44),
                     BackColor = Color.DarkOrange,
                     ForeColor = Color.White,
@@ -187,7 +220,7 @@ namespace Comercial.Formularios.Ventas
             }
 
             // btnCobrar viene del Designer — reposicionar y estilizar
-            btnCobrar.Location  = new Point(490, 370);
+            btnCobrar.Location  = new Point(490, 420);
             btnCobrar.Size      = new Size(228, 44);
             btnCobrar.Text      = "Cobrar  [F3]";
             btnCobrar.Font      = new Font("Segoe UI", 11, FontStyle.Bold);
@@ -199,7 +232,7 @@ namespace Comercial.Formularios.Ventas
             // Si no lleva CC, alinear Cobrar a la derecha del Cancelar
             if (!_llevaCC)
             {
-                btnCobrar.Location = new Point(200, 370);
+                btnCobrar.Location = new Point(200, 420);
                 btnCobrar.Size     = new Size(518, 44);
             }
 
@@ -211,6 +244,10 @@ namespace Comercial.Formularios.Ventas
             Controls.Add(_lblPlanSel);
             Controls.Add(lblImp);
             Controls.Add(_txtImporte);
+            Controls.Add(_lblDatosTit);
+            Controls.Add(_lblDato1); Controls.Add(_txtDato1);
+            Controls.Add(_lblDato2); Controls.Add(_txtDato2);
+            Controls.Add(_lblDato3); Controls.Add(_txtDato3);
             Controls.Add(_btnAgregar);
             Controls.Add(_lblBalance);
             Controls.Add(lblGridTip);
@@ -267,6 +304,7 @@ namespace Comercial.Formularios.Ventas
             _planSelId      = id;
             _planSelNombre  = planRow["Nombre"].ToString();
             _planSelRecargo = decimal.Parse(planRow["Recargo"].ToString());
+            _planSelNecesitaDatos = obtenerNecesitaDatos(id);
 
             _lblPlanSel.Text = "Plan: " + _planSelNombre;
 
@@ -278,6 +316,10 @@ namespace Comercial.Formularios.Ventas
                 b.ForeColor = activo ? Color.White     : Color.Black;
             }
 
+            // Mostrar/ocultar campos de datos según el plan
+            mostrarCamposDatos(_planSelNecesitaDatos);
+            limpiarCamposDatos();
+
             // Pre-cargar el saldo faltante (excluyendo ítem CC) y seleccionarlo todo
             decimal faltanteReal = _total - unDT.Where(x => x.idPlan != 0).Sum(x => x.Importe);
             _txtImporte.Text = faltanteReal > 0
@@ -285,6 +327,22 @@ namespace Comercial.Formularios.Ventas
                 : string.Empty;
             _txtImporte.Focus();
             _txtImporte.SelectAll();
+        }
+
+        // ── Mostrar/ocultar los 3 campos de datos del pago ────────────────────
+        private void mostrarCamposDatos(bool visible)
+        {
+            _lblDatosTit.Visible = visible;
+            _lblDato1.Visible    = _txtDato1.Visible = visible;
+            _lblDato2.Visible    = _txtDato2.Visible = visible;
+            _lblDato3.Visible    = _txtDato3.Visible = visible;
+        }
+
+        private void limpiarCamposDatos()
+        {
+            _txtDato1.Text = string.Empty;
+            _txtDato2.Text = string.Empty;
+            _txtDato3.Text = string.Empty;
         }
 
         // ── Actualizar balance ────────────────────────────────────────────────
@@ -407,17 +465,24 @@ namespace Comercial.Formularios.Ventas
             if (monto > faltanteReal)
                 monto = faltanteReal;
 
-            bool necesita = obtenerNecesitaDatos(_planSelId.Value);
+            bool necesita = _planSelNecesitaDatos;
             string ref1 = string.Empty, ref2 = string.Empty, ref3 = string.Empty;
 
+            // Los datos se ingresan directamente en los TextBoxes inline.
+            // Si el plan los requiere y aún no se ingresó nada, llevamos foco al primer campo.
             if (necesita)
             {
-                using (var f = new frmImputacionFormasPagos(monto, _planSelId.Value, "", "", "", false))
+                ref1 = _txtDato1.Text.Trim();
+                ref2 = _txtDato2.Text.Trim();
+                ref3 = _txtDato3.Text.Trim();
+
+                if (string.IsNullOrEmpty(ref1) &&
+                    string.IsNullOrEmpty(ref2) &&
+                    string.IsNullOrEmpty(ref3))
                 {
-                    if (f.ShowDialog() != DialogResult.OK) return;
-                    ref1 = f._dato1;
-                    ref2 = f._dato2;
-                    ref3 = f._dato3;
+                    _txtDato1.Focus();
+                    _txtDato1.SelectAll();
+                    return;
                 }
             }
 
@@ -428,8 +493,40 @@ namespace Comercial.Formularios.Ventas
             ajustarItemCC();
 
             _txtImporte.Text = string.Empty;
+            limpiarCamposDatos();
+            mostrarCamposDatos(false);
             actualizarBalance();
             _pnlPlanes.Focus();
+        }
+
+        // ── Navegación con Enter entre los campos de datos ────────────────────
+        private void datoCampo_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                if (sender == _txtDato1)
+                {
+                    _txtDato2.Focus();
+                    _txtDato2.SelectAll();
+                }
+                else if (sender == _txtDato2)
+                {
+                    _txtDato3.Focus();
+                    _txtDato3.SelectAll();
+                }
+                else // _txtDato3
+                {
+                    agregarPago();
+                }
+            }
+            else if (e.KeyCode == Keys.Escape)
+            {
+                e.SuppressKeyPress = true;
+                limpiarCamposDatos();
+                _txtImporte.Focus();
+                _txtImporte.SelectAll();
+            }
         }
 
         // ── Ajustar ítem CC tras agregar un pago real ─────────────────────────
@@ -532,7 +629,20 @@ namespace Comercial.Formularios.Ventas
             if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true;
-                agregarPago();
+                // Si el plan requiere datos y aún están vacíos, saltamos al primer
+                // campo de referencia para que el operador los ingrese antes de confirmar.
+                if (_planSelNecesitaDatos &&
+                    string.IsNullOrWhiteSpace(_txtDato1.Text) &&
+                    string.IsNullOrWhiteSpace(_txtDato2.Text) &&
+                    string.IsNullOrWhiteSpace(_txtDato3.Text))
+                {
+                    _txtDato1.Focus();
+                    _txtDato1.SelectAll();
+                }
+                else
+                {
+                    agregarPago();
+                }
             }
             else if (e.KeyCode == Keys.Escape)
             {
@@ -545,14 +655,21 @@ namespace Comercial.Formularios.Ventas
         // ── ProcessCmdKey — captura teclas globales ───────────────────────────
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
+            // Si el foco está en cualquier campo de entrada de texto, dejamos que la
+            // tecla viaje normal (caso contrario se seleccionarían planes al tipear datos).
+            bool enCampoTexto = _txtImporte.Focused
+                             || _txtDato1.Focused
+                             || _txtDato2.Focused
+                             || _txtDato3.Focused;
+
             // 1-9 (teclado superior) → seleccionar plan
-            if (keyData >= Keys.D1 && keyData <= Keys.D9 && !_txtImporte.Focused)
+            if (keyData >= Keys.D1 && keyData <= Keys.D9 && !enCampoTexto)
             {
                 seleccionarPlan((int)keyData - (int)Keys.D0);
                 return true;
             }
             // Numpad 1-9
-            if (keyData >= Keys.NumPad1 && keyData <= Keys.NumPad9 && !_txtImporte.Focused)
+            if (keyData >= Keys.NumPad1 && keyData <= Keys.NumPad9 && !enCampoTexto)
             {
                 seleccionarPlan((int)keyData - (int)Keys.NumPad0);
                 return true;
@@ -568,14 +685,14 @@ namespace Comercial.Formularios.Ventas
                 agregarSaldoCC();
                 return true;
             }
-            if (keyData == Keys.Escape && !_txtImporte.Focused)
+            if (keyData == Keys.Escape && !enCampoTexto)
             {
                 this.DialogResult = DialogResult.Cancel;
                 this.Close();
                 return true;
             }
             if (keyData == Keys.Delete && dgvFormasPago.SelectedRows.Count > 0
-                                       && !_txtImporte.Focused)
+                                       && !enCampoTexto)
             {
                 var item = (Clases.ClassVentas.CobroFormasPago)
                     dgvFormasPago.SelectedRows[0].DataBoundItem;

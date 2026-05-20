@@ -45,6 +45,8 @@ namespace Comercial.Formularios.Ventas
         int facturaElectronica = Clases.ClassParametros.buscarParametro("ventas", "facturaElectronica") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "facturaElectronica"));
         int puntoVenta = Clases.ClassParametros.buscarParametro("PuntoVenta", Environment.MachineName) == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("PuntoVenta", Environment.MachineName));
         int bonificacionPorLinea = Clases.ClassParametros.buscarParametro("ventas", "bonificacionesPorDetalle") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "bonificacionesPorDetalle"));
+        int tieneCaja = Clases.ClassParametros.buscarParametro("caja", "haceCaja") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("caja", "haceCaja"));
+        int CajaId = 0;
         public frmDevolucion()
         {
             InitializeComponent();
@@ -861,8 +863,18 @@ namespace Comercial.Formularios.Ventas
                     progreso++;
 
                 }
+                if (tieneCaja == 1)
+                {
+                    Clases.ClassCaja instCaja = new Clases.ClassCaja();
+                    DataTable cajaEstado = instCaja.traerEstadoCaja(int.Parse(Environment.GetEnvironmentVariable("idUser")));
+
+                    bool cajaAbierta = cajaEstado.Rows.Count == 0 ? false : (cajaEstado.Rows[0]["estado"].ToString() == "ABIERTA" ? true : false);
+                    CajaId = cajaEstado.Rows.Count == 0 ? 0 : int.Parse(cajaEstado.Rows[0]["caja_id"].ToString());
+                   
+                }
+
                 salida = instVentas.grabarDevolucion(decimal.Parse(txtTotGeneral.Text), unCosto, unCliente, int.Parse(Environment.GetEnvironmentVariable("idUser")), decimal.Parse(cboIVA.Text), nudDescuento.Value, nudRecargo.Value,
-                                                     int.Parse(cboVendedores.SelectedValue.ToString()), nudComision.Value / 100, decimal.Parse(cboIngBrutos.Text), detalle, llevaCC);
+                                                     int.Parse(cboVendedores.SelectedValue.ToString()), nudComision.Value / 100, decimal.Parse(cboIngBrutos.Text), detalle, llevaCC, tieneCaja, CajaId);
                 if (salida != -1)
                 {
                     detalle = string.Empty;

@@ -160,7 +160,7 @@ namespace Comercial.Clases
         }
 
         public long grabarDevolucion(decimal unTotal, decimal unCosto, int unCliente, int unCajero, decimal unIva, decimal unDescuento, decimal unRecargo, int unVendedor, decimal unaComision, decimal unImpuesto,
-                                        string unDetalle, int unLlevaCC)
+                                        string unDetalle, int unLlevaCC, int haceCaja, int cajaId)
         {
             try
             {
@@ -181,6 +181,8 @@ namespace Comercial.Clases
                 cmd.Parameters.AddWithValue("unImpuesto", unImpuesto);
                 cmd.Parameters.AddWithValue("detalle", unDetalle);
                 cmd.Parameters.AddWithValue("llevaCC", unLlevaCC);
+                cmd.Parameters.AddWithValue("haceCaja", haceCaja);
+                cmd.Parameters.AddWithValue("CajaId", cajaId);
 
                 MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int64);
                 salida.Direction = ParameterDirection.Output;

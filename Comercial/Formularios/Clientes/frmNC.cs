@@ -16,9 +16,10 @@ namespace Comercial.Formularios.Clientes
     {
         int facturaElectronica = Clases.ClassParametros.buscarParametro("ventas", "facturaElectronica") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("ventas", "facturaElectronica"));
         int puntoVenta = Clases.ClassParametros.buscarParametro("PuntoVenta", Environment.MachineName) == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("PuntoVenta", Environment.MachineName));
+        int tieneCaja = Clases.ClassParametros.buscarParametro("caja", "haceCaja") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("caja", "haceCaja"));
         int _cliente;
         decimal _importe;
-
+        int CajaId = 0;
         public frmNC(int cliente, decimal importe)
         {
             _cliente = cliente;
@@ -52,7 +53,17 @@ namespace Comercial.Formularios.Clientes
                     }
                 }
                 Clases.ClassClientes instClie = new Clases.ClassClientes();
-                var salida = instClie.NC_Cliente(_cliente, nudImputar.Value, rbtObserv.Text.Trim());
+
+                if (tieneCaja == 1)
+                {
+                    Clases.ClassCaja instCaja = new Clases.ClassCaja();
+                    DataTable cajaEstado = instCaja.traerEstadoCaja(int.Parse(Environment.GetEnvironmentVariable("idUser")));
+
+                    bool cajaAbierta = cajaEstado.Rows.Count == 0 ? false : (cajaEstado.Rows[0]["estado"].ToString() == "ABIERTA" ? true : false);
+                    CajaId = cajaEstado.Rows.Count == 0 ? 0 : int.Parse(cajaEstado.Rows[0]["caja_id"].ToString());
+                }
+
+                    var salida = instClie.NC_Cliente(_cliente, nudImputar.Value, rbtObserv.Text.Trim(), tieneCaja, CajaId);
                 if (salida != -1)
                 {
                     MessageBox.Show(this, "Nota de Crédito ingresada con éxito!!", "CLIENTES", MessageBoxButtons.OK, MessageBoxIcon.Information);
