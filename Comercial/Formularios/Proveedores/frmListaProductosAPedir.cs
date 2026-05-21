@@ -155,18 +155,12 @@ namespace Comercial.Formularios.Proveedores
 
         private void btnImprimir_Click(object sender, EventArgs e)
         {
-            Reportes.frmReport unFrmReport = new Reportes.frmReport();
-            //unFrmReport.titulo = "Nota de Pedido";
-            unFrmReport.nombreReporte = "ReportProductoPedir.rdlc";
-            List<string> var = new List<string>();
-            var.Add(Proveedor .ToString ());
-            var.Add(dtpDesde.Value.ToString ());
-            var.Add(dtpHasta.Value.ToString ());
-            var.Add("MOVIMIENTOS DE PRODUCTOS DESDE " + dtpDesde .Value .ToShortDateString () + " HASTA " + dtpHasta .Value .ToShortDateString () );
-            var.Add(cantDec.ToString());
-            var.Add(cantStock.ToString());
-            unFrmReport.variable = var;
-            unFrmReport.ShowDialog();
+            string subtitulo = "MOVIMIENTOS DESDE " + dtpDesde.Value.ToShortDateString()
+                             + " HASTA " + dtpHasta.Value.ToShortDateString();
+
+            var instReportes = new Clases.ClassReportesITextSharp();
+            instReportes.GenerarProductosAPedirPDF(Proveedor, dtpDesde.Value, dtpHasta.Value,
+                                                    subtitulo, cantDec, cantStock);
         }
     }
 }

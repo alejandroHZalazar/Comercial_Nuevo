@@ -61,6 +61,24 @@ namespace Comercial.Clases
             return t2;
         }
 
+        public DataTable traerOrdenCompra(long idOrden)
+        {
+            string sql = @"SELECT lpad(o.id, 8, 0) AS id, o.fecha, o.total, o.iva, o.recargo, o.descuento,
+                                  d.codBarras, d.codProveedor, d.descripcion, d.precioProveedor, d.cantidad, d.subtotal,
+                                  p.imagen, pr.nombreComercial, pr.direccion
+                           FROM ordenCompra o
+                           INNER JOIN ordenCompraDetalle d ON o.id = d.fk_ordenCompra
+                           INNER JOIN parametros p ON p.modulo = 'login' AND p.parametro = 'imagen'
+                           INNER JOIN Proveedores pr ON pr.id = o.fk_proveedor
+                           WHERE o.id = @idOrden";
+            MySqlDataAdapter a1 = new MySqlDataAdapter(sql, instDatos.abrirConexion());
+            a1.SelectCommand.Parameters.AddWithValue("@idOrden", idOrden);
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            instDatos.cerrarConexion();
+            return t2;
+        }
+
         public DataTable traerCoeficientes (int unId)
         {
             MySqlDataAdapter rows = new MySqlDataAdapter("select ganancia, descuento from Proveedores where id = " + unId , instDatos.abrirConexion());

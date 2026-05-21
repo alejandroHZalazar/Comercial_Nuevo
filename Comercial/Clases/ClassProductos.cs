@@ -53,6 +53,17 @@ namespace Comercial.Clases
             return t2;
         }
 
+        public DataTable traerListaPrecios(string unFiltro)
+        {
+            MySqlDataAdapter a1 = new MySqlDataAdapter("sp_ProductosListaPrecios", instDatos.abrirConexion());
+            a1.SelectCommand.CommandType = CommandType.StoredProcedure;
+            a1.SelectCommand.Parameters.AddWithValue("unFiltro", unFiltro);
+
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            return t2;
+        }
+
         public DataTable traerLotesIngreso(DateTime desde, DateTime hasta, string unComprobante, int unTipo)
         {
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_Productos_TraerLotesIngreso", instDatos.abrirConexion());

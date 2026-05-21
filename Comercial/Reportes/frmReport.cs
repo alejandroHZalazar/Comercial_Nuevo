@@ -115,7 +115,7 @@ namespace Comercial.Reportes
 
         private void ReportDevolucion()
         {
-            unDs.EnforceConstraints = false;
+            unDs1.EnforceConstraints = false;   // sp_DevolucionPrint pertenece a unDs1, no a unDs
             dsComercial1TableAdapters.sp_DevolucionPrintTableAdapter  unTablaAdapter = new dsComercial1TableAdapters.sp_DevolucionPrintTableAdapter ();
             unTablaAdapter.Fill(unDs1.sp_DevolucionPrint ,long.Parse(variable[0]));
 
@@ -200,7 +200,7 @@ namespace Comercial.Reportes
 
         private void ReportProductosStock()
         {
-            unDs.EnforceConstraints = false;
+            unDs1.EnforceConstraints = false;   // sp_ProductosTraerStock pertenece a unDs1, no a unDs
             dsComercial1TableAdapters.sp_ProductosTraerStockTableAdapter unTablaAdapter = new dsComercial1TableAdapters.sp_ProductosTraerStockTableAdapter();
             unTablaAdapter.Fill(unDs1.sp_ProductosTraerStock, variable[0]);
 

@@ -80,16 +80,9 @@ namespace Comercial.Formularios.Proveedores
         {
             if (dgvOrden.Rows.Count > 0)
             {
-                Reportes.frmReport unFrmReport = new Reportes.frmReport();
-               // unFrmReport.titulo = "Nota de Pedido";
-                unFrmReport.nombreReporte = "ReportOrdenCompra.rdlc";
-                List<string> var = new List<string>();
-                var.Add(dgvOrden .CurrentRow .Cells ["id"].Value .ToString ());
-                var.Add(Clases.ClassValidacion.traerEmpresa());
-                var.Add(cantDec.ToString());
-                var.Add(cantStock.ToString());
-                unFrmReport.variable = var;
-                unFrmReport.ShowDialog();
+                long idOrden = long.Parse(dgvOrden.CurrentRow.Cells["id"].Value.ToString());
+                var instReportes = new Clases.ClassReportesITextSharp();
+                instReportes.GenerarOrdenCompraPDF(idOrden, cantDec, cantStock);
             }
         }
 

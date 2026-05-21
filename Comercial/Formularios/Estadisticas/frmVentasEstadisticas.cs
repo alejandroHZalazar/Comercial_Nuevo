@@ -185,68 +185,36 @@ namespace Comercial.Formularios.Estadisticas
 
         private void btnPrint_Click(object sender, EventArgs e)
         {
-
-            Reportes.frmReport unFrmReport = new Reportes.frmReport();
-            unFrmReport.nombreReporte = "ReportVentasEstadisticas.rdlc";
-            List<string> var = new List<string>();
-            
-
             string filtro;
             string filtroDev;
-            string Subtitulo;
-            filtro = " where v.fecha between '" + dtpDesde.Value.Year + "-" + dtpDesde.Value.Month + "-" + dtpDesde.Value.Day + "' and '" + dtpHasta.Value.Year + "-" + dtpHasta.Value.Month + "-" + dtpHasta.Value.Day + " 23:59:59'";
-            Subtitulo = "Periodo desde " + dtpDesde.Value.ToShortDateString().Substring(0, 10) + " al " + dtpHasta.Value.ToShortDateString().Substring(0, 10);
+            string subtitulo = "Periodo desde " + dtpDesde.Value.ToShortDateString().Substring(0, 10)
+                              + " al " + dtpHasta.Value.ToShortDateString().Substring(0, 10);
+
+            filtro = " where v.fecha between '" + dtpDesde.Value.Year + "-" + dtpDesde.Value.Month + "-" + dtpDesde.Value.Day + "' and '"
+                   + dtpHasta.Value.Year + "-" + dtpHasta.Value.Month + "-" + dtpHasta.Value.Day + " 23:59:59'";
 
             if (cbProveedor.Checked == false)
             {
                 Tipo = 1;
-                filtro = " where v.fecha between '" + dtpDesde.Value.Year + "-" + dtpDesde.Value.Month + "-" + dtpDesde.Value.Day + "' and '" + dtpHasta.Value.Year + "-" + dtpHasta.Value.Month + "-" + dtpHasta.Value.Day + " 23:59:59'";
-
                 if (cbUsuario.Checked)
-                {
                     filtro += " and v.fk_vendedor = " + cboUsuario.SelectedValue.ToString();
-                }
-
                 if (cbCliente.Checked)
-                {
                     filtro += " and v.fk_cliente = " + cboCliente.SelectedValue.ToString();
-                }
-
                 filtroDev = filtro.Replace("v.", "d.");
-
-               
             }
             else
             {
                 Tipo = 2;
-                filtro = " where v.fecha between '" + dtpDesde.Value.Year + "-" + dtpDesde.Value.Month + "-" + dtpDesde.Value.Day + "' and '" + dtpHasta.Value.Year + "-" + dtpHasta.Value.Month + "-" + dtpHasta.Value.Day + " 23:59:59'";
-
                 if (cbUsuario.Checked)
-                {
                     filtro += " and v.fk_vendedor = " + cboUsuario.SelectedValue.ToString();
-                }
-
                 if (cbCliente.Checked)
-                {
                     filtro += " and v.fk_cliente = " + cboCliente.SelectedValue.ToString();
-                }
-
                 filtro += " and p.fk_proveedor = " + cboProveedor.SelectedValue.ToString();
-
                 filtroDev = filtro;
-
-                
             }
 
-
-
-            var.Add(filtro);
-            var.Add(Subtitulo);
-            var.Add(filtroDev);
-            var.Add(Tipo.ToString());
-
-            unFrmReport.variable = var;
-            unFrmReport.ShowDialog();
+            var instReportes = new Clases.ClassReportesITextSharp();
+            instReportes.GenerarVentasEstadisticasPDF(filtro, filtroDev, subtitulo, Tipo);
         }
     }
 

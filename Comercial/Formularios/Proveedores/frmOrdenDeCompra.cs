@@ -427,16 +427,8 @@ namespace Comercial.Formularios.Proveedores
                        
                     }
 
-                    Reportes.frmReport unFrmReport = new Reportes.frmReport();
-                    //unFrmReport.titulo = "Nota de Pedido";
-                    unFrmReport.nombreReporte = "ReportOrdenCompra.rdlc";
-                    List<string> var = new List<string>();
-                    var.Add(salida.ToString());
-                    var.Add(Clases.ClassValidacion.traerEmpresa());
-                    var.Add(cantDec.ToString());
-                    var.Add(cantStock.ToString());
-                    unFrmReport.variable = var;
-                    unFrmReport.ShowDialog();
+                    var instReportes = new Clases.ClassReportesITextSharp();
+                    instReportes.GenerarOrdenCompraPDF(salida, cantDec, cantStock);
                     salida = 0;
                     estadoInicial();
 

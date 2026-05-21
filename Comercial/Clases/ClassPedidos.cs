@@ -189,6 +189,21 @@ namespace Comercial.Clases
             return t2;
         }
 
+        /// <summary>
+        /// Datos completos para impresión del pedido (cabecera + detalle aplanados por fila).
+        /// Usado por la generación PDF en <see cref="ClassReportesITextSharp.GenerarPedidoPDF"/>.
+        /// </summary>
+        public DataTable traerImpresionPedido(int unPedido)
+        {
+            MySqlDataAdapter a1 = new MySqlDataAdapter("sp_PedidosPrintPedido", instDatos.abrirConexion());
+            a1.SelectCommand.CommandType = CommandType.StoredProcedure;
+            a1.SelectCommand.Parameters.AddWithValue("unPedido", unPedido);
+
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            return t2;
+        }
+
         public void marcarPedido(int unPedido, int unTipo)
         {
             MySqlCommand nComando = new MySqlCommand("sp_PedidosMarcarPedidos", instDatos.abrirConexion());

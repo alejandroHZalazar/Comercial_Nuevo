@@ -1489,5 +1489,1633 @@ namespace Comercial.Clases
             });
         }
 
+        // ════════════════════════════════════════════════════════════════════════
+        // PEDIDO — PDF visualmente equivalente al reporte web
+        // C:\Desarrollos\Comercial-master\Comercial Web\ComercialWeb\Pages\Ventas\ReportePedidos\Imprimir
+        // Data: sp_PedidosPrintPedido(unPedido) — cabecera+detalle aplanados.
+        // Teléfono/Contacto se obtienen de ClassClientes.traerDatosVenta (no están en el SP).
+        // ════════════════════════════════════════════════════════════════════════
+        public void GenerarPedidoPDF(int unPedido, int unCliente)
+        {
+            var instPed = new Clases.ClassPedidos();
+            DataTable dt = instPed.traerImpresionPedido(unPedido);
+            if (dt.Rows.Count == 0) return;
+
+            // Datos extra del cliente que no vienen en el SP
+            var instClie = new Clases.ClassClientes();
+            DataTable cli = instClie.traerDatosVenta(" and c.id = " + unCliente);
+
+            string clienteTelefono   = cli.Rows.Count > 0 ? cli.Rows[0]["Tel"].ToString()      : "";
+            string clienteContacto   = cli.Rows.Count > 0 ? cli.Rows[0]["contacto"].ToString() : "";
+            string clienteDireccion  = "";
+            if (cli.Rows.Count > 0)
+            {
+                clienteDireccion = cli.Rows[0]["Dir"].ToString()
+                                 + (string.IsNullOrEmpty(cli.Rows[0]["Localidad"].ToString())  ? "" : ". " + cli.Rows[0]["Localidad"].ToString())
+                                 + (string.IsNullOrEmpty(cli.Rows[0]["Provincia"].ToString())  ? "" : ". " + cli.Rows[0]["Provincia"].ToString());
+            }
+
+            string downloads = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                "Downloads");
+
+            string path = Path.Combine(downloads, $"Pedido_{unPedido}_{DateTime.Now:ddMMyyyy_HHmmss}.pdf");
+
+            var culture = new CultureInfo("es-AR");
+
+            // ─── Paleta (matchea CSS web) ───────────────────────────────────
+            BaseColor cAzul       = new BaseColor(26, 58, 92);     // #1a3a5c
+            BaseColor cGrisFondo  = new BaseColor(248, 249, 252);  // #f8f9fc
+            BaseColor cGrisBorde  = new BaseColor(227, 230, 240);  // #e3e6f0
+            BaseColor cGrisLabel  = new BaseColor(108, 117, 125);  // #6c757d
+            BaseColor cBlanco     = BaseColor.WHITE;
+            BaseColor cTextoOsc   = new BaseColor(44, 62, 80);     // #2c3e50
+            BaseColor cTextoSec   = new BaseColor(85, 85, 85);     // #555
+            BaseColor cVerde      = new BaseColor(26, 122, 69);    // #1a7a45
+            BaseColor cRojo       = new BaseColor(192, 57, 43);    // #c0392b
+            BaseColor cTextoNeg   = new BaseColor(34, 34, 34);     // #222
+
+            // ─── Fuentes ────────────────────────────────────────────────────
+            Font fEmpNombre  = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 14, cAzul);
+            Font fEmpRazon   = FontFactory.GetFont(FontFactory.HELVETICA,      9, cTextoOsc);
+            Font fEmpSub     = FontFactory.GetFont(FontFactory.HELVETICA,      8, cTextoSec);
+            Font fEmpSubLbl  = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 8, cTextoSec);
+            Font fPedTitulo  = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, cBlanco);
+            Font fPedFecha   = FontFactory.GetFont(FontFactory.HELVETICA,       9, cBlanco);
+            Font fCabLabel   = FontFactory.GetFont(FontFactory.HELVETICA_BOLD,  7, cGrisLabel);
+            Font fCabValor   = FontFactory.GetFont(FontFactory.HELVETICA_BOLD,  9, cTextoOsc);
+            Font fObsLabel   = FontFactory.GetFont(FontFactory.HELVETICA_BOLD,  7, cGrisLabel);
+            Font fObsValor   = FontFactory.GetFont(FontFactory.HELVETICA,       9, cTextoNeg);
+            // Tabla detalle: tipografía reducida para que entren los headers ("Precio s/IVA", "Subt. s/IVA", etc.)
+            Font fThead      = FontFactory.GetFont(FontFactory.HELVETICA_BOLD,  7.5f, cBlanco);
+            Font fTbody      = FontFactory.GetFont(FontFactory.HELVETICA,       7.5f, cTextoNeg);
+            Font fTbodySmall = FontFactory.GetFont(FontFactory.HELVETICA,       6.5f, new BaseColor(136, 136, 136));
+            Font fTbodyBold  = FontFactory.GetFont(FontFactory.HELVETICA_BOLD,  7.5f, cTextoNeg);
+            Font fTotLab     = FontFactory.GetFont(FontFactory.HELVETICA,       9, cTextoNeg);
+            Font fTotVal     = FontFactory.GetFont(FontFactory.HELVETICA,       9, cTextoNeg);
+            Font fTotTotLab  = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 11, cBlanco);
+            Font fTotTotVal  = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 11, cBlanco);
+            Font fFirma      = FontFactory.GetFont(FontFactory.HELVETICA,       8, cTextoSec);
+
+            using (FileStream fs = new FileStream(path, FileMode.Create))
+            {
+                // 1.5cm de margen como el CSS web (1cm = 28.35pt)
+                Document doc = new Document(PageSize.A4, 42.5f, 42.5f, 42.5f, 42.5f);
+                PdfWriter.GetInstance(doc, fs);
+                doc.Open();
+
+                DataRow cab = dt.Rows[0];
+
+                // ═════════════════════════════════════════════════════════════
+                // ENCABEZADO EMPRESA (logo + datos, separado por línea azul)
+                // ═════════════════════════════════════════════════════════════
+                PdfPTable empHeader = new PdfPTable(2);
+                empHeader.WidthPercentage = 100;
+                empHeader.SetWidths(new float[] { 1.2f, 4f });
+
+                PdfPCell logoCell;
+                if (cab.Table.Columns.Contains("imagen") && cab["imagen"] != DBNull.Value)
+                {
+                    try
+                    {
+                        Image logo = Image.GetInstance((byte[])cab["imagen"]);
+                        logo.ScaleToFit(120, 60);
+                        logoCell = new PdfPCell(logo);
+                    }
+                    catch
+                    {
+                        logoCell = new PdfPCell(new Phrase(""));
+                    }
+                }
+                else
+                {
+                    logoCell = new PdfPCell(new Phrase(""));
+                }
+                logoCell.Border = Rectangle.NO_BORDER;
+                logoCell.PaddingBottom = 8f;
+                logoCell.VerticalAlignment = Element.ALIGN_TOP;
+                empHeader.AddCell(logoCell);
+
+                // Datos de empresa (parametros: nombre, razonSocial, direccion, localidad, cuit, telefono)
+                string empNombre   = Clases.ClassValidacion.traerEmpresa();
+                string empRazon    = Clases.ClassValidacion.traerRazonSocial();
+                string empDir      = Clases.ClassValidacion.traerEmpresaDireccion();
+                string empLocal    = Clases.ClassValidacion.traerEmpresaCiudad();
+                string empCuit     = Clases.ClassValidacion.traerEmpresaCuit();
+                string empTel      = Clases.ClassValidacion.traerEmpresaTelefono();
+                const string SEP = "   ·   ";
+
+                Paragraph empDatos = new Paragraph();
+                empDatos.SetLeading(0f, 1.35f); // espaciado entre líneas más aireado
+
+                // Línea 1: nombre comercial (grande, azul)
+                empDatos.Add(new Chunk(empNombre, fEmpNombre));
+                empDatos.Add(Chunk.NEWLINE);
+
+                // Línea 2: razón social
+                if (!string.IsNullOrEmpty(empRazon))
+                {
+                    empDatos.Add(new Chunk(empRazon, fEmpRazon));
+                    empDatos.Add(Chunk.NEWLINE);
+                }
+
+                // Línea 3: dirección · localidad (espaciado horizontal)
+                bool tieneDir   = !string.IsNullOrEmpty(empDir);
+                bool tieneLocal = !string.IsNullOrEmpty(empLocal);
+                if (tieneDir || tieneLocal)
+                {
+                    if (tieneDir)   empDatos.Add(new Chunk(empDir, fEmpSub));
+                    if (tieneDir && tieneLocal) empDatos.Add(new Chunk(SEP, fEmpSub));
+                    if (tieneLocal) empDatos.Add(new Chunk(empLocal, fEmpSub));
+                    empDatos.Add(Chunk.NEWLINE);
+                }
+
+                // Línea 4: CUIT · Tel (con label en negrita)
+                bool tieneCuit = !string.IsNullOrEmpty(empCuit);
+                bool tieneTel  = !string.IsNullOrEmpty(empTel);
+                if (tieneCuit || tieneTel)
+                {
+                    if (tieneCuit)
+                    {
+                        empDatos.Add(new Chunk("CUIT: ", fEmpSubLbl));
+                        empDatos.Add(new Chunk(empCuit, fEmpSub));
+                    }
+                    if (tieneCuit && tieneTel) empDatos.Add(new Chunk(SEP, fEmpSub));
+                    if (tieneTel)
+                    {
+                        empDatos.Add(new Chunk("Tel: ", fEmpSubLbl));
+                        empDatos.Add(new Chunk(empTel, fEmpSub));
+                    }
+                }
+
+                PdfPCell empDatCell = new PdfPCell(empDatos);
+                empDatCell.Border = Rectangle.NO_BORDER;
+                empDatCell.PaddingLeft = 12f;
+                empDatCell.PaddingBottom = 8f;
+                empDatCell.VerticalAlignment = Element.ALIGN_TOP;
+                empHeader.AddCell(empDatCell);
+
+                doc.Add(empHeader);
+
+                // Línea azul gruesa que separa el header empresa
+                LineSeparator lineaAzul = new LineSeparator(2f, 100, cAzul, Element.ALIGN_CENTER, -1);
+                doc.Add(new Chunk(lineaAzul));
+                doc.Add(new Paragraph(" ") { SpacingAfter = 4f });
+
+                // ═════════════════════════════════════════════════════════════
+                // TITULO PEDIDO (banner azul: "PEDIDO N.° X" + fecha)
+                // ═════════════════════════════════════════════════════════════
+                PdfPTable banner = new PdfPTable(2);
+                banner.WidthPercentage = 100;
+                banner.SetWidths(new float[] { 3, 1 });
+
+                PdfPCell bcIzq = new PdfPCell(new Phrase("PEDIDO N.° " + cab["Pedido"].ToString(), fPedTitulo));
+                bcIzq.BackgroundColor = cAzul;
+                bcIzq.Border = Rectangle.NO_BORDER;
+                bcIzq.HorizontalAlignment = Element.ALIGN_LEFT;
+                bcIzq.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                bcIzq.PaddingTop = 6f; bcIzq.PaddingBottom = 6f; bcIzq.PaddingLeft = 10f;
+
+                string fechaTxt = cab["fecha"] != DBNull.Value
+                    ? Convert.ToDateTime(cab["fecha"]).ToString("dd/MM/yyyy")
+                    : "";
+                PdfPCell bcDer = new PdfPCell(new Phrase(fechaTxt, fPedFecha));
+                bcDer.BackgroundColor = cAzul;
+                bcDer.Border = Rectangle.NO_BORDER;
+                bcDer.HorizontalAlignment = Element.ALIGN_RIGHT;
+                bcDer.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                bcDer.PaddingTop = 6f; bcDer.PaddingBottom = 6f; bcDer.PaddingRight = 10f;
+
+                banner.AddCell(bcIzq);
+                banner.AddCell(bcDer);
+                banner.SpacingAfter = 10f;
+                doc.Add(banner);
+
+                // ═════════════════════════════════════════════════════════════
+                // DATOS CABECERA (grid 3 columnas, fondo gris claro)
+                // ═════════════════════════════════════════════════════════════
+                decimal ivaPct       = cab.Table.Columns.Contains("iva")       && cab["iva"]       != DBNull.Value ? Convert.ToDecimal(cab["iva"])       : 0m;
+                decimal descuentoCab = cab.Table.Columns.Contains("descuento") && cab["descuento"] != DBNull.Value ? Convert.ToDecimal(cab["descuento"]) : 0m;
+                decimal recargoCab   = cab.Table.Columns.Contains("recargo")   && cab["recargo"]   != DBNull.Value ? Convert.ToDecimal(cab["recargo"])   : 0m;
+                string  nombreClie   = cab["nombreComercial"].ToString();
+                string  observacion  = cab.Table.Columns.Contains("observacion") ? cab["observacion"].ToString() : "";
+
+                bool mostrarDescRecGlobal = descuentoCab != 0 || recargoCab != 0;
+
+                PdfPTable cabGrid = new PdfPTable(3);
+                cabGrid.WidthPercentage = 100;
+                cabGrid.DefaultCell.Border = Rectangle.NO_BORDER;
+                cabGrid.SpacingAfter = 8f;
+
+                Action<string, string> addCabItem = (label, valor) =>
+                {
+                    Paragraph p = new Paragraph();
+                    p.Add(new Chunk(label.ToUpper(), fCabLabel));
+                    p.Add(Chunk.NEWLINE);
+                    p.Add(new Chunk(string.IsNullOrEmpty(valor) ? " " : valor, fCabValor));
+                    PdfPCell c = new PdfPCell(p);
+                    c.BackgroundColor = cGrisFondo;
+                    c.BorderColor = cGrisBorde;
+                    c.Border = Rectangle.BOX;
+                    c.Padding = 6f;
+                    cabGrid.AddCell(c);
+                };
+
+                addCabItem("Cliente",  nombreClie);
+                addCabItem("Telefono", clienteTelefono);
+                addCabItem("Contacto", clienteContacto);
+                addCabItem("Direccion", clienteDireccion);
+                addCabItem("IVA", ivaPct.ToString("N0", culture) + "%");
+                if (mostrarDescRecGlobal)
+                {
+                    string txt = "";
+                    if (descuentoCab != 0) txt += "Dto " + descuentoCab.ToString("N2", culture) + "%";
+                    if (recargoCab   != 0) txt += "  Rec " + recargoCab.ToString("N2", culture) + "%";
+                    addCabItem("Desc / Rec global", txt);
+                }
+                else
+                {
+                    // Para que el grid tenga celdas pares (3 columnas, completar fila)
+                    PdfPCell empty = new PdfPCell(new Phrase(" "));
+                    empty.BackgroundColor = cGrisFondo;
+                    empty.BorderColor = cGrisBorde;
+                    empty.Border = Rectangle.BOX;
+                    cabGrid.AddCell(empty);
+                }
+
+                doc.Add(cabGrid);
+
+                // ═════════════════════════════════════════════════════════════
+                // OBSERVACION (si hay)
+                // ═════════════════════════════════════════════════════════════
+                if (!string.IsNullOrWhiteSpace(observacion))
+                {
+                    PdfPTable obsT = new PdfPTable(1);
+                    obsT.WidthPercentage = 100;
+                    Paragraph p = new Paragraph();
+                    p.Add(new Chunk("OBSERVACION", fObsLabel));
+                    p.Add(Chunk.NEWLINE);
+                    p.Add(new Chunk(observacion, fObsValor));
+                    PdfPCell c = new PdfPCell(p);
+                    c.BorderColor = cGrisBorde;
+                    c.Border = Rectangle.BOX;
+                    c.Padding = 8f;
+                    obsT.AddCell(c);
+                    obsT.SpacingAfter = 8f;
+                    doc.Add(obsT);
+                }
+
+                // ═════════════════════════════════════════════════════════════
+                // TABLA DETALLE
+                // ═════════════════════════════════════════════════════════════
+                PdfPTable det = new PdfPTable(7);
+                det.WidthPercentage = 100;
+                // Anchos optimizados para que cada header entre completo: Precio s/IVA, Subt. s/IVA, Desc/Rec %
+                det.SetWidths(new float[] { 3.8f, 1.2f, 1.6f, 1.5f, 1.6f, 1.2f, 1.6f });
+
+                string[] heads = { "Descripcion", "Cantidad", "Precio s/IVA", "Desc/Rec %", "Subt. s/IVA", "IVA", "Subtotal" };
+                for (int i = 0; i < heads.Length; i++)
+                {
+                    PdfPCell c = new PdfPCell(new Phrase(heads[i], fThead));
+                    c.BackgroundColor = cAzul;
+                    c.Border = Rectangle.NO_BORDER;
+                    c.HorizontalAlignment = i == 0 ? Element.ALIGN_LEFT : Element.ALIGN_RIGHT;
+                    c.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                    c.NoWrap = true; // forzar que el header no se corte
+                    c.PaddingTop = 5f; c.PaddingBottom = 5f;
+                    c.PaddingLeft = 3f; c.PaddingRight = 3f;
+                    det.AddCell(c);
+                }
+
+                // Acumuladores totales
+                decimal totPrecioSIva = 0;
+                decimal totDescRec    = 0;
+                decimal totSubtSIva   = 0;
+                decimal totIva        = 0;
+                decimal totTotal      = 0;
+
+                decimal ivaRate = ivaPct / 100m;
+
+                // descRecGlobal: web aplica (descuento*-1)+recargo si la cabecera tiene global.
+                // En este SP descuento llega a nivel línea; recargo puede no existir.
+                // Sin manera fiable de distinguir si la cabecera tiene global, replicamos
+                // el cálculo por línea (idéntico a la lógica web cuando no hay global).
+                int idx = 0;
+                foreach (DataRow l in dt.Rows)
+                {
+                    decimal precioSIva = l["Precio_S_IVA"] != DBNull.Value ? Convert.ToDecimal(l["Precio_S_IVA"]) : 0m;
+                    decimal cant       = l["Cantidad"]    != DBNull.Value ? Convert.ToDecimal(l["Cantidad"])    : 0m;
+                    decimal dLinea     = l.Table.Columns.Contains("descuento") && l["descuento"] != DBNull.Value ? Convert.ToDecimal(l["descuento"]) : 0m;
+                    decimal rLinea     = l.Table.Columns.Contains("recargo")   && l["recargo"]   != DBNull.Value ? Convert.ToDecimal(l["recargo"])   : 0m;
+                    decimal descRecPct = (dLinea * -1m) + rLinea;
+
+                    decimal subSIva    = precioSIva * (1m + descRecPct / 100m);
+                    decimal conIva     = subSIva * (1m + ivaRate);
+
+                    totPrecioSIva += precioSIva * cant;
+                    totDescRec    += (subSIva - precioSIva) * cant;
+                    totSubtSIva   += subSIva * cant;
+                    totIva        += (conIva - subSIva) * cant;
+                    totTotal      += conIva * cant;
+
+                    BaseColor bgFila = (idx % 2 == 0) ? cBlanco : cGrisFondo;
+
+                    // Descripción (con observ debajo, gris pequeño)
+                    string desc = l["Descripcion"].ToString();
+                    string obs  = l.Table.Columns.Contains("Observ") ? l["Observ"].ToString() : "";
+                    Paragraph pDesc = new Paragraph();
+                    pDesc.Add(new Chunk(desc, fTbody));
+                    if (!string.IsNullOrWhiteSpace(obs))
+                    {
+                        pDesc.Add(Chunk.NEWLINE);
+                        pDesc.Add(new Chunk(obs, fTbodySmall));
+                    }
+                    PdfPCell cDesc = new PdfPCell(pDesc);
+                    cDesc.BackgroundColor = bgFila;
+                    cDesc.BorderColor = cGrisBorde;
+                    cDesc.Border = Rectangle.BOTTOM_BORDER;
+                    cDesc.PaddingTop = 3f; cDesc.PaddingBottom = 3f;
+                    cDesc.PaddingLeft = 4f; cDesc.PaddingRight = 3f;
+                    det.AddCell(cDesc);
+
+                    Action<string, Font> addNum = (txt, fnt) =>
+                    {
+                        PdfPCell c = new PdfPCell(new Phrase(txt, fnt));
+                        c.BackgroundColor = bgFila;
+                        c.BorderColor = cGrisBorde;
+                        c.Border = Rectangle.BOTTOM_BORDER;
+                        c.HorizontalAlignment = Element.ALIGN_RIGHT;
+                        c.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                        c.PaddingTop = 3f; c.PaddingBottom = 3f;
+                        c.PaddingLeft = 3f; c.PaddingRight = 3f;
+                        det.AddCell(c);
+                    };
+
+                    addNum(cant.ToString("N2", culture), fTbody);
+                    addNum("$" + precioSIva.ToString("N2", culture), fTbody);
+
+                    // Desc/Rec con color condicional (rojo si negativo, verde si positivo)
+                    Font fDr = descRecPct < 0 ? FontFactory.GetFont(FontFactory.HELVETICA, 9, cRojo)
+                             : descRecPct > 0 ? FontFactory.GetFont(FontFactory.HELVETICA, 9, cVerde)
+                             : fTbody;
+                    addNum(descRecPct.ToString("N2", culture) + "%", fDr);
+
+                    addNum("$" + (subSIva * cant).ToString("N2", culture), fTbody);
+                    addNum("$" + ((conIva - subSIva) * cant).ToString("N2", culture), fTbody);
+                    addNum("$" + (conIva * cant).ToString("N2", culture), fTbodyBold);
+
+                    idx++;
+                }
+
+                det.SpacingAfter = 8f;
+                doc.Add(det);
+
+                // ═════════════════════════════════════════════════════════════
+                // TOTALES (cuadro a la derecha, mitad del ancho)
+                // ═════════════════════════════════════════════════════════════
+                PdfPTable wrap = new PdfPTable(2);
+                wrap.WidthPercentage = 100;
+                wrap.SetWidths(new float[] { 1.4f, 1f });
+
+                PdfPCell hueco = new PdfPCell(new Phrase(" "));
+                hueco.Border = Rectangle.NO_BORDER;
+                wrap.AddCell(hueco);
+
+                PdfPTable tot = new PdfPTable(2);
+                tot.WidthPercentage = 100;
+                tot.SetWidths(new float[] { 1.4f, 1f });
+
+                Action<string, string, BaseColor, Font, Font> totRow = (lbl, val, bg, fl, fv) =>
+                {
+                    PdfPCell lc = new PdfPCell(new Phrase(lbl, fl));
+                    lc.BackgroundColor = bg;
+                    lc.BorderColor = cGrisBorde;
+                    lc.Border = Rectangle.NO_BORDER;
+                    lc.PaddingTop = 4f; lc.PaddingBottom = 4f; lc.PaddingLeft = 8f;
+                    tot.AddCell(lc);
+
+                    PdfPCell vc = new PdfPCell(new Phrase(val, fv));
+                    vc.BackgroundColor = bg;
+                    vc.BorderColor = cGrisBorde;
+                    vc.Border = Rectangle.NO_BORDER;
+                    vc.HorizontalAlignment = Element.ALIGN_RIGHT;
+                    vc.PaddingTop = 4f; vc.PaddingBottom = 4f; vc.PaddingRight = 8f;
+                    tot.AddCell(vc);
+                };
+
+                totRow("Precio s/IVA",     "$" + totPrecioSIva.ToString("N2", culture), cBlanco,    fTotLab, fTotVal);
+                totRow("Desc / Rec",       "$" + totDescRec.ToString("N2", culture),    cGrisFondo, fTotLab, fTotVal);
+                totRow("Subtotal s/IVA",   "$" + totSubtSIva.ToString("N2", culture),   cBlanco,    fTotLab, fTotVal);
+                totRow("IVA " + ivaPct.ToString("N0", culture) + "%",
+                                           "$" + totIva.ToString("N2", culture),        cGrisFondo, fTotLab, fTotVal);
+                totRow("TOTAL",            "$" + totTotal.ToString("N2", culture),      cAzul,      fTotTotLab, fTotTotVal);
+
+                PdfPCell totCell = new PdfPCell(tot);
+                totCell.Border = Rectangle.BOX;
+                totCell.BorderColor = cGrisBorde;
+                totCell.Padding = 0f;
+                wrap.AddCell(totCell);
+                doc.Add(wrap);
+
+                // ═════════════════════════════════════════════════════════════
+                // FIRMA (a la derecha)
+                // ═════════════════════════════════════════════════════════════
+                doc.Add(new Paragraph(" ") { SpacingAfter = 20f });
+
+                PdfPTable firma = new PdfPTable(2);
+                firma.WidthPercentage = 100;
+                firma.SetWidths(new float[] { 2.5f, 1f });
+
+                PdfPCell huecoF = new PdfPCell(new Phrase(" "));
+                huecoF.Border = Rectangle.NO_BORDER;
+                firma.AddCell(huecoF);
+
+                PdfPCell firmaCell = new PdfPCell(new Phrase("Firma y aclaracion", fFirma));
+                firmaCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                firmaCell.Border = Rectangle.TOP_BORDER;
+                firmaCell.BorderColor = cTextoSec;
+                firmaCell.PaddingTop = 6f;
+                firmaCell.PaddingBottom = 4f;
+                firma.AddCell(firmaCell);
+
+                doc.Add(firma);
+
+                doc.Close();
+            }
+
+            Process.Start(new ProcessStartInfo()
+            {
+                FileName = path,
+                UseShellExecute = true
+            });
+        }
+
+        // ════════════════════════════════════════════════════════════════════════
+        // ESTADÍSTICAS DE VENTAS — PDF reemplaza ReportVentasEstadisticas.rdlc
+        // Data: sp_VentasBuscarEntreFechayFiltro(filtro, filtroDev, tipo)
+        // ════════════════════════════════════════════════════════════════════════
+        public void GenerarVentasEstadisticasPDF(string filtro, string filtroDev, string subtitulo, int tipo)
+        {
+            var instEstad = new ClassEstadisticas();
+            DataTable dt = instEstad.traeEstadisticasVentas(filtro, filtroDev, tipo);
+
+            if (dt.Rows.Count == 0)
+            {
+                System.Windows.Forms.MessageBox.Show(
+                    "No hay datos para el período seleccionado.", "Sin datos",
+                    System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Information);
+                return;
+            }
+
+            string downloads = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+            string path = Path.Combine(downloads,
+                $"VentasEstadisticas_{DateTime.Now:ddMMyyyy_HHmmss}.pdf");
+
+            var culture = new CultureInfo("es-AR");
+
+            // ─── Paleta ────────────────────────────────────────────────────────
+            BaseColor cAzul      = new BaseColor(26,  58,  92);
+            BaseColor cGrisFondo = new BaseColor(248, 249, 252);
+            BaseColor cGrisBorde = new BaseColor(227, 230, 240);
+            BaseColor cGrisTotal = new BaseColor(220, 220, 230);
+            BaseColor cBlanco    = BaseColor.WHITE;
+            BaseColor cTextoOsc  = new BaseColor(44,  62,  80);
+            BaseColor cTextoNeg  = new BaseColor(34,  34,  34);
+            BaseColor cRojo      = new BaseColor(192, 57,  43);
+
+            // ─── Fuentes ───────────────────────────────────────────────────────
+            Font fTitulo    = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, cBlanco);
+            Font fSubtitulo = FontFactory.GetFont(FontFactory.HELVETICA,       9, cBlanco);
+            Font fThead     = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 7f, cBlanco);
+            Font fTbody     = FontFactory.GetFont(FontFactory.HELVETICA,      7f, cTextoNeg);
+            Font fTbodyNeg  = FontFactory.GetFont(FontFactory.HELVETICA,      7f, cRojo);
+            Font fTbodyBold = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 7f, cTextoNeg);
+            Font fTotLab    = FontFactory.GetFont(FontFactory.HELVETICA_BOLD,  8, cTextoOsc);
+            Font fTotVal    = FontFactory.GetFont(FontFactory.HELVETICA_BOLD,  8, cTextoNeg);
+
+            // ─── Logo y datos empresa (para el header repetido) ────────────────
+            byte[] logoBytes = null;
+            try { logoBytes = ClassParametros.traerImagenLogotipo(); } catch { }
+
+            string empNombre = Clases.ClassValidacion.traerEmpresa();
+            string empRazon  = Clases.ClassValidacion.traerRazonSocial();
+            string empDir    = Clases.ClassValidacion.traerEmpresaDireccion();
+            string empLocal  = Clases.ClassValidacion.traerEmpresaCiudad();
+            string empCuit   = Clases.ClassValidacion.traerEmpresaCuit();
+            string empTel    = Clases.ClassValidacion.traerEmpresaTelefono();
+
+            using (FileStream fs = new FileStream(path, FileMode.Create))
+            {
+                // Margen superior amplio para que el page-event dibuje el header sin pisar contenido
+                const float TOP_MARGIN = 92f;
+                Document doc = new Document(PageSize.A4.Rotate(), 36, 36, TOP_MARGIN, 36);
+                PdfWriter writer = PdfWriter.GetInstance(doc, fs);
+                // Header repetido en todas las páginas via page event
+                writer.PageEvent = new EmpresaPageHeader(
+                    logoBytes, empNombre, empRazon, empDir, empLocal, empCuit, empTel);
+                doc.Open();
+
+                // ══ BANNER TÍTULO (sólo página 1) ════════════════════════════
+                PdfPTable banner = new PdfPTable(2);
+                banner.WidthPercentage = 100;
+                banner.SetWidths(new float[] { 3, 2 });
+
+                PdfPCell bcIzq = new PdfPCell(new Phrase("RESUMEN DE VENTAS", fTitulo));
+                bcIzq.BackgroundColor = cAzul;
+                bcIzq.Border = Rectangle.NO_BORDER;
+                bcIzq.HorizontalAlignment = Element.ALIGN_LEFT;
+                bcIzq.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                bcIzq.PaddingTop = 6f; bcIzq.PaddingBottom = 6f; bcIzq.PaddingLeft = 10f;
+
+                PdfPCell bcDer = new PdfPCell(new Phrase(subtitulo, fSubtitulo));
+                bcDer.BackgroundColor = cAzul;
+                bcDer.Border = Rectangle.NO_BORDER;
+                bcDer.HorizontalAlignment = Element.ALIGN_RIGHT;
+                bcDer.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                bcDer.PaddingTop = 6f; bcDer.PaddingBottom = 6f; bcDer.PaddingRight = 10f;
+
+                banner.AddCell(bcIzq);
+                banner.AddCell(bcDer);
+                banner.SpacingAfter = 10f;
+                doc.Add(banner);
+
+                // ══ TABLA DETALLE ════════════════════════════════════════════
+                PdfPTable det = new PdfPTable(10);
+                det.WidthPercentage = 100;
+                det.SetWidths(new float[] { 1f, 1.5f, 3.5f, 2.5f, 1.8f, 1.2f, 1.8f, 1.8f, 1f, 1.8f });
+                det.HeaderRows = 1; // repetir fila de encabezado en cada página
+
+                string[] heads = { "Nro", "Fecha", "Cliente", "Vendedor",
+                                   "Total C/IVA", "IVA", "Total S/IVA", "Costo", "% Com", "Comisión" };
+                foreach (var h in heads)
+                {
+                    PdfPCell c = new PdfPCell(new Phrase(h, fThead));
+                    c.BackgroundColor = cAzul;
+                    c.Border = Rectangle.NO_BORDER;
+                    c.HorizontalAlignment = h == "Nro" || h == "Fecha" || h == "Cliente" || h == "Vendedor"
+                        ? Element.ALIGN_LEFT : Element.ALIGN_RIGHT;
+                    c.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    c.NoWrap = true;
+                    c.PaddingTop = 4f; c.PaddingBottom = 4f;
+                    c.PaddingLeft = 3f; c.PaddingRight = 3f;
+                    det.AddCell(c);
+                }
+
+                decimal sumTotalCIVA = 0, sumIVA = 0, sumTotalSIVA = 0, sumCosto = 0, sumComision = 0;
+                int idx = 0;
+                foreach (DataRow row in dt.Rows)
+                {
+                    decimal totalCIVA  = row["TotalCIVA"]  != DBNull.Value ? Convert.ToDecimal(row["TotalCIVA"])  : 0m;
+                    decimal iva        = row["IVA"]        != DBNull.Value ? Convert.ToDecimal(row["IVA"])        : 0m;
+                    decimal totalSIVA  = row["totalSIVA"]  != DBNull.Value ? Convert.ToDecimal(row["totalSIVA"])  : 0m;
+                    decimal costo      = row["Costo"]      != DBNull.Value ? Convert.ToDecimal(row["Costo"])      : 0m;
+                    decimal pCom       = row["P_Com"]      != DBNull.Value ? Convert.ToDecimal(row["P_Com"])      : 0m;
+                    decimal comision   = row["Comision"]   != DBNull.Value ? Convert.ToDecimal(row["Comision"])   : 0m;
+
+                    sumTotalCIVA += totalCIVA;
+                    sumIVA       += iva;
+                    sumTotalSIVA += totalSIVA;
+                    sumCosto     += costo;
+                    sumComision  += comision;
+
+                    BaseColor bg = (idx % 2 == 0) ? cBlanco : cGrisFondo;
+
+                    string fecha = row["Fecha"] != DBNull.Value
+                        ? Convert.ToDateTime(row["Fecha"]).ToString("dd/MM/yyyy") : "";
+
+                    Action<string, bool, bool> addTxt = (txt, right, bold) =>
+                    {
+                        Font f = bold ? fTbodyBold : fTbody;
+                        PdfPCell c = new PdfPCell(new Phrase(txt, f));
+                        c.BackgroundColor = bg;
+                        c.BorderColor = cGrisBorde;
+                        c.Border = Rectangle.BOTTOM_BORDER;
+                        c.HorizontalAlignment = right ? Element.ALIGN_RIGHT : Element.ALIGN_LEFT;
+                        c.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                        c.PaddingTop = 3f; c.PaddingBottom = 3f;
+                        c.PaddingLeft = 3f; c.PaddingRight = 3f;
+                        det.AddCell(c);
+                    };
+
+                    Action<decimal, bool> addNum = (val, isNegSign) =>
+                    {
+                        Font f = isNegSign && val < 0 ? fTbodyNeg : fTbody;
+                        string txt = val.ToString("N2", culture);
+                        PdfPCell c = new PdfPCell(new Phrase(txt, f));
+                        c.BackgroundColor = bg;
+                        c.BorderColor = cGrisBorde;
+                        c.Border = Rectangle.BOTTOM_BORDER;
+                        c.HorizontalAlignment = Element.ALIGN_RIGHT;
+                        c.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                        c.PaddingTop = 3f; c.PaddingBottom = 3f;
+                        c.PaddingLeft = 3f; c.PaddingRight = 3f;
+                        det.AddCell(c);
+                    };
+
+                    addTxt(row["Nro"].ToString(),      false, false);
+                    addTxt(fecha,                      false, false);
+                    addTxt(row["Cliente"].ToString(),  false, false);
+                    addTxt(row["Vendedor"].ToString(), false, false);
+                    addNum(totalCIVA,  true);
+                    addNum(iva,        false);
+                    addNum(totalSIVA,  true);
+                    addNum(costo,      false);
+                    addTxt(pCom.ToString("N2", culture) + "%", true, false);
+                    addNum(comision,   false);
+
+                    idx++;
+                }
+
+                det.SpacingAfter = 0f;
+                doc.Add(det);
+
+                // ══ FILA DE TOTALES ══════════════════════════════════════════
+                PdfPTable totT = new PdfPTable(10);
+                totT.WidthPercentage = 100;
+                totT.SetWidths(new float[] { 1f, 1.5f, 3.5f, 2.5f, 1.8f, 1.2f, 1.8f, 1.8f, 1f, 1.8f });
+                totT.KeepTogether = true;  // no partir el total entre páginas
+                totT.SpacingBefore = 0f;
+
+                Action<string, bool> addTotCell = (txt, isNum) =>
+                {
+                    PdfPCell c = new PdfPCell(new Phrase(txt, isNum ? fTotVal : fTotLab));
+                    c.BackgroundColor = cGrisTotal;
+                    c.Border = Rectangle.TOP_BORDER;
+                    c.BorderColor = cAzul;
+                    c.HorizontalAlignment = isNum ? Element.ALIGN_RIGHT : Element.ALIGN_LEFT;
+                    c.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                    c.PaddingTop = 5f; c.PaddingBottom = 5f;
+                    c.PaddingLeft = 3f; c.PaddingRight = 3f;
+                    totT.AddCell(c);
+                };
+
+                // "TOTALES" abarca las 3 primeras columnas para que no se corte la etiqueta
+                PdfPCell cTotLbl = new PdfPCell(new Phrase("TOTALES", fTotLab));
+                cTotLbl.Colspan = 3;
+                cTotLbl.BackgroundColor = cGrisTotal;
+                cTotLbl.Border = Rectangle.TOP_BORDER;
+                cTotLbl.BorderColor = cAzul;
+                cTotLbl.HorizontalAlignment = Element.ALIGN_LEFT;
+                cTotLbl.VerticalAlignment = Element.ALIGN_MIDDLE;
+                cTotLbl.NoWrap = true;
+                cTotLbl.PaddingTop = 5f; cTotLbl.PaddingBottom = 5f;
+                cTotLbl.PaddingLeft = 3f; cTotLbl.PaddingRight = 3f;
+                totT.AddCell(cTotLbl);
+                addTotCell(idx.ToString() + " registros", false);
+                addTotCell(sumTotalCIVA.ToString("N2", culture), true);
+                addTotCell(sumIVA.ToString("N2", culture),       true);
+                addTotCell(sumTotalSIVA.ToString("N2", culture), true);
+                addTotCell(sumCosto.ToString("N2", culture),     true);
+                addTotCell("",                                    false);
+                addTotCell(sumComision.ToString("N2", culture),  true);
+
+                doc.Add(totT);
+                doc.Close();
+            }
+
+            Process.Start(new ProcessStartInfo()
+            {
+                FileName = path,
+                UseShellExecute = true
+            });
+        }
+
+        // ════════════════════════════════════════════════════════════════════════
+        // STOCK DE PRODUCTOS — PDF reemplaza ReportProductosStock.rdlc
+        // Data: sp_ProductosTraerStock(unFiltro)
+        // ════════════════════════════════════════════════════════════════════════
+        public void GenerarStockPDF(string filtro, int cantDec, int cantStock)
+        {
+            var instProd = new ClassProductos();
+            DataTable dt = instProd.traeProductosStock(filtro);
+
+            if (dt.Rows.Count == 0)
+            {
+                System.Windows.Forms.MessageBox.Show(
+                    "No hay productos para los filtros seleccionados.", "Sin datos",
+                    System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Information);
+                return;
+            }
+
+            string downloads = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+            string path = Path.Combine(downloads,
+                $"Stock_{DateTime.Now:ddMMyyyy_HHmmss}.pdf");
+
+            var culture = new CultureInfo("es-AR");
+
+            // ─── Paleta ────────────────────────────────────────────────────────
+            BaseColor cAzul      = new BaseColor(26,  58,  92);
+            BaseColor cGrisFondo = new BaseColor(248, 249, 252);
+            BaseColor cGrisBorde = new BaseColor(227, 230, 240);
+            BaseColor cGrisTotal = new BaseColor(220, 220, 230);
+            BaseColor cBlanco    = BaseColor.WHITE;
+            BaseColor cTextoOsc  = new BaseColor(44,  62,  80);
+            BaseColor cTextoNeg  = new BaseColor(34,  34,  34);
+            BaseColor cRojo      = new BaseColor(192, 57,  43);
+
+            // ─── Fuentes ───────────────────────────────────────────────────────
+            Font fTitulo    = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, cBlanco);
+            Font fSubtitulo = FontFactory.GetFont(FontFactory.HELVETICA,       9, cBlanco);
+            Font fThead     = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 7.5f, cBlanco);
+            Font fTbody     = FontFactory.GetFont(FontFactory.HELVETICA,      7.5f, cTextoNeg);
+            Font fTbodyNeg  = FontFactory.GetFont(FontFactory.HELVETICA,      7.5f, cRojo);
+            Font fTotLab    = FontFactory.GetFont(FontFactory.HELVETICA_BOLD,  8.5f, cTextoOsc);
+            Font fTotVal    = FontFactory.GetFont(FontFactory.HELVETICA_BOLD,  8.5f, cTextoNeg);
+
+            // ─── Logo y datos empresa (para el header repetido) ────────────────
+            byte[] logoBytes = null;
+            try { logoBytes = ClassParametros.traerImagenLogotipo(); } catch { }
+
+            string empNombre = Clases.ClassValidacion.traerEmpresa();
+            string empRazon  = Clases.ClassValidacion.traerRazonSocial();
+            string empDir    = Clases.ClassValidacion.traerEmpresaDireccion();
+            string empLocal  = Clases.ClassValidacion.traerEmpresaCiudad();
+            string empCuit   = Clases.ClassValidacion.traerEmpresaCuit();
+            string empTel    = Clases.ClassValidacion.traerEmpresaTelefono();
+
+            string fmtDec   = "N" + cantDec.ToString();
+            string fmtStock = "N" + cantStock.ToString();
+
+            using (FileStream fs = new FileStream(path, FileMode.Create))
+            {
+                const float TOP_MARGIN = 92f;
+                Document doc = new Document(PageSize.A4.Rotate(), 36, 36, TOP_MARGIN, 36);
+                PdfWriter writer = PdfWriter.GetInstance(doc, fs);
+                writer.PageEvent = new EmpresaPageHeader(
+                    logoBytes, empNombre, empRazon, empDir, empLocal, empCuit, empTel);
+                doc.Open();
+
+                // ══ BANNER TÍTULO (sólo página 1) ════════════════════════════
+                PdfPTable banner = new PdfPTable(2);
+                banner.WidthPercentage = 100;
+                banner.SetWidths(new float[] { 3, 2 });
+
+                PdfPCell bcIzq = new PdfPCell(new Phrase("STOCK DE PRODUCTOS", fTitulo));
+                bcIzq.BackgroundColor = cAzul;
+                bcIzq.Border = Rectangle.NO_BORDER;
+                bcIzq.HorizontalAlignment = Element.ALIGN_LEFT;
+                bcIzq.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                bcIzq.PaddingTop = 6f; bcIzq.PaddingBottom = 6f; bcIzq.PaddingLeft = 10f;
+
+                PdfPCell bcDer = new PdfPCell(new Phrase("Fecha: " + DateTime.Now.ToString("dd/MM/yyyy"), fSubtitulo));
+                bcDer.BackgroundColor = cAzul;
+                bcDer.Border = Rectangle.NO_BORDER;
+                bcDer.HorizontalAlignment = Element.ALIGN_RIGHT;
+                bcDer.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                bcDer.PaddingTop = 6f; bcDer.PaddingBottom = 6f; bcDer.PaddingRight = 10f;
+
+                banner.AddCell(bcIzq);
+                banner.AddCell(bcDer);
+                banner.SpacingAfter = 10f;
+                doc.Add(banner);
+
+                // ══ TABLA DETALLE ════════════════════════════════════════════
+                // Columnas: Cod_Prov | Descripcion | Stock | C_Min | Costo | P_Prov | P_Lista
+                PdfPTable det = new PdfPTable(7);
+                det.WidthPercentage = 100;
+                det.SetWidths(new float[] { 1.6f, 5.5f, 1.4f, 1.3f, 1.6f, 1.6f, 1.6f });
+                det.HeaderRows = 1; // repetir encabezado en cada página
+
+                string[] heads = { "Cód. Prov.", "Descripción", "Stock", "C. Mín.", "Costo", "P. Prov.", "P. Lista" };
+                for (int i = 0; i < heads.Length; i++)
+                {
+                    PdfPCell c = new PdfPCell(new Phrase(heads[i], fThead));
+                    c.BackgroundColor = cAzul;
+                    c.Border = Rectangle.NO_BORDER;
+                    c.HorizontalAlignment = i <= 1 ? Element.ALIGN_LEFT : Element.ALIGN_RIGHT;
+                    c.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    c.NoWrap = true;
+                    c.PaddingTop = 4f; c.PaddingBottom = 4f;
+                    c.PaddingLeft = 4f; c.PaddingRight = 4f;
+                    det.AddCell(c);
+                }
+
+                decimal sumStock = 0, sumCosto = 0, sumPProv = 0, sumPLista = 0;
+                int idx = 0;
+                foreach (DataRow row in dt.Rows)
+                {
+                    decimal stock   = row["Stock"]   != DBNull.Value ? Convert.ToDecimal(row["Stock"])   : 0m;
+                    decimal cMin    = row["C_Min"]   != DBNull.Value ? Convert.ToDecimal(row["C_Min"])   : 0m;
+                    decimal costo   = row["Costo"]   != DBNull.Value ? Convert.ToDecimal(row["Costo"])   : 0m;
+                    decimal pProv   = row["P_Prov"]  != DBNull.Value ? Convert.ToDecimal(row["P_Prov"])  : 0m;
+                    decimal pLista  = row["P_Lista"] != DBNull.Value ? Convert.ToDecimal(row["P_Lista"]) : 0m;
+
+                    sumStock  += stock;
+                    sumCosto  += costo  * stock;
+                    sumPProv  += pProv  * stock;
+                    sumPLista += pLista * stock;
+
+                    BaseColor bg = (idx % 2 == 0) ? cBlanco : cGrisFondo;
+
+                    Action<string, bool> addTxt = (txt, right) =>
+                    {
+                        PdfPCell c = new PdfPCell(new Phrase(txt, fTbody));
+                        c.BackgroundColor = bg;
+                        c.BorderColor = cGrisBorde;
+                        c.Border = Rectangle.BOTTOM_BORDER;
+                        c.HorizontalAlignment = right ? Element.ALIGN_RIGHT : Element.ALIGN_LEFT;
+                        c.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                        c.PaddingTop = 3f; c.PaddingBottom = 3f;
+                        c.PaddingLeft = 4f; c.PaddingRight = 4f;
+                        det.AddCell(c);
+                    };
+
+                    Action<decimal, string, bool> addNum = (val, fmt, alertaBajoMin) =>
+                    {
+                        Font f = alertaBajoMin ? fTbodyNeg : fTbody;
+                        PdfPCell c = new PdfPCell(new Phrase(val.ToString(fmt, culture), f));
+                        c.BackgroundColor = bg;
+                        c.BorderColor = cGrisBorde;
+                        c.Border = Rectangle.BOTTOM_BORDER;
+                        c.HorizontalAlignment = Element.ALIGN_RIGHT;
+                        c.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                        c.PaddingTop = 3f; c.PaddingBottom = 3f;
+                        c.PaddingLeft = 4f; c.PaddingRight = 4f;
+                        det.AddCell(c);
+                    };
+
+                    addTxt(row["Cod_Prov"].ToString(),    false);
+                    addTxt(row["Descripcion"].ToString(), false);
+                    addNum(stock,  fmtStock, stock < cMin);  // resaltar stock bajo mínimo
+                    addNum(cMin,   fmtStock, false);
+                    addNum(costo,  fmtDec,   false);
+                    addNum(pProv,  fmtDec,   false);
+                    addNum(pLista, fmtDec,   false);
+
+                    idx++;
+                }
+
+                det.SpacingAfter = 0f;
+                doc.Add(det);
+
+                // ══ FILA DE TOTALES ══════════════════════════════════════════
+                PdfPTable totT = new PdfPTable(7);
+                totT.WidthPercentage = 100;
+                totT.SetWidths(new float[] { 1.6f, 5.5f, 1.4f, 1.3f, 1.6f, 1.6f, 1.6f });
+                totT.KeepTogether = true;
+                totT.SpacingBefore = 0f;
+
+                Action<string, bool, int> addTotCell = (txt, isNum, colspan) =>
+                {
+                    PdfPCell c = new PdfPCell(new Phrase(txt, isNum ? fTotVal : fTotLab));
+                    if (colspan > 1) c.Colspan = colspan;
+                    c.BackgroundColor = cGrisTotal;
+                    c.Border = Rectangle.TOP_BORDER;
+                    c.BorderColor = cAzul;
+                    c.HorizontalAlignment = isNum ? Element.ALIGN_RIGHT : Element.ALIGN_LEFT;
+                    c.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                    c.NoWrap = true;
+                    c.PaddingTop = 5f; c.PaddingBottom = 5f;
+                    c.PaddingLeft = 4f; c.PaddingRight = 4f;
+                    totT.AddCell(c);
+                };
+
+                addTotCell("TOTALES (" + idx.ToString() + " productos)", false, 2);
+                addTotCell(sumStock.ToString(fmtStock, culture), true, 1);
+                addTotCell("", false, 1);
+                addTotCell(sumCosto.ToString(fmtDec, culture),  true, 1);
+                addTotCell(sumPProv.ToString(fmtDec, culture),  true, 1);
+                addTotCell(sumPLista.ToString(fmtDec, culture), true, 1);
+
+                doc.Add(totT);
+                doc.Close();
+            }
+
+            Process.Start(new ProcessStartInfo()
+            {
+                FileName = path,
+                UseShellExecute = true
+            });
+        }
+
+        // ════════════════════════════════════════════════════════════════════════
+        // LISTA DE PRECIOS — PDF reemplaza ReportListaDePreciosPorRubro.rdlc
+        // Data: sp_ProductosListaPrecios(unFiltro)
+        // ════════════════════════════════════════════════════════════════════════
+        public void GenerarListaPreciosPDF(string filtro, int cantDec)
+        {
+            var instProd = new ClassProductos();
+            DataTable dt = instProd.traerListaPrecios(filtro);
+
+            if (dt.Rows.Count == 0)
+            {
+                System.Windows.Forms.MessageBox.Show(
+                    "No hay productos para los filtros seleccionados.", "Sin datos",
+                    System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Information);
+                return;
+            }
+
+            string downloads = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+            string path = Path.Combine(downloads,
+                $"ListaPrecios_{DateTime.Now:ddMMyyyy_HHmmss}.pdf");
+
+            var culture = new CultureInfo("es-AR");
+
+            // ─── Paleta ────────────────────────────────────────────────────────
+            BaseColor cAzul      = new BaseColor(26,  58,  92);
+            BaseColor cGrisFondo = new BaseColor(248, 249, 252);
+            BaseColor cGrisBorde = new BaseColor(227, 230, 240);
+            BaseColor cBlanco    = BaseColor.WHITE;
+            BaseColor cTextoNeg  = new BaseColor(34,  34,  34);
+
+            // ─── Fuentes ───────────────────────────────────────────────────────
+            Font fTitulo    = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, cBlanco);
+            Font fSubtitulo = FontFactory.GetFont(FontFactory.HELVETICA,       9, cBlanco);
+            Font fThead     = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 8f, cBlanco);
+            Font fTbody     = FontFactory.GetFont(FontFactory.HELVETICA,      8f, cTextoNeg);
+            Font fTbodyBold = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 8f, cTextoNeg);
+
+            // ─── Logo y datos empresa (para el header repetido) ────────────────
+            byte[] logoBytes = null;
+            try { logoBytes = ClassParametros.traerImagenLogotipo(); } catch { }
+
+            string empNombre = Clases.ClassValidacion.traerEmpresa();
+            string empRazon  = Clases.ClassValidacion.traerRazonSocial();
+            string empDir    = Clases.ClassValidacion.traerEmpresaDireccion();
+            string empLocal  = Clases.ClassValidacion.traerEmpresaCiudad();
+            string empCuit   = Clases.ClassValidacion.traerEmpresaCuit();
+            string empTel    = Clases.ClassValidacion.traerEmpresaTelefono();
+
+            string fmtDec = "N" + cantDec.ToString();
+
+            using (FileStream fs = new FileStream(path, FileMode.Create))
+            {
+                const float TOP_MARGIN = 92f;
+                Document doc = new Document(PageSize.A4.Rotate(), 36, 36, TOP_MARGIN, 36);
+                PdfWriter writer = PdfWriter.GetInstance(doc, fs);
+                writer.PageEvent = new EmpresaPageHeader(
+                    logoBytes, empNombre, empRazon, empDir, empLocal, empCuit, empTel);
+                doc.Open();
+
+                // ══ BANNER TÍTULO (sólo página 1) ════════════════════════════
+                PdfPTable banner = new PdfPTable(2);
+                banner.WidthPercentage = 100;
+                banner.SetWidths(new float[] { 3, 2 });
+
+                PdfPCell bcIzq = new PdfPCell(new Phrase("LISTA DE PRECIOS", fTitulo));
+                bcIzq.BackgroundColor = cAzul;
+                bcIzq.Border = Rectangle.NO_BORDER;
+                bcIzq.HorizontalAlignment = Element.ALIGN_LEFT;
+                bcIzq.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                bcIzq.PaddingTop = 6f; bcIzq.PaddingBottom = 6f; bcIzq.PaddingLeft = 10f;
+
+                PdfPCell bcDer = new PdfPCell(new Phrase("Fecha: " + DateTime.Now.ToString("dd/MM/yyyy"), fSubtitulo));
+                bcDer.BackgroundColor = cAzul;
+                bcDer.Border = Rectangle.NO_BORDER;
+                bcDer.HorizontalAlignment = Element.ALIGN_RIGHT;
+                bcDer.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                bcDer.PaddingTop = 6f; bcDer.PaddingBottom = 6f; bcDer.PaddingRight = 10f;
+
+                banner.AddCell(bcIzq);
+                banner.AddCell(bcDer);
+                banner.SpacingAfter = 10f;
+                doc.Add(banner);
+
+                // ══ TABLA DETALLE ════════════════════════════════════════════
+                // Columnas: Cod. Prov. | Cod. Barras | Descripción | Precio S/IVA | Precio C/IVA
+                PdfPTable det = new PdfPTable(5);
+                det.WidthPercentage = 100;
+                det.SetWidths(new float[] { 1.6f, 2.2f, 7f, 1.8f, 1.8f });
+                det.HeaderRows = 1; // repetir encabezado en cada página
+
+                string[] heads = { "Cód. Prov.", "Cód. Barras", "Descripción", "Precio S/IVA", "Precio C/IVA" };
+                for (int i = 0; i < heads.Length; i++)
+                {
+                    PdfPCell c = new PdfPCell(new Phrase(heads[i], fThead));
+                    c.BackgroundColor = cAzul;
+                    c.Border = Rectangle.NO_BORDER;
+                    c.HorizontalAlignment = i <= 2 ? Element.ALIGN_LEFT : Element.ALIGN_RIGHT;
+                    c.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    c.NoWrap = true;
+                    c.PaddingTop = 5f; c.PaddingBottom = 5f;
+                    c.PaddingLeft = 5f; c.PaddingRight = 5f;
+                    det.AddCell(c);
+                }
+
+                int idx = 0;
+                foreach (DataRow row in dt.Rows)
+                {
+                    decimal precio    = row["precio"]    != DBNull.Value ? Convert.ToDecimal(row["precio"])    : 0m;
+                    decimal precioIva = row["PrecioIVA"] != DBNull.Value ? Convert.ToDecimal(row["PrecioIVA"]) : 0m;
+
+                    BaseColor bg = (idx % 2 == 0) ? cBlanco : cGrisFondo;
+
+                    Action<string, bool, bool> addTxt = (txt, right, bold) =>
+                    {
+                        Font f = bold ? fTbodyBold : fTbody;
+                        PdfPCell c = new PdfPCell(new Phrase(txt, f));
+                        c.BackgroundColor = bg;
+                        c.BorderColor = cGrisBorde;
+                        c.Border = Rectangle.BOTTOM_BORDER;
+                        c.HorizontalAlignment = right ? Element.ALIGN_RIGHT : Element.ALIGN_LEFT;
+                        c.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                        c.PaddingTop = 4f; c.PaddingBottom = 4f;
+                        c.PaddingLeft = 5f; c.PaddingRight = 5f;
+                        det.AddCell(c);
+                    };
+
+                    addTxt(row["codProveedor"].ToString(), false, false);
+                    addTxt(row["codBarras"].ToString(),    false, false);
+                    addTxt(row["descripcion"].ToString(),  false, false);
+                    addTxt("$ " + precio.ToString(fmtDec, culture),     true, false);
+                    addTxt("$ " + precioIva.ToString(fmtDec, culture),  true, true);
+
+                    idx++;
+                }
+
+                doc.Add(det);
+                doc.Close();
+            }
+
+            Process.Start(new ProcessStartInfo()
+            {
+                FileName = path,
+                UseShellExecute = true
+            });
+        }
+
+        // ════════════════════════════════════════════════════════════════════════
+        // PRODUCTOS A PEDIR — PDF reemplaza ReportProductoPedir.rdlc
+        // Data: sp_ProveedoresListarProductosAPedir(unProveedor, desde, hasta)
+        // ════════════════════════════════════════════════════════════════════════
+        public void GenerarProductosAPedirPDF(int proveedor, DateTime desde, DateTime hasta,
+                                              string subtitulo, int cantDec, int cantStock)
+        {
+            var instProv = new ClassProveedores();
+            DataTable dt = instProv.traerListaProdAPedir(proveedor, desde, hasta);
+
+            if (dt.Rows.Count == 0)
+            {
+                System.Windows.Forms.MessageBox.Show(
+                    "No hay productos para los filtros seleccionados.", "Sin datos",
+                    System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Information);
+                return;
+            }
+
+            string downloads = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+            string path = Path.Combine(downloads,
+                $"ProductosAPedir_{DateTime.Now:ddMMyyyy_HHmmss}.pdf");
+
+            var culture = new CultureInfo("es-AR");
+
+            // ─── Paleta ────────────────────────────────────────────────────────
+            BaseColor cAzul      = new BaseColor(26,  58,  92);
+            BaseColor cGrisFondo = new BaseColor(248, 249, 252);
+            BaseColor cGrisBorde = new BaseColor(227, 230, 240);
+            BaseColor cBlanco    = BaseColor.WHITE;
+            BaseColor cTextoNeg  = new BaseColor(34,  34,  34);
+            BaseColor cRojo      = new BaseColor(192, 57,  43);
+
+            // ─── Fuentes ───────────────────────────────────────────────────────
+            Font fTitulo    = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, cBlanco);
+            Font fSubtitulo = FontFactory.GetFont(FontFactory.HELVETICA,       9, cBlanco);
+            Font fThead     = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 7.5f, cBlanco);
+            Font fTbody     = FontFactory.GetFont(FontFactory.HELVETICA,      7.5f, cTextoNeg);
+            Font fTbodyNeg  = FontFactory.GetFont(FontFactory.HELVETICA,      7.5f, cRojo);
+
+            // ─── Logo y datos empresa (para el header repetido) ────────────────
+            byte[] logoBytes = null;
+            try { logoBytes = ClassParametros.traerImagenLogotipo(); } catch { }
+
+            string empNombre = Clases.ClassValidacion.traerEmpresa();
+            string empRazon  = Clases.ClassValidacion.traerRazonSocial();
+            string empDir    = Clases.ClassValidacion.traerEmpresaDireccion();
+            string empLocal  = Clases.ClassValidacion.traerEmpresaCiudad();
+            string empCuit   = Clases.ClassValidacion.traerEmpresaCuit();
+            string empTel    = Clases.ClassValidacion.traerEmpresaTelefono();
+
+            string fmtDec   = "N" + cantDec.ToString();
+            string fmtStock = "N" + cantStock.ToString();
+
+            using (FileStream fs = new FileStream(path, FileMode.Create))
+            {
+                const float TOP_MARGIN = 92f;
+                Document doc = new Document(PageSize.A4.Rotate(), 36, 36, TOP_MARGIN, 36);
+                PdfWriter writer = PdfWriter.GetInstance(doc, fs);
+                writer.PageEvent = new EmpresaPageHeader(
+                    logoBytes, empNombre, empRazon, empDir, empLocal, empCuit, empTel);
+                doc.Open();
+
+                // ══ BANNER TÍTULO (sólo página 1) ════════════════════════════
+                PdfPTable banner = new PdfPTable(2);
+                banner.WidthPercentage = 100;
+                banner.SetWidths(new float[] { 2, 3 });
+
+                PdfPCell bcIzq = new PdfPCell(new Phrase("PRODUCTOS A PEDIR", fTitulo));
+                bcIzq.BackgroundColor = cAzul;
+                bcIzq.Border = Rectangle.NO_BORDER;
+                bcIzq.HorizontalAlignment = Element.ALIGN_LEFT;
+                bcIzq.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                bcIzq.PaddingTop = 6f; bcIzq.PaddingBottom = 6f; bcIzq.PaddingLeft = 10f;
+
+                PdfPCell bcDer = new PdfPCell(new Phrase(subtitulo ?? string.Empty, fSubtitulo));
+                bcDer.BackgroundColor = cAzul;
+                bcDer.Border = Rectangle.NO_BORDER;
+                bcDer.HorizontalAlignment = Element.ALIGN_RIGHT;
+                bcDer.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                bcDer.PaddingTop = 6f; bcDer.PaddingBottom = 6f; bcDer.PaddingRight = 10f;
+
+                banner.AddCell(bcIzq);
+                banner.AddCell(bcDer);
+                banner.SpacingAfter = 10f;
+                doc.Add(banner);
+
+                // ══ TABLA DETALLE ════════════════════════════════════════════
+                // Columnas: Cod.Prov | Descripción | Stock | Ingreso | Ventas | P.Prov | Costo | P.Lista
+                PdfPTable det = new PdfPTable(8);
+                det.WidthPercentage = 100;
+                det.SetWidths(new float[] { 1.5f, 5f, 1.2f, 1.2f, 1.2f, 1.5f, 1.5f, 1.5f });
+                det.HeaderRows = 1; // repetir encabezado en cada página
+
+                string[] heads = { "Cód. Prov.", "Descripción", "Stock", "Ingreso", "Ventas", "P. Prov.", "Costo", "P. Lista" };
+                for (int i = 0; i < heads.Length; i++)
+                {
+                    PdfPCell c = new PdfPCell(new Phrase(heads[i], fThead));
+                    c.BackgroundColor = cAzul;
+                    c.Border = Rectangle.NO_BORDER;
+                    c.HorizontalAlignment = i <= 1 ? Element.ALIGN_LEFT : Element.ALIGN_RIGHT;
+                    c.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    c.NoWrap = true;
+                    c.PaddingTop = 4f; c.PaddingBottom = 4f;
+                    c.PaddingLeft = 4f; c.PaddingRight = 4f;
+                    det.AddCell(c);
+                }
+
+                int idx = 0;
+                foreach (DataRow row in dt.Rows)
+                {
+                    decimal stock   = row["Stock"]   != DBNull.Value ? Convert.ToDecimal(row["Stock"])   : 0m;
+                    decimal ingreso = row["Ingreso"] != DBNull.Value ? Convert.ToDecimal(row["Ingreso"]) : 0m;
+                    decimal ventas  = row["Ventas"]  != DBNull.Value ? Convert.ToDecimal(row["Ventas"])  : 0m;
+                    decimal pProv   = row["P_Prov"]  != DBNull.Value ? Convert.ToDecimal(row["P_Prov"])  : 0m;
+                    decimal costo   = row["Costo"]   != DBNull.Value ? Convert.ToDecimal(row["Costo"])   : 0m;
+                    decimal pLista  = row["P_Lista"] != DBNull.Value ? Convert.ToDecimal(row["P_Lista"]) : 0m;
+
+                    BaseColor bg = (idx % 2 == 0) ? cBlanco : cGrisFondo;
+
+                    Action<string, bool> addTxt = (txt, right) =>
+                    {
+                        PdfPCell c = new PdfPCell(new Phrase(txt, fTbody));
+                        c.BackgroundColor = bg;
+                        c.BorderColor = cGrisBorde;
+                        c.Border = Rectangle.BOTTOM_BORDER;
+                        c.HorizontalAlignment = right ? Element.ALIGN_RIGHT : Element.ALIGN_LEFT;
+                        c.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                        c.PaddingTop = 3f; c.PaddingBottom = 3f;
+                        c.PaddingLeft = 4f; c.PaddingRight = 4f;
+                        det.AddCell(c);
+                    };
+
+                    Action<decimal, string, bool> addNum = (val, fmt, alertar) =>
+                    {
+                        Font f = alertar ? fTbodyNeg : fTbody;
+                        PdfPCell c = new PdfPCell(new Phrase(val.ToString(fmt, culture), f));
+                        c.BackgroundColor = bg;
+                        c.BorderColor = cGrisBorde;
+                        c.Border = Rectangle.BOTTOM_BORDER;
+                        c.HorizontalAlignment = Element.ALIGN_RIGHT;
+                        c.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                        c.PaddingTop = 3f; c.PaddingBottom = 3f;
+                        c.PaddingLeft = 4f; c.PaddingRight = 4f;
+                        det.AddCell(c);
+                    };
+
+                    addTxt(row["Cod_Prov"].ToString(),    false);
+                    addTxt(row["Descripcion"].ToString(), false);
+                    addNum(stock,   fmtStock, stock <= 0); // resaltar stock 0 o negativo
+                    addNum(ingreso, fmtStock, false);
+                    addNum(ventas,  fmtStock, false);
+                    addNum(pProv,   fmtDec,   false);
+                    addNum(costo,   fmtDec,   false);
+                    addNum(pLista,  fmtDec,   false);
+
+                    idx++;
+                }
+
+                doc.Add(det);
+                doc.Close();
+            }
+
+            Process.Start(new ProcessStartInfo()
+            {
+                FileName = path,
+                UseShellExecute = true
+            });
+        }
+
+        public void GenerarOrdenCompraPDF(long idOrden, int cantDec, int cantStock)
+        {
+            var instProv = new ClassProveedores();
+            DataTable dt = instProv.traerOrdenCompra(idOrden);
+
+            if (dt.Rows.Count == 0)
+            {
+                System.Windows.Forms.MessageBox.Show(
+                    "No se encontraron datos para la orden seleccionada.", "Sin datos",
+                    System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Information);
+                return;
+            }
+
+            string downloads = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+            string path = Path.Combine(downloads,
+                $"OrdenCompra_{idOrden}_{DateTime.Now:ddMMyyyy_HHmmss}.pdf");
+
+            var culture = new CultureInfo("es-AR");
+
+            // ─── Paleta ────────────────────────────────────────────────────────
+            BaseColor cAzul      = new BaseColor(26,  58,  92);
+            BaseColor cAzulClaro = new BaseColor(44,  84, 130);
+            BaseColor cGrisFondo = new BaseColor(248, 249, 252);
+            BaseColor cGrisBorde = new BaseColor(227, 230, 240);
+            BaseColor cGrisTotal = new BaseColor(220, 220, 230);
+            BaseColor cBlanco    = BaseColor.WHITE;
+            BaseColor cTextoNeg  = new BaseColor(34,  34,  34);
+            BaseColor cTextoSec  = new BaseColor(85,  85,  85);
+
+            // ─── Fuentes ───────────────────────────────────────────────────────
+            Font fNombreEmp = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 13f, cAzul);
+            Font fDatosEmp  = FontFactory.GetFont(FontFactory.HELVETICA,       8f, cTextoSec);
+            Font fDatosLbl  = FontFactory.GetFont(FontFactory.HELVETICA_BOLD,  8f, cTextoSec);
+            Font fTitOC     = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 14f, cBlanco);
+            Font fNroOC     = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 11f, cBlanco);
+            Font fFecOC     = FontFactory.GetFont(FontFactory.HELVETICA,       8f, cBlanco);
+            Font fSeccion   = FontFactory.GetFont(FontFactory.HELVETICA_BOLD,  9f, cBlanco);
+            Font fThead     = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 8.5f, cBlanco);
+            Font fTbody     = FontFactory.GetFont(FontFactory.HELVETICA,      8.5f, cTextoNeg);
+            Font fProvNom   = FontFactory.GetFont(FontFactory.HELVETICA_BOLD,  9f, cTextoNeg);
+            Font fProvDir   = FontFactory.GetFont(FontFactory.HELVETICA,      8.5f, cTextoNeg);
+
+            DataRow cab     = dt.Rows[0];
+            string nroOrden = cab["id"].ToString();
+            string fecha    = Convert.ToDateTime(cab["fecha"]).ToString("dd/MM/yyyy");
+            string proveedor = cab["nombreComercial"].ToString();
+            string dirProv   = cab["direccion"] != DBNull.Value ? cab["direccion"].ToString() : string.Empty;
+            decimal total    = cab["total"]    != DBNull.Value ? Convert.ToDecimal(cab["total"])    : 0m;
+            decimal iva      = cab["iva"]      != DBNull.Value ? Convert.ToDecimal(cab["iva"])      : 0m;
+            decimal recargo  = cab["recargo"]  != DBNull.Value ? Convert.ToDecimal(cab["recargo"])  : 0m;
+            decimal descuento= cab["descuento"]!= DBNull.Value ? Convert.ToDecimal(cab["descuento"]): 0m;
+
+            string fmtDec   = "N" + cantDec.ToString();
+            string fmtStock = "N" + cantStock.ToString();
+
+            string empNombre = Clases.ClassValidacion.traerEmpresa();
+            string empRazon  = Clases.ClassValidacion.traerRazonSocial();
+            string empDir    = Clases.ClassValidacion.traerEmpresaDireccion();
+            string empLocal  = Clases.ClassValidacion.traerEmpresaCiudad();
+            string empCuit   = Clases.ClassValidacion.traerEmpresaCuit();
+            string empTel    = Clases.ClassValidacion.traerEmpresaTelefono();
+
+            using (FileStream fs = new FileStream(path, FileMode.Create))
+            {
+                Document doc = new Document(PageSize.A4, 36, 36, 36, 36);
+                PdfWriter.GetInstance(doc, fs);
+                doc.Open();
+
+                // ══ HEADER: logo | empresa | bloque orden ═════════════════════
+                PdfPTable hdr = new PdfPTable(3);
+                hdr.WidthPercentage = 100;
+                hdr.SetWidths(new float[] { 1.5f, 4f, 2.5f });
+                hdr.SpacingAfter = 14f;
+
+                // Logo
+                PdfPCell logoCell;
+                if (cab["imagen"] != DBNull.Value)
+                {
+                    try
+                    {
+                        Image logo = Image.GetInstance((byte[])cab["imagen"]);
+                        logo.ScaleToFit(90, 55);
+                        logoCell = new PdfPCell(logo);
+                        logoCell.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                        logoCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                    }
+                    catch { logoCell = new PdfPCell(new Phrase("")); }
+                }
+                else { logoCell = new PdfPCell(new Phrase("")); }
+                logoCell.Border       = Rectangle.NO_BORDER;
+                logoCell.PaddingRight = 10f;
+                hdr.AddCell(logoCell);
+
+                // Datos empresa
+                Paragraph pEmp = new Paragraph();
+                pEmp.SetLeading(0f, 1.35f);
+                pEmp.Add(new Chunk(empNombre, fNombreEmp));
+                pEmp.Add(Chunk.NEWLINE);
+                if (!string.IsNullOrEmpty(empRazon))
+                    { pEmp.Add(new Chunk(empRazon, fDatosEmp)); pEmp.Add(Chunk.NEWLINE); }
+                if (!string.IsNullOrEmpty(empDir))
+                    { pEmp.Add(new Chunk(empDir, fDatosEmp)); pEmp.Add(Chunk.NEWLINE); }
+                if (!string.IsNullOrEmpty(empLocal))
+                    { pEmp.Add(new Chunk(empLocal, fDatosEmp)); pEmp.Add(Chunk.NEWLINE); }
+                if (!string.IsNullOrEmpty(empCuit))
+                    { pEmp.Add(new Chunk("CUIT: ", fDatosLbl)); pEmp.Add(new Chunk(empCuit, fDatosEmp)); pEmp.Add(Chunk.NEWLINE); }
+                if (!string.IsNullOrEmpty(empTel))
+                    { pEmp.Add(new Chunk("Tel: ", fDatosLbl));  pEmp.Add(new Chunk(empTel, fDatosEmp)); }
+
+                PdfPCell empCell = new PdfPCell(pEmp);
+                empCell.Border            = Rectangle.NO_BORDER;
+                empCell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                hdr.AddCell(empCell);
+
+                // Bloque azul: título + nro + fecha
+                PdfPTable ocBox = new PdfPTable(1);
+                ocBox.WidthPercentage = 100;
+
+                PdfPCell ocTitCell = new PdfPCell(new Phrase("ORDEN DE COMPRA", fTitOC));
+                ocTitCell.BackgroundColor     = cAzul;
+                ocTitCell.Border              = Rectangle.NO_BORDER;
+                ocTitCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                ocTitCell.PaddingTop          = 8f; ocTitCell.PaddingBottom = 4f;
+                ocBox.AddCell(ocTitCell);
+
+                PdfPCell ocNroCell = new PdfPCell(new Phrase("N°  " + nroOrden, fNroOC));
+                ocNroCell.BackgroundColor     = cAzul;
+                ocNroCell.Border              = Rectangle.NO_BORDER;
+                ocNroCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                ocNroCell.PaddingBottom       = 6f;
+                ocBox.AddCell(ocNroCell);
+
+                PdfPCell ocFecCell = new PdfPCell(new Phrase("Fecha:  " + fecha, fFecOC));
+                ocFecCell.BackgroundColor     = cAzulClaro;
+                ocFecCell.Border              = Rectangle.NO_BORDER;
+                ocFecCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                ocFecCell.PaddingTop          = 4f; ocFecCell.PaddingBottom = 4f;
+                ocBox.AddCell(ocFecCell);
+
+                PdfPCell ocBoxCell = new PdfPCell(ocBox);
+                ocBoxCell.Border      = Rectangle.NO_BORDER;
+                ocBoxCell.PaddingLeft = 10f;
+                hdr.AddCell(ocBoxCell);
+
+                doc.Add(hdr);
+
+                // ══ SECCIÓN PROVEEDOR ════════════════════════════════════════
+                PdfPTable secProv = new PdfPTable(1);
+                secProv.WidthPercentage = 100;
+                secProv.SpacingAfter = 10f;
+
+                PdfPCell secProvHdr = new PdfPCell(new Phrase("PROVEEDOR", fSeccion));
+                secProvHdr.BackgroundColor = cAzul;
+                secProvHdr.Border          = Rectangle.NO_BORDER;
+                secProvHdr.PaddingTop      = 4f; secProvHdr.PaddingBottom = 4f;
+                secProvHdr.PaddingLeft     = 8f;
+                secProv.AddCell(secProvHdr);
+
+                Paragraph pProv = new Paragraph();
+                pProv.SetLeading(0f, 1.35f);
+                pProv.Add(new Chunk(proveedor, fProvNom));
+                if (!string.IsNullOrEmpty(dirProv))
+                    { pProv.Add(Chunk.NEWLINE); pProv.Add(new Chunk(dirProv, fProvDir)); }
+
+                PdfPCell provCell = new PdfPCell(pProv);
+                provCell.BackgroundColor = cGrisFondo;
+                provCell.BorderColor     = cGrisBorde;
+                provCell.Border          = Rectangle.BOX;
+                provCell.PaddingTop      = 6f; provCell.PaddingBottom = 6f;
+                provCell.PaddingLeft     = 8f;
+                secProv.AddCell(provCell);
+
+                doc.Add(secProv);
+
+                // ══ TABLA DETALLE ════════════════════════════════════════════
+                // Cód.Prov | Descripción | Cantidad | P.Proveedor | Subtotal
+                PdfPTable det = new PdfPTable(5);
+                det.WidthPercentage = 100;
+                det.SetWidths(new float[] { 1.5f, 5f, 1.2f, 1.8f, 1.8f });
+                det.HeaderRows   = 1;
+                det.SpacingAfter = 0f;
+
+                string[] heads = { "Cód. Prov.", "Descripción", "Cantidad", "P. Proveedor", "Subtotal" };
+                for (int i = 0; i < heads.Length; i++)
+                {
+                    PdfPCell c = new PdfPCell(new Phrase(heads[i], fThead));
+                    c.BackgroundColor     = cAzul;
+                    c.Border              = Rectangle.NO_BORDER;
+                    c.HorizontalAlignment = i <= 1 ? Element.ALIGN_LEFT : Element.ALIGN_RIGHT;
+                    c.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                    c.NoWrap              = true;
+                    c.PaddingTop          = 5f; c.PaddingBottom = 5f;
+                    c.PaddingLeft         = 4f; c.PaddingRight  = 4f;
+                    det.AddCell(c);
+                }
+
+                int rowIdx = 0;
+                foreach (DataRow row in dt.Rows)
+                {
+                    decimal cantidad   = row["cantidad"]       != DBNull.Value ? Convert.ToDecimal(row["cantidad"])       : 0m;
+                    decimal precioProv = row["precioProveedor"]!= DBNull.Value ? Convert.ToDecimal(row["precioProveedor"]) : 0m;
+                    decimal subtotal   = row["subtotal"]       != DBNull.Value ? Convert.ToDecimal(row["subtotal"])       : 0m;
+
+                    BaseColor bg = (rowIdx % 2 == 0) ? cBlanco : cGrisFondo;
+
+                    Action<string, bool> addTxt = (txt, right) =>
+                    {
+                        PdfPCell c = new PdfPCell(new Phrase(txt, fTbody));
+                        c.BackgroundColor     = bg;
+                        c.BorderColor         = cGrisBorde;
+                        c.Border              = Rectangle.BOTTOM_BORDER;
+                        c.HorizontalAlignment = right ? Element.ALIGN_RIGHT : Element.ALIGN_LEFT;
+                        c.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                        c.PaddingTop          = 3f; c.PaddingBottom = 3f;
+                        c.PaddingLeft         = 4f; c.PaddingRight  = 4f;
+                        det.AddCell(c);
+                    };
+
+                    Action<decimal, string> addNum = (val, fmt) =>
+                    {
+                        PdfPCell c = new PdfPCell(new Phrase(val.ToString(fmt, culture), fTbody));
+                        c.BackgroundColor     = bg;
+                        c.BorderColor         = cGrisBorde;
+                        c.Border              = Rectangle.BOTTOM_BORDER;
+                        c.HorizontalAlignment = Element.ALIGN_RIGHT;
+                        c.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                        c.PaddingTop          = 3f; c.PaddingBottom = 3f;
+                        c.PaddingLeft         = 4f; c.PaddingRight  = 4f;
+                        det.AddCell(c);
+                    };
+
+                    addTxt(row["codProveedor"].ToString(), false);
+                    addTxt(row["descripcion"].ToString(),  false);
+                    addNum(cantidad,   fmtStock);
+                    addNum(precioProv, fmtDec);
+                    addNum(subtotal,   fmtDec);
+
+                    rowIdx++;
+                }
+
+                doc.Add(det);
+
+                // ══ TOTALES (alineado a la derecha, 45% del ancho) ═════════
+                Font fTotLbl  = FontFactory.GetFont(FontFactory.HELVETICA,      8.5f, cTextoNeg);
+                Font fTotBold = FontFactory.GetFont(FontFactory.HELVETICA_BOLD,  9f,  cBlanco);
+
+                PdfPTable totT = new PdfPTable(2);
+                totT.WidthPercentage      = 45;
+                totT.HorizontalAlignment  = Element.ALIGN_RIGHT;
+                totT.SetWidths(new float[] { 2.5f, 2f });
+                totT.KeepTogether   = true;
+                totT.SpacingBefore  = 0f;
+
+                Action<string, decimal, bool> addTot = (lbl, val, bold) =>
+                {
+                    Font fL = bold ? fTotBold : fTotLbl;
+                    Font fV = bold ? fTotBold : fTotLbl;
+                    BaseColor bg2 = bold ? cAzul : cGrisTotal;
+
+                    PdfPCell cL = new PdfPCell(new Phrase(lbl, fL));
+                    cL.BackgroundColor     = bg2;
+                    cL.Border              = Rectangle.NO_BORDER;
+                    cL.HorizontalAlignment = Element.ALIGN_LEFT;
+                    cL.PaddingTop          = bold ? 5f : 3f;
+                    cL.PaddingBottom       = bold ? 5f : 3f;
+                    cL.PaddingLeft         = 8f;
+                    totT.AddCell(cL);
+
+                    PdfPCell cV = new PdfPCell(new Phrase(val.ToString(fmtDec, culture), fV));
+                    cV.BackgroundColor     = bg2;
+                    cV.Border              = Rectangle.NO_BORDER;
+                    cV.HorizontalAlignment = Element.ALIGN_RIGHT;
+                    cV.PaddingTop          = bold ? 5f : 3f;
+                    cV.PaddingBottom       = bold ? 5f : 3f;
+                    cV.PaddingRight        = 8f;
+                    totT.AddCell(cV);
+                };
+
+                if (descuento != 0) addTot("Descuento:", descuento, false);
+                if (recargo   != 0) addTot("Recargo:",   recargo,   false);
+                if (iva       != 0) addTot("IVA:",       iva,       false);
+                addTot("TOTAL:", total, true);
+
+                doc.Add(totT);
+                doc.Close();
+            }
+
+            Process.Start(new ProcessStartInfo()
+            {
+                FileName = path,
+                UseShellExecute = true
+            });
+        }
+
+        // Header empresa repetido en cada página via PdfPageEventHelper.
+        // Reutilizado por reportes tipo listado (estadísticas de ventas, stock, lista de precios, productos a pedir, etc.).
+        private class EmpresaPageHeader : PdfPageEventHelper
+        {
+            private readonly byte[] _logoBytes;
+            private readonly string _empNombre, _empRazon, _empDir, _empLocal, _empCuit, _empTel;
+
+            public EmpresaPageHeader(byte[] logoBytes,
+                string empNombre, string empRazon, string empDir,
+                string empLocal, string empCuit, string empTel)
+            {
+                _logoBytes = logoBytes;
+                _empNombre = empNombre; _empRazon  = empRazon;
+                _empDir    = empDir;    _empLocal  = empLocal;
+                _empCuit   = empCuit;   _empTel    = empTel;
+            }
+
+            public override void OnEndPage(PdfWriter writer, Document document)
+            {
+                BaseColor cAzul     = new BaseColor(26, 58, 92);
+                BaseColor cTextoOsc = new BaseColor(44, 62, 80);
+                BaseColor cTextoSec = new BaseColor(85, 85, 85);
+
+                Font fNombre = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 13f, cAzul);
+                Font fRazon  = FontFactory.GetFont(FontFactory.HELVETICA,      8.5f, cTextoOsc);
+                Font fSub    = FontFactory.GetFont(FontFactory.HELVETICA,      7.5f, cTextoSec);
+                Font fSubLbl = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 7.5f, cTextoSec);
+
+                float usableWidth = document.PageSize.Width - document.LeftMargin - document.RightMargin;
+
+                PdfPTable hdr = new PdfPTable(2);
+                hdr.TotalWidth   = usableWidth;
+                hdr.LockedWidth  = true;
+                hdr.SetWidths(new float[] { 1.4f, 5f });
+
+                // Columna logo
+                PdfPCell logoCell;
+                if (_logoBytes != null)
+                {
+                    try
+                    {
+                        Image logo = Image.GetInstance(_logoBytes);
+                        logo.ScaleToFit(100, 50);
+                        logoCell = new PdfPCell(logo);
+                        logoCell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        logoCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                    }
+                    catch { logoCell = new PdfPCell(new Phrase("")); }
+                }
+                else { logoCell = new PdfPCell(new Phrase("")); }
+                logoCell.Border       = Rectangle.NO_BORDER;
+                logoCell.PaddingTop   = 5f;
+                logoCell.PaddingBottom = 5f;
+                logoCell.PaddingRight  = 16f;
+                hdr.AddCell(logoCell);
+
+                // Columna datos empresa
+                const string SEP = "   ·   ";
+                Paragraph p = new Paragraph();
+                p.SetLeading(0f, 1.32f);
+                p.Add(new Chunk(_empNombre, fNombre));
+                p.Add(Chunk.NEWLINE);
+                if (!string.IsNullOrEmpty(_empRazon))
+                {
+                    p.Add(new Chunk(_empRazon, fRazon));
+                    p.Add(Chunk.NEWLINE);
+                }
+                bool tieneDir   = !string.IsNullOrEmpty(_empDir);
+                bool tieneLocal = !string.IsNullOrEmpty(_empLocal);
+                if (tieneDir || tieneLocal)
+                {
+                    if (tieneDir)             p.Add(new Chunk(_empDir,   fSub));
+                    if (tieneDir && tieneLocal) p.Add(new Chunk(SEP,     fSub));
+                    if (tieneLocal)           p.Add(new Chunk(_empLocal, fSub));
+                    p.Add(Chunk.NEWLINE);
+                }
+                bool tieneCuit = !string.IsNullOrEmpty(_empCuit);
+                bool tieneTel  = !string.IsNullOrEmpty(_empTel);
+                if (tieneCuit || tieneTel)
+                {
+                    if (tieneCuit) { p.Add(new Chunk("CUIT: ", fSubLbl)); p.Add(new Chunk(_empCuit, fSub)); }
+                    if (tieneCuit && tieneTel) p.Add(new Chunk(SEP, fSub));
+                    if (tieneTel)  { p.Add(new Chunk("Tel: ",  fSubLbl)); p.Add(new Chunk(_empTel,  fSub)); }
+                }
+
+                PdfPCell datosCell = new PdfPCell(p);
+                datosCell.Border            = Rectangle.NO_BORDER;
+                datosCell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                datosCell.PaddingLeft       = 8f;
+                datosCell.PaddingTop        = 5f;
+                datosCell.PaddingBottom     = 5f;
+                hdr.AddCell(datosCell);
+
+                // Dibujar la tabla en la zona del margen superior (fuera del flujo del documento)
+                float startY = document.PageSize.Height - 8f;
+                hdr.WriteSelectedRows(0, -1, document.LeftMargin, startY, writer.DirectContent);
+
+                // Línea azul separadora justo debajo del header
+                float lineY = startY - hdr.TotalHeight - 2f;
+                PdfContentByte cb = writer.DirectContent;
+                cb.SaveState();
+                cb.SetLineWidth(2f);
+                cb.SetColorStroke(cAzul);
+                cb.MoveTo(document.LeftMargin, lineY);
+                cb.LineTo(document.PageSize.Width - document.RightMargin, lineY);
+                cb.Stroke();
+                cb.RestoreState();
+            }
+        }
+
     }
 }

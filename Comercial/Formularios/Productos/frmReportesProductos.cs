@@ -21,44 +21,26 @@ namespace Comercial.Formularios.Productos
 
         private void btnImprimir_Click(object sender, EventArgs e)
         {
-            Reportes.frmReport unFrmReport = new Reportes.frmReport();
-            unFrmReport.nombreReporte = "ReportListaDePreciosPorRubro.rdlc";
-            List<string> var = new List<string>();
             string filtro = string.Empty;
-            if (cbRubro .Checked )
+            if (cbRubro.Checked)
             {
                 filtro = " where p.fk_rubro = " + cboRubro.SelectedValue.ToString();
             }
-            if (cbProveedor .Checked )
+            if (cbProveedor.Checked)
             {
-                if (cbRubro .Checked )
-                {
+                if (cbRubro.Checked)
                     filtro += " and p.fk_proveedor = " + cboProveedor.SelectedValue.ToString();
-                }
                 else
-                {
                     filtro = " where p.fk_proveedor = " + cboProveedor.SelectedValue.ToString();
-                }
             }
 
-            if (filtro == string .Empty )
-            {
+            if (filtro == string.Empty)
                 filtro = " where p.baja = 0 ";
-            }
             else
-            {
                 filtro += " and p.baja = 0";
-            }
 
-            
-            var.Add(filtro );
-            var.Add(Clases.ClassValidacion.traerEmpresa());
-            var.Add("Tel: " + Clases.ClassValidacion.traerEmpresaTelefono());
-            var.Add(Clases.ClassValidacion.traerEmpresaDireccion());
-            var.Add(Clases.ClassValidacion.traerEmpresaCiudad());
-            var.Add(cantDec.ToString());
-            unFrmReport.variable = var;
-            unFrmReport.ShowDialog();
+            var instReportes = new Clases.ClassReportesITextSharp();
+            instReportes.GenerarListaPreciosPDF(filtro, cantDec);
         }
 
         private void frmReportesProductos_Load(object sender, EventArgs e)

@@ -21,17 +21,8 @@ namespace Comercial.Formularios.Productos
 
         private void btnImprimir_Click(object sender, EventArgs e)
         {
-            Clases.ClassConfiguracion instConfig = new Clases.ClassConfiguracion ();
-            Reportes.frmReport unFrmReport = new Reportes.frmReport();
-            unFrmReport.nombreReporte = "ReportProductosStock.rdlc";
-            List<string> var = new List<string>();
-            var.Add(obtenerFiltro ());
-            var.Add(Clases.ClassValidacion.traerEmpresa());
-            var.Add(cantDec.ToString());
-            var.Add(cantStock.ToString());
-            unFrmReport.variable = var;
-            unFrmReport.ShowDialog();
-
+            var instReportes = new Clases.ClassReportesITextSharp();
+            instReportes.GenerarStockPDF(obtenerFiltro(), cantDec, cantStock);
         }
 
         private string obtenerFiltro ()

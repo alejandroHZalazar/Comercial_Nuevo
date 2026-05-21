@@ -122,26 +122,18 @@ namespace Comercial.Formularios.Ventas
 
         private void btnImprimir_Click(object sender, EventArgs e)
         {
-            if (dgvOrden .Rows.Count > 0)
-            {
-                Reportes.frmReport unFrmReport = new Reportes.frmReport();
+            if (dgvOrden.Rows.Count == 0 || dgvOrden.CurrentRow == null) return;
 
-                unFrmReport.nombreReporte = "ReportPedidos.rdlc";
-                List<string> var = new List<string>();
-                var.Add(dgvOrden .CurrentRow .Cells["id"].Value .ToString () );
-                var.Add(Clases.ClassValidacion.traerEmpresa());
-                var.Add("Tel: " + Clases.ClassValidacion.traerEmpresaTelefono());
-                var.Add(Clases.ClassValidacion.traerEmpresaDireccion());
-                var.Add(Clases.ClassValidacion.traerEmpresaCiudad());
-                var.Add(dgvOrden.CurrentRow.Cells["Cliente"].Value.ToString());
-                var.Add(cantDec.ToString());
-                var.Add(cantStock.ToString());
-                var.Add(lblDir.Text + ". " + lblLocalidad.Text + ". " + lblProv.Text);
-                var.Add(lblTel .Text );
-                unFrmReport.variable = var;
-                unFrmReport.ShowDialog();
-                instPedidos.marcarPedido(int.Parse(dgvOrden.CurrentRow.Cells["id"].Value.ToString()), 2);
-            }
+            int idPedido  = int.Parse(dgvOrden.CurrentRow.Cells["id"].Value.ToString());
+            int idCliente = int.Parse(dgvOrden.CurrentRow.Cells["fk_cliente"].Value.ToString());
+
+            // Reemplaza ReportViewer (ReportPedidos.rdlc) por PDF visualmente
+            // equivalente al reporte web (ReportePedidos/Imprimir). El SP usado
+            // sigue siendo sp_PedidosPrintPedido(unPedido).
+            var instReportes = new Clases.ClassReportesITextSharp();
+            instReportes.GenerarPedidoPDF(idPedido, idCliente);
+
+            instPedidos.marcarPedido(idPedido, 2);
         }
     }
 }
