@@ -211,8 +211,16 @@ namespace Comercial.Formularios
 
         private void venderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Ventas.frmVentas unFrmVentas = new Ventas.frmVentas();
-            unFrmVentas.ShowDialog();
+            if (Clases.ClassParametros.buscarParametro("empresa", "esMinorista") == "1")
+            {
+                Ventas.frmVentasMinorista unFrm = new Ventas.frmVentasMinorista();
+                unFrm.ShowDialog();
+            }
+            else
+            {
+                Ventas.frmVentas unFrmVentas = new Ventas.frmVentas();
+                unFrmVentas.ShowDialog();
+            }
         }
 
         private void altaMasivaDeProductosToolStripMenuItem_Click(object sender, EventArgs e)

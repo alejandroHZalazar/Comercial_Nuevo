@@ -9,7 +9,8 @@ namespace Comercial.Clases
 {
     class classDatos
     {
-        MySqlConnection miCOnexion = new MySqlConnection("Server=72.61.47.240;Database=ale;User ID=remoto;Password=0315061;SslMode=None;AllowPublicKeyRetrieval=True;");
+        MySqlConnection miCOnexion = new MySqlConnection("Server=72.61.47.240;Database=ale" +
+            ";User ID=remoto;Password=0315061;SslMode=None;AllowPublicKeyRetrieval=True;");
         
         public MySqlConnection abrirConexion()
         {

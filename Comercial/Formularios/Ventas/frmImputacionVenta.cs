@@ -14,6 +14,7 @@ namespace Comercial.Formularios.Ventas
         private readonly decimal _total;
         private readonly int     _defaultPlanId;
         private readonly bool    _llevaCC;
+        private readonly bool    _esMinorista;
 
         private DataTable _planes;          // cols: Nro, Nombre, Recargo
         private int?      _planSelId;
@@ -42,12 +43,19 @@ namespace Comercial.Formularios.Ventas
         private bool    _planSelNecesitaDatos;
         // dgvFormasPago y btnCobrar vienen del Designer
 
+        // ── Controles de vuelto (solo kiosco) ──────────────────────────────
+        private Label   _lblMontoRecibidoLbl;
+        private TextBox _txtMontoRecibido;
+        private Label   _lblVueltoLbl;
+        private Label   _lblVuelto;
+
         // ── Constructor ─────────────────────────────────────────────────────
         public frmImputacionVenta(decimal total, int plan, int llevaCC = 0)
         {
             _total         = total;
             _defaultPlanId = plan;
             _llevaCC       = llevaCC == 1;
+            _esMinorista   = Clases.ClassParametros.buscarParametro("empresa", "esMinorista") == "1";
             InitializeComponent();
         }
 
@@ -234,6 +242,62 @@ namespace Comercial.Formularios.Ventas
             {
                 btnCobrar.Location = new Point(200, 420);
                 btnCobrar.Size     = new Size(518, 44);
+            }
+
+            // ── Sección VUELTO (solo en modo kiosco / esMinorista=1) ─────────
+            if (_esMinorista)
+            {
+                // Ampliar form para dar espacio al vuelto
+                this.ClientSize = new Size(730, 540);
+
+                _lblMontoRecibidoLbl = new Label
+                {
+                    Text     = "Monto recibido:",
+                    Font     = new Font("Segoe UI", 10f),
+                    Location = new Point(12, 490),
+                    AutoSize = true
+                };
+                _txtMontoRecibido = new TextBox
+                {
+                    Font      = new Font("Segoe UI", 12f, FontStyle.Bold),
+                    Location  = new Point(150, 486),
+                    Size      = new Size(130, 28),
+                    TextAlign = HorizontalAlignment.Right
+                };
+                _lblVueltoLbl = new Label
+                {
+                    Text     = "Vuelto:",
+                    Font     = new Font("Segoe UI", 10f),
+                    Location = new Point(300, 490),
+                    AutoSize = true
+                };
+                _lblVuelto = new Label
+                {
+                    Text      = "$0,00",
+                    Font      = new Font("Segoe UI", 14f, FontStyle.Bold),
+                    ForeColor = Color.DarkGreen,
+                    Location  = new Point(360, 484),
+                    AutoSize  = true
+                };
+
+                _txtMontoRecibido.TextChanged += (s, ev) =>
+                {
+                    string raw = _txtMontoRecibido.Text.Trim().Replace('.', ',');
+                    if (decimal.TryParse(raw, NumberStyles.Any,
+                            new CultureInfo("es-AR"), out decimal recibido))
+                    {
+                        decimal vuelto = recibido - _total;
+                        _lblVuelto.Text = vuelto >= 0
+                            ? vuelto.ToString("C", new CultureInfo("es-AR"))
+                            : "Falta: " + Math.Abs(vuelto).ToString("C", new CultureInfo("es-AR"));
+                        _lblVuelto.ForeColor = vuelto >= 0 ? Color.DarkGreen : Color.DarkRed;
+                    }
+                };
+
+                Controls.Add(_lblMontoRecibidoLbl);
+                Controls.Add(_txtMontoRecibido);
+                Controls.Add(_lblVueltoLbl);
+                Controls.Add(_lblVuelto);
             }
 
             // — Agregar controles —

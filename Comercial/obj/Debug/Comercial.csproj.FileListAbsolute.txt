@@ -282,4 +282,6 @@ C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Ventas.frmAvisoPromociones.resources
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.csproj.AssemblyReference.cache
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Productos.frmPickProducto.resources
-C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.csproj.Up2Date
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\RdlCompile.cache
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\RdlCompile.compiled
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.csproj.CopyComplete

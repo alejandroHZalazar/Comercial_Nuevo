@@ -1521,7 +1521,8 @@ namespace Comercial.Clases
 
             string path = Path.Combine(downloads, $"Pedido_{unPedido}_{DateTime.Now:ddMMyyyy_HHmmss}.pdf");
 
-            var culture = new CultureInfo("es-AR");
+            var culture   = new CultureInfo("es-AR");
+            int cantStock = Clases.ClassProductos.cantDecimalesStock();
 
             // ─── Paleta (matchea CSS web) ───────────────────────────────────
             BaseColor cAzul       = new BaseColor(26, 58, 92);     // #1a3a5c
@@ -1768,20 +1769,20 @@ namespace Comercial.Clases
                 // ═════════════════════════════════════════════════════════════
                 // TABLA DETALLE
                 // ═════════════════════════════════════════════════════════════
-                PdfPTable det = new PdfPTable(7);
+                // Columnas: Cód.Prov | Cód.Barras | Descripción | Stock | Cantidad | Subtotal
+                PdfPTable det = new PdfPTable(6);
                 det.WidthPercentage = 100;
-                // Anchos optimizados para que cada header entre completo: Precio s/IVA, Subt. s/IVA, Desc/Rec %
-                det.SetWidths(new float[] { 3.8f, 1.2f, 1.6f, 1.5f, 1.6f, 1.2f, 1.6f });
+                det.SetWidths(new float[] { 1.3f, 2.0f, 3.8f, 1.0f, 1.0f, 1.6f });
 
-                string[] heads = { "Descripcion", "Cantidad", "Precio s/IVA", "Desc/Rec %", "Subt. s/IVA", "IVA", "Subtotal" };
+                string[] heads = { "Cód. Prov.", "Cód. Barras", "Descripción", "Stock", "Cantidad", "Subtotal" };
                 for (int i = 0; i < heads.Length; i++)
                 {
                     PdfPCell c = new PdfPCell(new Phrase(heads[i], fThead));
                     c.BackgroundColor = cAzul;
                     c.Border = Rectangle.NO_BORDER;
-                    c.HorizontalAlignment = i == 0 ? Element.ALIGN_LEFT : Element.ALIGN_RIGHT;
+                    c.HorizontalAlignment = i <= 2 ? Element.ALIGN_LEFT : Element.ALIGN_RIGHT;
                     c.VerticalAlignment   = Element.ALIGN_MIDDLE;
-                    c.NoWrap = true; // forzar que el header no se corte
+                    c.NoWrap = true;
                     c.PaddingTop = 5f; c.PaddingBottom = 5f;
                     c.PaddingLeft = 3f; c.PaddingRight = 3f;
                     det.AddCell(c);
@@ -1820,6 +1821,30 @@ namespace Comercial.Clases
 
                     BaseColor bgFila = (idx % 2 == 0) ? cBlanco : cGrisFondo;
 
+                    // Helpers de celda
+                    Action<string, Font, bool> addCell = (txt, fnt, right) =>
+                    {
+                        PdfPCell c = new PdfPCell(new Phrase(txt, fnt));
+                        c.BackgroundColor     = bgFila;
+                        c.BorderColor         = cGrisBorde;
+                        c.Border              = Rectangle.BOTTOM_BORDER;
+                        c.HorizontalAlignment = right ? Element.ALIGN_RIGHT : Element.ALIGN_LEFT;
+                        c.VerticalAlignment   = Element.ALIGN_MIDDLE;
+                        c.PaddingTop = 3f; c.PaddingBottom = 3f;
+                        c.PaddingLeft = 3f; c.PaddingRight = 3f;
+                        det.AddCell(c);
+                    };
+
+                    // Cód. Prov.
+                    string codProv  = l.Table.Columns.Contains("Cod_Proveedor") && l["Cod_Proveedor"] != DBNull.Value
+                                      ? l["Cod_Proveedor"].ToString() : "";
+                    addCell(codProv, fTbody, false);
+
+                    // Cód. Barras
+                    string codBarras = l.Table.Columns.Contains("Cod_Barras") && l["Cod_Barras"] != DBNull.Value
+                                       ? l["Cod_Barras"].ToString() : "";
+                    addCell(codBarras, fTbody, false);
+
                     // Descripción (con observ debajo, gris pequeño)
                     string desc = l["Descripcion"].ToString();
                     string obs  = l.Table.Columns.Contains("Observ") ? l["Observ"].ToString() : "";
@@ -1832,37 +1857,22 @@ namespace Comercial.Clases
                     }
                     PdfPCell cDesc = new PdfPCell(pDesc);
                     cDesc.BackgroundColor = bgFila;
-                    cDesc.BorderColor = cGrisBorde;
-                    cDesc.Border = Rectangle.BOTTOM_BORDER;
+                    cDesc.BorderColor     = cGrisBorde;
+                    cDesc.Border          = Rectangle.BOTTOM_BORDER;
                     cDesc.PaddingTop = 3f; cDesc.PaddingBottom = 3f;
                     cDesc.PaddingLeft = 4f; cDesc.PaddingRight = 3f;
                     det.AddCell(cDesc);
 
-                    Action<string, Font> addNum = (txt, fnt) =>
-                    {
-                        PdfPCell c = new PdfPCell(new Phrase(txt, fnt));
-                        c.BackgroundColor = bgFila;
-                        c.BorderColor = cGrisBorde;
-                        c.Border = Rectangle.BOTTOM_BORDER;
-                        c.HorizontalAlignment = Element.ALIGN_RIGHT;
-                        c.VerticalAlignment   = Element.ALIGN_MIDDLE;
-                        c.PaddingTop = 3f; c.PaddingBottom = 3f;
-                        c.PaddingLeft = 3f; c.PaddingRight = 3f;
-                        det.AddCell(c);
-                    };
+                    // Stock
+                    decimal stock = l.Table.Columns.Contains("Stock") && l["Stock"] != DBNull.Value
+                                    ? Convert.ToDecimal(l["Stock"]) : 0m;
+                    addCell(stock.ToString("N" + cantStock, culture), fTbody, true);
 
-                    addNum(cant.ToString("N2", culture), fTbody);
-                    addNum("$" + precioSIva.ToString("N2", culture), fTbody);
+                    // Cantidad
+                    addCell(cant.ToString("N2", culture), fTbody, true);
 
-                    // Desc/Rec con color condicional (rojo si negativo, verde si positivo)
-                    Font fDr = descRecPct < 0 ? FontFactory.GetFont(FontFactory.HELVETICA, 9, cRojo)
-                             : descRecPct > 0 ? FontFactory.GetFont(FontFactory.HELVETICA, 9, cVerde)
-                             : fTbody;
-                    addNum(descRecPct.ToString("N2", culture) + "%", fDr);
-
-                    addNum("$" + (subSIva * cant).ToString("N2", culture), fTbody);
-                    addNum("$" + ((conIva - subSIva) * cant).ToString("N2", culture), fTbody);
-                    addNum("$" + (conIva * cant).ToString("N2", culture), fTbodyBold);
+                    // Subtotal (precio con IVA × cantidad — misma lógica que antes)
+                    addCell("$" + (conIva * cant).ToString("N2", culture), fTbodyBold, true);
 
                     idx++;
                 }
