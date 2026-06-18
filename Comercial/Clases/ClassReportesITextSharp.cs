@@ -1550,7 +1550,7 @@ namespace Comercial.Clases
             // Tabla detalle: tipografía reducida para que entren los headers ("Precio s/IVA", "Subt. s/IVA", etc.)
             Font fThead      = FontFactory.GetFont(FontFactory.HELVETICA_BOLD,  7.5f, cBlanco);
             Font fTbody      = FontFactory.GetFont(FontFactory.HELVETICA,       7.5f, cTextoNeg);
-            Font fTbodySmall = FontFactory.GetFont(FontFactory.HELVETICA,       6.5f, new BaseColor(136, 136, 136));
+            Font fTbodySmall = FontFactory.GetFont(FontFactory.HELVETICA_OBLIQUE, 6.5f, cRojo);
             Font fTbodyBold  = FontFactory.GetFont(FontFactory.HELVETICA_BOLD,  7.5f, cTextoNeg);
             Font fTotLab     = FontFactory.GetFont(FontFactory.HELVETICA,       9, cTextoNeg);
             Font fTotVal     = FontFactory.GetFont(FontFactory.HELVETICA,       9, cTextoNeg);

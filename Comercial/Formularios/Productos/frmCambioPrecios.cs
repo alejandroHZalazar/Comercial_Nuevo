@@ -249,6 +249,8 @@ namespace Comercial.Formularios.Productos
 
             dgvProductos.DataSource = instProd.traeParaCambiarPrecio(unFiltro);
 
+            dgvProductos.Columns["fk_proveedor"].Visible = false;
+
             // Aplicar editabilidad de columnas según el modo activo
             aplicarEditabilidadColumnasModo();
 
@@ -340,7 +342,7 @@ namespace Comercial.Formularios.Productos
                         instProd.actualziarMasivaPrecios(
                             fila.Cells["Cod_Prov"].Value.ToString(),
                             decimal.Parse(fila.Cells["P_Prov_M"].Value.ToString()),
-                            "", "", 0);
+                            "", "", (int)fila.Cells["fk_proveedor"].Value);
                         rtbObserv.Text += System.Environment.NewLine +
                             "[" + DateTime.Now + "] Procesado Prod: " + fila.Cells["Cod_Prov"].Value;
                     }

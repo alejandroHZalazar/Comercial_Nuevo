@@ -475,7 +475,7 @@
             // 
             this.lblCliente.FormattingEnabled = true;
             this.lblCliente.ItemHeight = 15;
-            this.lblCliente.Location = new System.Drawing.Point(-9, 22);
+            this.lblCliente.Location = new System.Drawing.Point(66, 37);
             this.lblCliente.Name = "lblCliente";
             this.lblCliente.Size = new System.Drawing.Size(436, 169);
             this.lblCliente.TabIndex = 5;
@@ -659,7 +659,6 @@
             this.groupBox1.Controls.Add(this.lblDir);
             this.groupBox1.Controls.Add(this.label12);
             this.groupBox1.Controls.Add(this.lblTel);
-            this.groupBox1.Controls.Add(this.lblCliente);
             this.groupBox1.Controls.Add(this.label13);
             this.groupBox1.Controls.Add(this.label14);
             this.groupBox1.Controls.Add(this.lblClienteNombre);
@@ -996,6 +995,7 @@
             this.Controls.Add(this.label20);
             this.Controls.Add(this.txtIVA);
             this.Controls.Add(this.label19);
+            this.Controls.Add(this.lblCliente);
             this.Controls.Add(this.cboIngBrutos);
             this.Controls.Add(this.label18);
             this.Controls.Add(this.nudComision);

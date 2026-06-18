@@ -724,7 +724,8 @@ namespace Comercial.Formularios.Ventas
             bool enCampoTexto = _txtImporte.Focused
                              || _txtDato1.Focused
                              || _txtDato2.Focused
-                             || _txtDato3.Focused;
+                             || _txtDato3.Focused
+                             || (_txtMontoRecibido != null && _txtMontoRecibido.Focused);
 
             // 1-9 (teclado superior) → seleccionar plan
             if (keyData >= Keys.D1 && keyData <= Keys.D9 && !enCampoTexto)

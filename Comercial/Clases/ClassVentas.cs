@@ -179,7 +179,7 @@ namespace Comercial.Clases
                 cmd.Parameters.AddWithValue("unVendedor", unVendedor);
                 cmd.Parameters.AddWithValue("unaComision", unaComision);
                 cmd.Parameters.AddWithValue("unImpuesto", unImpuesto);
-                cmd.Parameters.AddWithValue("detalle", unDetalle);
+                cmd.Parameters.Add(new MySqlParameter("detalle", MySqlDbType.LongText) { Value = unDetalle });
                 cmd.Parameters.AddWithValue("llevaCC", unLlevaCC);
                 cmd.Parameters.AddWithValue("haceCaja", haceCaja);
                 cmd.Parameters.AddWithValue("CajaId", cajaId);
@@ -237,8 +237,7 @@ namespace Comercial.Clases
                 cmd.CommandText = "sp_VentasAddDetalle";
 
                 cmd.Parameters.AddWithValue("unaVenta", unaVenta);
-                cmd.Parameters.AddWithValue("detalle", unDetalle );
-                
+                cmd.Parameters.Add(new MySqlParameter("detalle", MySqlDbType.LongText) { Value = unDetalle });
 
                 MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int64);
                 salida.Direction = ParameterDirection.Output;
@@ -268,7 +267,7 @@ namespace Comercial.Clases
                 cmd.CommandText = "sp_DevolucionAddDetalle";
                 cmd.CommandTimeout = 0;
                 cmd.Parameters.AddWithValue("unaDevolucion", unaDevolucion);
-                cmd.Parameters.AddWithValue("detalle", unDetalle);
+                cmd.Parameters.Add(new MySqlParameter("detalle", MySqlDbType.LongText) { Value = unDetalle });
 
 
                 MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int64);
@@ -319,7 +318,7 @@ namespace Comercial.Clases
                 cmd.Parameters.AddWithValue("unaComision", comision);
                 cmd.Parameters.AddWithValue("unImpuesto", unImpuesto);
                 cmd.Parameters.AddWithValue("llevaCC", llevaCC);
-                cmd.Parameters.AddWithValue("detalle", unDetalle);
+                cmd.Parameters.Add(new MySqlParameter("detalle", MySqlDbType.LongText) { Value = unDetalle });
                 cmd.Parameters.AddWithValue("detallePlanPago", DetallePlanPago);
                 cmd.Parameters.AddWithValue("imputaEnVenta", imputaEnVenta);
                 cmd.Parameters.AddWithValue("tieneMediosPagos", tieneMediosPagos);
