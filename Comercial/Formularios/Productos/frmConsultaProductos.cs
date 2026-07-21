@@ -42,7 +42,62 @@ namespace Comercial.Formularios.Productos
             lblCosto.Text = string.Empty;
             lblStock.Text = string.Empty;
             lblPProveedor.Text = string.Empty;
-            txtFiltro.Focus();            
+            ocultarPreciosPorProducto();
+            txtFiltro.Focus();
+        }
+
+        // Oculta los controles de ganancia/descuento por producto y limpia sus valores.
+        private void ocultarPreciosPorProducto()
+        {
+            lblGananciaCaption.Visible = false;
+            lblGanancia.Visible = false;
+            lblDescuentoCaption.Visible = false;
+            lblDescuento.Visible = false;
+            lblGanancia.Text = string.Empty;
+            lblDescuento.Text = string.Empty;
+        }
+
+        /// <summary>
+        /// Muestra los porcentajes ganancia/descuento SOLO cuando el proveedor del
+        /// producto tiene preciosPorProducto = 1. Si es 0/NULL, los controles quedan
+        /// ocultos y se mantiene el comportamiento actual del formulario.
+        /// </summary>
+        private void actualizarPreciosPorProducto(int idProducto)
+        {
+            bool mostrar = false;
+            try
+            {
+                DataTable cfg = instProd.traerConfigPreciosPorProducto(idProducto);
+                if (cfg.Rows.Count > 0)
+                {
+                    object ppp = cfg.Rows[0]["preciosPorProducto"];
+                    mostrar = ppp != DBNull.Value && Convert.ToInt32(ppp) == 1;
+
+                    if (mostrar)
+                    {
+                        object g = cfg.Rows[0]["ganancia"];
+                        object d = cfg.Rows[0]["descuento"];
+                        lblGanancia.Text  = g == DBNull.Value ? "0" : Math.Round(Convert.ToDecimal(g), cantDec).ToString();
+                        lblDescuento.Text = d == DBNull.Value ? "0" : Math.Round(Convert.ToDecimal(d), cantDec).ToString();
+                    }
+                }
+            }
+            catch
+            {
+                mostrar = false;
+            }
+
+            if (mostrar)
+            {
+                lblGananciaCaption.Visible = true;
+                lblGanancia.Visible = true;
+                lblDescuentoCaption.Visible = true;
+                lblDescuento.Visible = true;
+            }
+            else
+            {
+                ocultarPreciosPorProducto();
+            }
         }
 
         private void btnBuscar_Click(object sender, EventArgs e)
@@ -165,6 +220,8 @@ namespace Comercial.Formularios.Productos
                 lblCosto.Text = (Math.Round(decimal.Parse(Prod.Rows[0]["costo"].ToString()), cantDec)).ToString();
                 lblStock .Text = (Math.Round(decimal.Parse(Prod.Rows[0]["cantidad"].ToString()), cantStock)).ToString();
                 lblPProveedor .Text = (Math.Round(decimal.Parse(Prod.Rows[0]["P_Proveedor"].ToString()), cantDec)).ToString();
+
+                actualizarPreciosPorProducto(int.Parse(dgvProductos.CurrentRow.Cells["ID"].Value.ToString()));
             }
         }
     }

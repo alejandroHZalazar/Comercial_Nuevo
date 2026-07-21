@@ -49,6 +49,7 @@
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.label8 = new System.Windows.Forms.Label();
             this.nudDescuento = new System.Windows.Forms.NumericUpDown();
+            this.chkPreciosPorProducto = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudGanancia)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDescuento)).BeginInit();
@@ -191,7 +192,7 @@
             this.btnCancelar.BackColor = System.Drawing.Color.Silver;
             this.btnCancelar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCancelar.Image = global::Comercial.Properties.Resources.back_arrow;
-            this.btnCancelar.Location = new System.Drawing.Point(252, 301);
+            this.btnCancelar.Location = new System.Drawing.Point(252, 335);
             this.btnCancelar.Name = "btnCancelar";
             this.btnCancelar.Size = new System.Drawing.Size(111, 35);
             this.btnCancelar.TabIndex = 9;
@@ -205,7 +206,7 @@
             this.btnGrabar.BackColor = System.Drawing.Color.Silver;
             this.btnGrabar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnGrabar.Image = global::Comercial.Properties.Resources.save__1_;
-            this.btnGrabar.Location = new System.Drawing.Point(103, 301);
+            this.btnGrabar.Location = new System.Drawing.Point(103, 335);
             this.btnGrabar.Name = "btnGrabar";
             this.btnGrabar.Size = new System.Drawing.Size(111, 35);
             this.btnGrabar.TabIndex = 8;
@@ -235,13 +236,24 @@
             this.nudDescuento.Size = new System.Drawing.Size(69, 23);
             this.nudDescuento.TabIndex = 7;
             this.nudDescuento.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nudDescuento_KeyPress);
-            // 
+            //
+            // chkPreciosPorProducto
+            //
+            this.chkPreciosPorProducto.AutoSize = true;
+            this.chkPreciosPorProducto.Location = new System.Drawing.Point(12, 292);
+            this.chkPreciosPorProducto.Name = "chkPreciosPorProducto";
+            this.chkPreciosPorProducto.Size = new System.Drawing.Size(215, 19);
+            this.chkPreciosPorProducto.TabIndex = 10;
+            this.chkPreciosPorProducto.Text = "Administrar precios por producto";
+            this.chkPreciosPorProducto.UseVisualStyleBackColor = true;
+            //
             // frmAltaModifProveedores
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(375, 348);
+            this.ClientSize = new System.Drawing.Size(375, 386);
+            this.Controls.Add(this.chkPreciosPorProducto);
             this.Controls.Add(this.nudDescuento);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.btnCancelar);
@@ -299,5 +311,6 @@
         private System.Windows.Forms.ErrorProvider errorProvider1;
         private System.Windows.Forms.NumericUpDown nudDescuento;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.CheckBox chkPreciosPorProducto;
     }
 }

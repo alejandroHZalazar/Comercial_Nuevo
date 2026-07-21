@@ -68,8 +68,11 @@
             this.dgvProveedores.Name = "dgvProveedores";
             this.dgvProveedores.ReadOnly = true;
             this.dgvProveedores.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvProveedores.Size = new System.Drawing.Size(474, 399);
+            this.dgvProveedores.Size = new System.Drawing.Size(500, 520);
             this.dgvProveedores.TabIndex = 0;
+            this.dgvProveedores.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvProveedores.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvProveedores_CellEnter);
             // 
             // btnEliminar
@@ -77,10 +80,11 @@
             this.btnEliminar.BackColor = System.Drawing.Color.Silver;
             this.btnEliminar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEliminar.Image = global::Comercial.Properties.Resources.rubbish_bin__1_;
-            this.btnEliminar.Location = new System.Drawing.Point(249, 418);
+            this.btnEliminar.Location = new System.Drawing.Point(249, 545);
             this.btnEliminar.Name = "btnEliminar";
             this.btnEliminar.Size = new System.Drawing.Size(110, 34);
             this.btnEliminar.TabIndex = 3;
+            this.btnEliminar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnEliminar.Text = "Eliminar [F4]";
             this.btnEliminar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnEliminar.UseVisualStyleBackColor = false;
@@ -91,10 +95,11 @@
             this.btnEditar.BackColor = System.Drawing.Color.Silver;
             this.btnEditar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEditar.Image = global::Comercial.Properties.Resources.pencil_edit_button__1_;
-            this.btnEditar.Location = new System.Drawing.Point(131, 418);
+            this.btnEditar.Location = new System.Drawing.Point(131, 545);
             this.btnEditar.Name = "btnEditar";
             this.btnEditar.Size = new System.Drawing.Size(110, 34);
             this.btnEditar.TabIndex = 2;
+            this.btnEditar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnEditar.Text = " Editar [F3]";
             this.btnEditar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnEditar.UseVisualStyleBackColor = false;
@@ -105,10 +110,11 @@
             this.btnAgregar.BackColor = System.Drawing.Color.Silver;
             this.btnAgregar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAgregar.Image = global::Comercial.Properties.Resources.plus;
-            this.btnAgregar.Location = new System.Drawing.Point(13, 418);
+            this.btnAgregar.Location = new System.Drawing.Point(13, 545);
             this.btnAgregar.Name = "btnAgregar";
             this.btnAgregar.Size = new System.Drawing.Size(110, 34);
             this.btnAgregar.TabIndex = 1;
+            this.btnAgregar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnAgregar.Text = "Agregar [F2]";
             this.btnAgregar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnAgregar.UseVisualStyleBackColor = false;
@@ -135,10 +141,11 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.lblId);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Location = new System.Drawing.Point(493, 13);
+            this.groupBox1.Location = new System.Drawing.Point(525, 13);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(328, 299);
             this.groupBox1.TabIndex = 11;
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Datos Proveedores";
             // 
@@ -318,10 +325,11 @@
             this.btnResumenPagoProveedores.BackColor = System.Drawing.Color.Silver;
             this.btnResumenPagoProveedores.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnResumenPagoProveedores.Image = ((System.Drawing.Image)(resources.GetObject("btnResumenPagoProveedores.Image")));
-            this.btnResumenPagoProveedores.Location = new System.Drawing.Point(654, 327);
+            this.btnResumenPagoProveedores.Location = new System.Drawing.Point(686, 327);
             this.btnResumenPagoProveedores.Name = "btnResumenPagoProveedores";
             this.btnResumenPagoProveedores.Size = new System.Drawing.Size(167, 34);
             this.btnResumenPagoProveedores.TabIndex = 12;
+            this.btnResumenPagoProveedores.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnResumenPagoProveedores.Text = "Resumen Pagos [F5]";
             this.btnResumenPagoProveedores.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnResumenPagoProveedores.UseVisualStyleBackColor = false;
@@ -332,7 +340,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(828, 462);
+            this.ClientSize = new System.Drawing.Size(866, 590);
+            this.MinimumSize = new System.Drawing.Size(760, 520);
             this.Controls.Add(this.btnResumenPagoProveedores);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnEliminar);
@@ -343,7 +352,7 @@
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
             this.MinimizeBox = false;
             this.Name = "frmGestionProveedores";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

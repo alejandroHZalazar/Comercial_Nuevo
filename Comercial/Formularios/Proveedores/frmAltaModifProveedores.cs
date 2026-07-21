@@ -76,6 +76,10 @@ namespace Comercial.Formularios.Proveedores
                    nudGanancia.Value  = decimal .Parse (prov.Rows[0]["ganancia"].ToString());
                     nudDescuento.Value = decimal.Parse(prov.Rows[0]["descuento"].ToString());
 
+                    // NULL o 0 → precios por proveedor; 1 → precios por producto
+                    object ppp = prov.Rows[0].Table.Columns.Contains("preciosPorProducto") ? prov.Rows[0]["preciosPorProducto"] : null;
+                    chkPreciosPorProducto.Checked = ppp != null && ppp != DBNull.Value && Convert.ToInt32(ppp) == 1;
+
                }
             }
         }
@@ -94,12 +98,12 @@ namespace Comercial.Formularios.Proveedores
                 if (unaAccion == 1)
                 {
                     string cuil = mtbCuil.Text.Replace("-", "");
-                    salida = instProv.ABMProveedores(0, txtNombreComercial.Text.Trim(), cuil, txtDir.Text.Trim(), txtEmail.Text.Trim(), txtTel.Text, txtCel.Text, nudGanancia.Value, 1,nudDescuento .Value );
+                    salida = instProv.ABMProveedores(0, txtNombreComercial.Text.Trim(), cuil, txtDir.Text.Trim(), txtEmail.Text.Trim(), txtTel.Text, txtCel.Text, nudGanancia.Value, 1,nudDescuento .Value, chkPreciosPorProducto.Checked );
                 }
                 else
-                { 
+                {
                     string cuil = mtbCuil .Text .Replace("-","");
-                    salida = instProv.ABMProveedores(int.Parse (unProveedor) , txtNombreComercial.Text.Trim(), cuil, txtDir.Text.Trim(), txtEmail.Text.Trim(), txtTel.Text, txtCel.Text, nudGanancia.Value, 2,nudDescuento .Value );
+                    salida = instProv.ABMProveedores(int.Parse (unProveedor) , txtNombreComercial.Text.Trim(), cuil, txtDir.Text.Trim(), txtEmail.Text.Trim(), txtTel.Text, txtCel.Text, nudGanancia.Value, 2,nudDescuento .Value, chkPreciosPorProducto.Checked );
                 }
 
                 if (salida != -1)

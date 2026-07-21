@@ -79,13 +79,21 @@ namespace Comercial.Formularios.Productos
             if (formularioValido())
             {
                 int resul;
+
+                // Coeficientes por producto: solo se envían cuando el proveedor usa esa modalidad.
+                // NULL en caso contrario → el SP no modifica Productos.ganancia/descuento.
+                int idProveedor = int.Parse(cboProveedor.SelectedValue.ToString());
+                bool porProducto = new Clases.ClassProveedores().usaPreciosPorProducto(idProveedor);
+                decimal? unGanancia  = porProducto ? (decimal?)nudGanancia.Value  : null;
+                decimal? unDescuento = porProducto ? (decimal?)nudDescuento.Value : null;
+
                 if (unAccion == 1)
                 {
-                    resul = instProd.ABMProductos(txtCodProveedor.Text.Trim(), txtCodBarras.Text.Trim(), int.Parse(cboRubro.SelectedValue.ToString()), txtDescripcion.Text.Trim(), int.Parse(cboProveedor.SelectedValue.ToString()), nudCosto.Value, nudLista.Value, nudStock.Value, nudMinima.Value, 1, 0,nudProveedor .Value,cbFraccionado.Checked, cbDolarizado.Checked, chkEsPromocion.Checked);
+                    resul = instProd.ABMProductos(txtCodProveedor.Text.Trim(), txtCodBarras.Text.Trim(), int.Parse(cboRubro.SelectedValue.ToString()), txtDescripcion.Text.Trim(), idProveedor, nudCosto.Value, nudLista.Value, nudStock.Value, nudMinima.Value, 1, 0,nudProveedor .Value,cbFraccionado.Checked, cbDolarizado.Checked, chkEsPromocion.Checked, unGanancia, unDescuento);
                 }
                 else
                 {
-                    resul = instProd .ABMProductos( txtCodProveedor.Text.Trim(), txtCodBarras.Text.Trim(), int.Parse(cboRubro.SelectedValue.ToString()),  txtDescripcion.Text.Trim(), int.Parse(cboProveedor.SelectedValue.ToString()), nudCosto.Value, nudLista.Value, nudStock.Value, nudMinima.Value, 2,unProducto,nudProveedor .Value, cbFraccionado.Checked, cbDolarizado.Checked, chkEsPromocion.Checked);
+                    resul = instProd .ABMProductos( txtCodProveedor.Text.Trim(), txtCodBarras.Text.Trim(), int.Parse(cboRubro.SelectedValue.ToString()),  txtDescripcion.Text.Trim(), idProveedor, nudCosto.Value, nudLista.Value, nudStock.Value, nudMinima.Value, 2,unProducto,nudProveedor .Value, cbFraccionado.Checked, cbDolarizado.Checked, chkEsPromocion.Checked, unGanancia, unDescuento);
                 }
 
                 if (resul == -1)
@@ -259,12 +267,16 @@ namespace Comercial.Formularios.Productos
             try
             {
                 Clases.ClassProveedores instProv = new Clases.ClassProveedores();
-                DataTable coef = instProv.traerCoeficientes(int.Parse(cboProveedor.SelectedValue.ToString()));
+                DataTable coef = instProv.traerCoeficientes(int.Parse(cboProveedor.SelectedValue.ToString()), unProducto);
 
                 if (coef.Rows.Count > 0)
                 {
-                    nudDescuento.Value = decimal.Parse(coef.Rows[0]["descuento"].ToString());
-                    nudGanancia.Value = decimal.Parse(coef.Rows[0]["ganancia"].ToString());
+                    // TryParse: si el producto aún no tiene coeficientes (alta o NULL) queda en 0
+                    decimal ganancia, descuento;
+                    decimal.TryParse(coef.Rows[0]["descuento"].ToString(), out descuento);
+                    decimal.TryParse(coef.Rows[0]["ganancia"].ToString(), out ganancia);
+                    nudDescuento.Value = descuento;
+                    nudGanancia.Value = ganancia;
                 }
             }
             catch

@@ -193,6 +193,96 @@ namespace Comercial.Formularios.Clientes
             }
         }
 
+        private void btnResetPassword_Click(object sender, EventArgs e)
+        {
+            if (dgvClientes.RowCount == 0 || dgvClientes.CurrentRow == null) return;
+
+            int idCliente = int.Parse(dgvClientes.CurrentRow.Cells["ID"].Value.ToString());
+
+            if (MessageBox.Show(this,
+                    "¿Generar un nuevo password para este cliente?\nEl password actual quedará invalidado.",
+                    "Resetear Password", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                return;
+
+            try
+            {
+                string nuevoPassword = instClie.ResetPasswordCliente(idCliente);
+                mostrarPasswordCopiable(nuevoPassword);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, "Error al resetear el password: " + ex.Message,
+                    "Resetear Password", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Muestra el nuevo password en un cuadro seleccionable con un botón "Copiar".
+        /// Se muestra una sola vez (el password no vuelve a estar disponible en texto plano).
+        /// </summary>
+        private void mostrarPasswordCopiable(string password)
+        {
+            using (Form dlg = new Form())
+            {
+                dlg.Text = "Password reseteado";
+                dlg.FormBorderStyle = FormBorderStyle.FixedDialog;
+                dlg.StartPosition = FormStartPosition.CenterParent;
+                dlg.MaximizeBox = false;
+                dlg.MinimizeBox = false;
+                dlg.ClientSize = new Size(400, 150);
+
+                Label lbl = new Label
+                {
+                    Text = "Nuevo password generado (se muestra una sola vez):",
+                    AutoSize = true,
+                    Location = new Point(12, 15)
+                };
+
+                TextBox txt = new TextBox
+                {
+                    Text = password,
+                    ReadOnly = true,
+                    Font = new Font("Consolas", 12F, FontStyle.Bold),
+                    Location = new Point(12, 45),
+                    Size = new Size(280, 30),
+                    TextAlign = HorizontalAlignment.Center
+                };
+                txt.Click += (s, ev) => txt.SelectAll();
+
+                Button btnCopiar = new Button
+                {
+                    Text = "Copiar",
+                    Location = new Point(300, 44),
+                    Size = new Size(85, 28),
+                    BackColor = Color.Silver,
+                    UseVisualStyleBackColor = false
+                };
+                btnCopiar.Click += (s, ev) =>
+                {
+                    Clipboard.SetText(password);
+                    btnCopiar.Text = "¡Copiado!";
+                };
+
+                Button btnCerrar = new Button
+                {
+                    Text = "Cerrar",
+                    DialogResult = DialogResult.OK,
+                    Location = new Point(300, 110),
+                    Size = new Size(85, 28),
+                    BackColor = Color.Silver,
+                    UseVisualStyleBackColor = false
+                };
+
+                dlg.Controls.Add(lbl);
+                dlg.Controls.Add(txt);
+                dlg.Controls.Add(btnCopiar);
+                dlg.Controls.Add(btnCerrar);
+                dlg.AcceptButton = btnCerrar;
+
+                dlg.ShowDialog(this);
+            }
+        }
+
         private void btnExportar_Click(object sender, EventArgs e)
         {
             DataTable lista = instClie.traerClientesExportarCSV();

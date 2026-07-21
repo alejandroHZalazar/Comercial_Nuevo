@@ -68,6 +68,7 @@
             this.btnEditar = new System.Windows.Forms.Button();
             this.btnAgregar = new System.Windows.Forms.Button();
             this.btnExportar = new System.Windows.Forms.Button();
+            this.btnResetPassword = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvClientes)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -505,12 +506,28 @@
             this.btnExportar.UseVisualStyleBackColor = false;
             this.btnExportar.Click += new System.EventHandler(this.btnExportar_Click);
             // 
+            // btnResetPassword
+            // 
+            this.btnResetPassword.BackColor = System.Drawing.Color.Silver;
+            this.btnResetPassword.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnResetPassword.Image = ((System.Drawing.Image)(resources.GetObject("btnResetPassword.Image")));
+            this.btnResetPassword.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnResetPassword.Location = new System.Drawing.Point(378, 496);
+            this.btnResetPassword.Name = "btnResetPassword";
+            this.btnResetPassword.Size = new System.Drawing.Size(148, 34);
+            this.btnResetPassword.TabIndex = 29;
+            this.btnResetPassword.Text = "Resetear Password";
+            this.btnResetPassword.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnResetPassword.UseVisualStyleBackColor = false;
+            this.btnResetPassword.Click += new System.EventHandler(this.btnResetPassword_Click);
+            // 
             // frmABMClientes
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ClientSize = new System.Drawing.Size(839, 542);
+            this.Controls.Add(this.btnResetPassword);
             this.Controls.Add(this.btnExportar);
             this.Controls.Add(this.btnEliminar);
             this.Controls.Add(this.btnEditar);
@@ -581,5 +598,6 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Button btnVerCC;
         private System.Windows.Forms.Button btnExportar;
+        private System.Windows.Forms.Button btnResetPassword;
     }
 }

@@ -79,13 +79,43 @@ namespace Comercial.Clases
             return t2;
         }
 
-        public DataTable traerCoeficientes (int unId)
+        /// <summary>
+        /// Devuelve los coeficientes ganancia/descuento a aplicar, resolviendo la modalidad
+        /// en una sola consulta según Proveedores.preciosPorProducto:
+        ///   - 1  → toma los valores de Productos (producto abierto).
+        ///   - 0 / NULL → toma los valores del Proveedor (comportamiento actual).
+        /// También devuelve la columna preciosPorProducto por si el llamador la necesita.
+        /// </summary>
+        public DataTable traerCoeficientes(int unProveedor, int unProducto)
         {
-            MySqlDataAdapter rows = new MySqlDataAdapter("select ganancia, descuento from Proveedores where id = " + unId , instDatos.abrirConexion());
+            string sql = @"select case when coalesce(pr.preciosPorProducto, 0) = 1 then p.ganancia  else pr.ganancia  end as ganancia,
+                                  case when coalesce(pr.preciosPorProducto, 0) = 1 then p.descuento else pr.descuento end as descuento,
+                                  coalesce(pr.preciosPorProducto, 0) as preciosPorProducto
+                           from Proveedores pr
+                           left join Productos p on p.id = @idProducto
+                           where pr.id = @idProveedor";
+            MySqlDataAdapter rows = new MySqlDataAdapter(sql, instDatos.abrirConexion());
+            rows.SelectCommand.Parameters.AddWithValue("@idProducto", unProducto);
+            rows.SelectCommand.Parameters.AddWithValue("@idProveedor", unProveedor);
             DataTable dt = new DataTable();
             rows.Fill(dt);
             instDatos.cerrarConexion();
             return dt;
+        }
+
+        /// <summary>
+        /// Determina en una sola consulta si el proveedor administra precios por producto
+        /// (Proveedores.preciosPorProducto = 1). NULL o 0 → false (precios por proveedor).
+        /// </summary>
+        public bool usaPreciosPorProducto(int idProveedor)
+        {
+            MySqlCommand cmd = new MySqlCommand(
+                "select coalesce(preciosPorProducto, 0) from Proveedores where id = @id",
+                instDatos.abrirConexion());
+            cmd.Parameters.AddWithValue("@id", idProveedor);
+            object res = cmd.ExecuteScalar();
+            instDatos.cerrarConexion();
+            return res != null && res != DBNull.Value && Convert.ToInt32(res) == 1;
         }
 
         public string traerNombreProveedor (int unId)
@@ -122,7 +152,12 @@ namespace Comercial.Clases
 
         public DataTable traeProveedoresCabecera()
         {
-            MySqlDataAdapter rows = new MySqlDataAdapter("select id as 'Cod', nombreComercial as 'Proveedor', direccion as 'Direccion' from Proveedores where baja = 0 order by nombreComercial", instDatos.abrirConexion());
+            // preciosPorProducto (tinyint(1)) se devuelve crudo: el conector lo mapea a Boolean
+            // y el DataGridView genera automáticamente una columna checkbox (NULL/0 = destildado).
+            string sql = @"select id as 'Cod', nombreComercial as 'Proveedor', direccion as 'Direccion',
+                                  preciosPorProducto as 'Precios por Producto'
+                           from Proveedores where baja = 0 order by nombreComercial";
+            MySqlDataAdapter rows = new MySqlDataAdapter(sql, instDatos.abrirConexion());
             DataTable dt = new DataTable();
             rows.Fill(dt);
             instDatos.cerrarConexion();
@@ -167,7 +202,7 @@ namespace Comercial.Clases
             return t2;
         }
 
-        public long ABMProveedores(int unId, string unNombreComercial, string unCuil, string unaDireccion, string unEmail, string unTel, string unCel, decimal unaGanacia, int unAccion, decimal unDescuento)
+        public long ABMProveedores(int unId, string unNombreComercial, string unCuil, string unaDireccion, string unEmail, string unTel, string unCel, decimal unaGanacia, int unAccion, decimal unDescuento, bool? unPreciosPorProducto = null)
         {
             try
             {
@@ -186,6 +221,9 @@ namespace Comercial.Clases
                 cmd.Parameters.AddWithValue("unaGanancia", unaGanacia );
                 cmd.Parameters.AddWithValue("unaAccion", unAccion);
                 cmd.Parameters.AddWithValue("unDescuento", unDescuento );
+                // NULL cuando no se especifica → el proveedor conserva la modalidad actual (por proveedor)
+                cmd.Parameters.AddWithValue("unPreciosPorProducto",
+                    unPreciosPorProducto.HasValue ? (object)(unPreciosPorProducto.Value ? 1 : 0) : DBNull.Value);
 
                 MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int64  );
                 salida.Direction = ParameterDirection.Output;

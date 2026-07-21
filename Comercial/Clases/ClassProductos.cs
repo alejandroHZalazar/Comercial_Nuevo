@@ -117,6 +117,28 @@ namespace Comercial.Clases
             return t2;
         }
 
+        /// <summary>
+        /// Devuelve los porcentajes ganancia/descuento del producto y el flag
+        /// preciosPorProducto del proveedor asociado. Se usa solo para visualizar
+        /// esos valores en frmConsultaProductos cuando el proveedor administra
+        /// precios por producto (Proveedores.preciosPorProducto = 1).
+        /// </summary>
+        public DataTable traerConfigPreciosPorProducto(int unProducto)
+        {
+            string sql = @"select p.ganancia, p.descuento,
+                                  coalesce(pr.preciosPorProducto, 0) as preciosPorProducto
+                           from Productos p
+                           left join Proveedores pr on pr.id = p.fk_proveedor
+                           where p.id = @id";
+            MySqlDataAdapter a1 = new MySqlDataAdapter(sql, instDatos.abrirConexion());
+            a1.SelectCommand.Parameters.AddWithValue("@id", unProducto);
+
+            DataTable t2 = new DataTable();
+            a1.Fill(t2);
+            instDatos.cerrarConexion();
+            return t2;
+        }
+
         public DataTable traerDetalleLoteIngreso(string unComprobante)
         {
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_Productos_TraerLotesIngresoDetalles", instDatos.abrirConexion());
@@ -184,7 +206,8 @@ namespace Comercial.Clases
             instDatos.cerrarConexion();
         }
 
-        public void actualziarMasivaPrecios(string unProducto, decimal unPrecio, string unaDescripcion, string unCodBarras, int unProveedor)
+        public void actualziarMasivaPrecios(string unProducto, decimal unPrecio, string unaDescripcion, string unCodBarras, int unProveedor,
+                                            decimal? unDescuento = null, decimal? unaGanancia = null)
         {
             MySqlCommand nComando = new MySqlCommand("sp_Productos_CambiarPreciosMasivos", instDatos.abrirConexion());
             nComando.CommandType = CommandType.StoredProcedure;
@@ -194,6 +217,9 @@ namespace Comercial.Clases
             nComando.Parameters.AddWithValue("@unCodBarras", unCodBarras);
             nComando.Parameters.AddWithValue("@unaDescripcion", unaDescripcion);
             nComando.Parameters.AddWithValue("@unProveedor", unProveedor);
+            // NULL cuando el proveedor NO usa precios por producto → se guardan como NULL en ProductosACrear
+            nComando.Parameters.AddWithValue("@unDescuento", unDescuento.HasValue ? (object)unDescuento.Value : DBNull.Value);
+            nComando.Parameters.AddWithValue("@unaGanancia", unaGanancia.HasValue ? (object)unaGanancia.Value : DBNull.Value);
 
             nComando.ExecuteNonQuery();
             instDatos.cerrarConexion();
@@ -268,7 +294,8 @@ namespace Comercial.Clases
         }
 
         public int ABMProductos(string unCodProveedor, string unCodBarras, int unRubro, string unaDescripcion, int unProveedor, decimal unCosto,
-                                decimal unPrecio, decimal unStock, decimal unaCantMinima, int unaAccion, int unProducto, decimal unPrecioProveedor, bool esFraccionado, bool esDolarizado, bool esPromocion)
+                                decimal unPrecio, decimal unStock, decimal unaCantMinima, int unaAccion, int unProducto, decimal unPrecioProveedor, bool esFraccionado, bool esDolarizado, bool esPromocion,
+                                decimal? unGanancia = null, decimal? unDescuento = null)
         {
             try
             {
@@ -292,6 +319,9 @@ namespace Comercial.Clases
                 cmd.Parameters.AddWithValue("esFraccionado", esFraccionado);
                 cmd.Parameters.AddWithValue("esDolarizado", esDolarizado);
                 cmd.Parameters.AddWithValue("esUnaPromocion", esPromocion);
+                // NULL cuando el proveedor NO usa precios por producto → el SP no altera esos campos
+                cmd.Parameters.AddWithValue("unGanancia", unGanancia.HasValue ? (object)unGanancia.Value : DBNull.Value);
+                cmd.Parameters.AddWithValue("unDescuento", unDescuento.HasValue ? (object)unDescuento.Value : DBNull.Value);
 
 
                 MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int32);

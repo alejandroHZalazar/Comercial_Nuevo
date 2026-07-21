@@ -60,6 +60,10 @@
             this.lblDescripcion = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.lblRubro = new System.Windows.Forms.Label();
+            this.lblGananciaCaption = new System.Windows.Forms.Label();
+            this.lblGanancia = new System.Windows.Forms.Label();
+            this.lblDescuentoCaption = new System.Windows.Forms.Label();
+            this.lblDescuento = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvProductos)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -90,17 +94,20 @@
             // 
             this.txtFiltro.Location = new System.Drawing.Point(234, 14);
             this.txtFiltro.Name = "txtFiltro";
-            this.txtFiltro.Size = new System.Drawing.Size(187, 23);
+            this.txtFiltro.Size = new System.Drawing.Size(338, 23);
             this.txtFiltro.TabIndex = 2;
+            this.txtFiltro.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFiltro.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtFiltro_KeyDown);
             // 
             // btnBuscar
             // 
             this.btnBuscar.Image = global::Comercial.Properties.Resources.musica_searcher;
-            this.btnBuscar.Location = new System.Drawing.Point(427, 8);
+            this.btnBuscar.Location = new System.Drawing.Point(578, 8);
             this.btnBuscar.Name = "btnBuscar";
             this.btnBuscar.Size = new System.Drawing.Size(50, 34);
             this.btnBuscar.TabIndex = 3;
+            this.btnBuscar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBuscar.UseVisualStyleBackColor = true;
             this.btnBuscar.Click += new System.EventHandler(this.btnBuscar_Click);
             // 
@@ -115,8 +122,11 @@
             this.dgvProductos.Name = "dgvProductos";
             this.dgvProductos.ReadOnly = true;
             this.dgvProductos.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvProductos.Size = new System.Drawing.Size(593, 227);
+            this.dgvProductos.Size = new System.Drawing.Size(616, 237);
             this.dgvProductos.TabIndex = 4;
+            this.dgvProductos.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvProductos.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvProductos_CellEnter);
             // 
             // btnAgregar
@@ -124,10 +134,11 @@
             this.btnAgregar.BackColor = System.Drawing.Color.Silver;
             this.btnAgregar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAgregar.Image = global::Comercial.Properties.Resources.plus;
-            this.btnAgregar.Location = new System.Drawing.Point(24, 444);
+            this.btnAgregar.Location = new System.Drawing.Point(24, 486);
             this.btnAgregar.Name = "btnAgregar";
             this.btnAgregar.Size = new System.Drawing.Size(110, 34);
             this.btnAgregar.TabIndex = 5;
+            this.btnAgregar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnAgregar.Text = "Agregar [F2]";
             this.btnAgregar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnAgregar.UseVisualStyleBackColor = false;
@@ -138,10 +149,11 @@
             this.btnEditar.BackColor = System.Drawing.Color.Silver;
             this.btnEditar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEditar.Image = global::Comercial.Properties.Resources.pencil_edit_button__1_;
-            this.btnEditar.Location = new System.Drawing.Point(140, 444);
+            this.btnEditar.Location = new System.Drawing.Point(140, 486);
             this.btnEditar.Name = "btnEditar";
             this.btnEditar.Size = new System.Drawing.Size(110, 34);
             this.btnEditar.TabIndex = 6;
+            this.btnEditar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnEditar.Text = " Editar [F3]";
             this.btnEditar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnEditar.UseVisualStyleBackColor = false;
@@ -152,10 +164,11 @@
             this.btnEliminar.BackColor = System.Drawing.Color.Silver;
             this.btnEliminar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEliminar.Image = global::Comercial.Properties.Resources.rubbish_bin__1_;
-            this.btnEliminar.Location = new System.Drawing.Point(256, 444);
+            this.btnEliminar.Location = new System.Drawing.Point(256, 486);
             this.btnEliminar.Name = "btnEliminar";
             this.btnEliminar.Size = new System.Drawing.Size(110, 34);
             this.btnEliminar.TabIndex = 7;
+            this.btnEliminar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnEliminar.Text = "Eliminar [F4]";
             this.btnEliminar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnEliminar.UseVisualStyleBackColor = false;
@@ -250,6 +263,10 @@
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.Color.Silver;
+            this.groupBox1.Controls.Add(this.lblGananciaCaption);
+            this.groupBox1.Controls.Add(this.lblGanancia);
+            this.groupBox1.Controls.Add(this.lblDescuentoCaption);
+            this.groupBox1.Controls.Add(this.lblDescuento);
             this.groupBox1.Controls.Add(this.lblPProveedor);
             this.groupBox1.Controls.Add(this.label12);
             this.groupBox1.Controls.Add(this.lblStock);
@@ -272,11 +289,13 @@
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.lblCodBarras);
-            this.groupBox1.Location = new System.Drawing.Point(12, 290);
+            this.groupBox1.Location = new System.Drawing.Point(12, 300);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(593, 142);
+            this.groupBox1.Size = new System.Drawing.Size(616, 176);
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             // 
             // lblPProveedor
             // 
@@ -401,13 +420,56 @@
             this.lblRubro.Size = new System.Drawing.Size(38, 15);
             this.lblRubro.TabIndex = 17;
             this.lblRubro.Text = "label3";
-            // 
+            //
+            // lblGananciaCaption
+            //
+            this.lblGananciaCaption.AutoSize = true;
+            this.lblGananciaCaption.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblGananciaCaption.Location = new System.Drawing.Point(9, 143);
+            this.lblGananciaCaption.Name = "lblGananciaCaption";
+            this.lblGananciaCaption.Size = new System.Drawing.Size(80, 15);
+            this.lblGananciaCaption.TabIndex = 30;
+            this.lblGananciaCaption.Text = "Ganancia (%):";
+            this.lblGananciaCaption.Visible = false;
+            //
+            // lblGanancia
+            //
+            this.lblGanancia.AutoSize = true;
+            this.lblGanancia.Location = new System.Drawing.Point(95, 143);
+            this.lblGanancia.Name = "lblGanancia";
+            this.lblGanancia.Size = new System.Drawing.Size(38, 15);
+            this.lblGanancia.TabIndex = 31;
+            this.lblGanancia.Text = "label3";
+            this.lblGanancia.Visible = false;
+            //
+            // lblDescuentoCaption
+            //
+            this.lblDescuentoCaption.AutoSize = true;
+            this.lblDescuentoCaption.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDescuentoCaption.Location = new System.Drawing.Point(220, 143);
+            this.lblDescuentoCaption.Name = "lblDescuentoCaption";
+            this.lblDescuentoCaption.Size = new System.Drawing.Size(88, 15);
+            this.lblDescuentoCaption.TabIndex = 32;
+            this.lblDescuentoCaption.Text = "Descuento (%):";
+            this.lblDescuentoCaption.Visible = false;
+            //
+            // lblDescuento
+            //
+            this.lblDescuento.AutoSize = true;
+            this.lblDescuento.Location = new System.Drawing.Point(314, 143);
+            this.lblDescuento.Name = "lblDescuento";
+            this.lblDescuento.Size = new System.Drawing.Size(38, 15);
+            this.lblDescuento.TabIndex = 33;
+            this.lblDescuento.Text = "label3";
+            this.lblDescuento.Visible = false;
+            //
             // frmConsultaProductos
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(617, 485);
+            this.ClientSize = new System.Drawing.Size(640, 530);
+            this.MinimumSize = new System.Drawing.Size(656, 569);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnEliminar);
             this.Controls.Add(this.btnEditar);
@@ -421,7 +483,7 @@
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
             this.MinimizeBox = false;
             this.Name = "frmConsultaProductos";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -469,5 +531,9 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label lblStock;
         private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label lblGananciaCaption;
+        private System.Windows.Forms.Label lblGanancia;
+        private System.Windows.Forms.Label lblDescuentoCaption;
+        private System.Windows.Forms.Label lblDescuento;
     }
 }

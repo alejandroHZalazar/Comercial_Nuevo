@@ -148,10 +148,29 @@ namespace Comercial.Formularios.Productos
                 DataTable precios = instProdu.traerProductosProveedores();
                 rtbProceso.Text = string.Empty;
                 rtbProceso.Text = "[" + DateTime.Now + "] Proceso Iniciado";
+                Clases.ClassProveedores instProv = new Clases.ClassProveedores();
+                var cacheModalidad = new Dictionary<int, bool>();  // evita consultar el flag por cada fila
                 foreach (DataGridViewRow fila in dgvProductos.Rows)
                 {
+                    int idProveedor = int.Parse(fila.Cells[4].Value.ToString());
 
-                    instProdu.actualziarMasivaPrecios(fila.Cells [0].Value. ToString(), Math.Round(decimal.Parse(fila.Cells [1].Value.ToString()), 2), fila.Cells[2].Value.ToString(), fila.Cells[3].Value.ToString(),int.Parse(fila.Cells[4].Value.ToString()));
+                    bool porProducto;
+                    if (!cacheModalidad.TryGetValue(idProveedor, out porProducto))
+                    {
+                        porProducto = instProv.usaPreciosPorProducto(idProveedor);
+                        cacheModalidad[idProveedor] = porProducto;
+                    }
+
+                    // Solo se leen y envían las columnas descuento/ganancia cuando el proveedor
+                    // usa precios por producto; en caso contrario van NULL (comportamiento actual).
+                    decimal? unDescuento = null, unaGanancia = null;
+                    if (porProducto && fila.Cells.Count > 6)
+                    {
+                        unDescuento = leerDecimalNullable(fila.Cells[5].Value);
+                        unaGanancia = leerDecimalNullable(fila.Cells[6].Value);
+                    }
+
+                    instProdu.actualziarMasivaPrecios(fila.Cells [0].Value. ToString(), Math.Round(decimal.Parse(fila.Cells [1].Value.ToString()), 2), fila.Cells[2].Value.ToString(), fila.Cells[3].Value.ToString(),idProveedor, unDescuento, unaGanancia);
                     rtbProceso.Text += System.Environment.NewLine + "[" + DateTime.Now + "] Procesado Prod: " + fila.Cells[0].Value.ToString();
                 progreso++;
                 backgroundWorkerTarea.ReportProgress(progreso, DateTime.Now);
@@ -168,6 +187,19 @@ namespace Comercial.Formularios.Productos
             MessageBox.Show(this, "ACTUALIZACION EXITOSA DE PRECIOS", "CAMBIO DE PRECIOS MASIVO", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             estadoInicial();
+        }
+
+        // Convierte el valor de una celda del Excel a decimal? — null si está vacía o no es numérica.
+        private decimal? leerDecimalNullable(object valor)
+        {
+            if (valor == null || valor == DBNull.Value) return null;
+            string texto = valor.ToString().Trim();
+            if (texto == string.Empty) return null;
+            decimal resultado;
+            if (decimal.TryParse(texto, System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.CurrentCulture, out resultado))
+                return resultado;
+            return null;
         }
 
         private void backgroundWorkerTarea_ProgressChanged(object sender, ProgressChangedEventArgs e)
