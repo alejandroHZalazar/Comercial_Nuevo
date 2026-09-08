@@ -17,6 +17,11 @@ namespace Comercial.Clases
 {
     public class ClassReportesITextSharp
     {
+        /// <summary>Convierte a decimal de forma segura: null/DBNull → 0.</summary>
+        private static decimal ToDec(object valor)
+        {
+            return (valor == null || valor == DBNull.Value) ? 0m : Convert.ToDecimal(valor);
+        }
 
 
         public void GenerarYMostrarRecibo(string unIdRecibo, string logoPath, string nombreEmpresa, string direccionEmpresa, string telEmpresa, string cuitEmpresa, DateTime unaFechaRecibo,
@@ -430,11 +435,11 @@ namespace Comercial.Clases
 
                 foreach (DataRow row in dt.Rows)
                 {
-                    decimal precioSinIva = Convert.ToDecimal(row["precioSinIva"]);
-                    decimal desc = Convert.ToDecimal(row["descuento_Linea"]);
-                    decimal rec = Convert.ToDecimal(row["recargo_linea"]);
+                    decimal precioSinIva = ToDec(row["precioSinIva"]);
+                    decimal desc = ToDec(row["descuento_Linea"]);
+                    decimal rec = ToDec(row["recargo_linea"]);
                     decimal porcentaje = rec > 0 ? rec : -desc;
-                    decimal precioAjustado = Convert.ToDecimal(row["subtotalSinIVA"]);
+                    decimal precioAjustado = ToDec(row["subtotalSinIVA"]);
 
                     table.AddCell(new Phrase(row["codBarras"].ToString(), normal8));
                     table.AddCell(new Phrase(row["codProveedor"].ToString(), normal8));
@@ -443,9 +448,9 @@ namespace Comercial.Clases
                     table.AddCell(new PdfPCell(new Phrase(precioSinIva.ToString("N2", culture), normal8)) { HorizontalAlignment = Element.ALIGN_RIGHT });
                     table.AddCell(new PdfPCell(new Phrase(porcentaje.ToString("N2", culture), normal8)) { HorizontalAlignment = Element.ALIGN_RIGHT });
                     table.AddCell(new PdfPCell(new Phrase(precioAjustado.ToString("N2", culture), normal8)) { HorizontalAlignment = Element.ALIGN_RIGHT });
-                    table.AddCell(new PdfPCell(new Phrase(Convert.ToDecimal(row["precioConIva"]).ToString("N2", culture), normal8)) { HorizontalAlignment = Element.ALIGN_RIGHT });
-                    table.AddCell(new PdfPCell(new Phrase(Convert.ToDecimal(row["cantidad"]).ToString("N2", culture), normal8)) { HorizontalAlignment = Element.ALIGN_RIGHT });
-                    table.AddCell(new PdfPCell(new Phrase(Convert.ToDecimal(row["subtotalIVA"]).ToString("N2", culture), normal8)) { HorizontalAlignment = Element.ALIGN_RIGHT });
+                    table.AddCell(new PdfPCell(new Phrase(ToDec(row["precioConIva"]).ToString("N2", culture), normal8)) { HorizontalAlignment = Element.ALIGN_RIGHT });
+                    table.AddCell(new PdfPCell(new Phrase(ToDec(row["cantidad"]).ToString("N2", culture), normal8)) { HorizontalAlignment = Element.ALIGN_RIGHT });
+                    table.AddCell(new PdfPCell(new Phrase(ToDec(row["subtotalIVA"]).ToString("N2", culture), normal8)) { HorizontalAlignment = Element.ALIGN_RIGHT });
                 }
 
                 doc.Add(table);
@@ -460,14 +465,29 @@ namespace Comercial.Clases
 
                 foreach (DataRow row in dt.Rows)
                 {
-                    subtotalBase += Convert.ToDecimal(row["precioSinIva"]) * Convert.ToDecimal(row["cantidad"]);
-                    totalSinIva += Convert.ToDecimal(row["subtotalSinIVA"]) * Convert.ToDecimal(row["cantidad"]);
-                    totalConIva += Convert.ToDecimal(row["precioConIva"]) * Convert.ToDecimal(row["cantidad"]);
-                    impuesto = Convert.ToDecimal(row["impuesto"]);
-                    IVA = Convert.ToDecimal(row["IVA"]);
+                    subtotalBase += ToDec(row["precioSinIva"]) * ToDec(row["cantidad"]);
+                    totalSinIva += ToDec(row["subtotalSinIVA"]) * ToDec(row["cantidad"]);
+                    totalConIva += ToDec(row["precioConIva"]) * ToDec(row["cantidad"]);
+                    impuesto = ToDec(row["impuesto"]);
+                    IVA = ToDec(row["IVA"]);
                 }
 
                 decimal ivaCalculado = IVA == 0 ? 0 : totalConIva - totalSinIva;
+
+                // ── Descuento general sobre Total S/IVA (data-driven: ventas.descuento) ──
+                // Reflejado en el PDF cuando la venta tiene descuento general de cabecera. IVA y
+                // percepción IIBB se recalculan sobre la base neta; el detalle por línea no cambia.
+                decimal descGeneralPct = dt.Columns.Contains("descuento") && cab["descuento"] != DBNull.Value
+                    ? ToDec(cab["descuento"]) : 0m;
+                decimal descGeneralMonto = 0m;
+                if (descGeneralPct > 0)
+                {
+                    decimal baseNeta = Math.Round(totalSinIva * (1m - descGeneralPct / 100m), 2, MidpointRounding.AwayFromZero);
+                    descGeneralMonto = totalSinIva - baseNeta;
+                    ivaCalculado = IVA == 0 ? 0 : Math.Round(baseNeta * (IVA / 100m), 2, MidpointRounding.AwayFromZero);
+                    totalSinIva = baseNeta;
+                }
+
                 decimal percepcion = impuesto == 0 ? 0 : totalSinIva * (impuesto / 100);
                 decimal totalGeneral = totalSinIva + ivaCalculado + percepcion;
 
@@ -481,6 +501,12 @@ namespace Comercial.Clases
 
                 tablaTotales.AddCell(new PdfPCell(new Phrase("Subtotal Sin IVA", bold9)) { BackgroundColor = grisClaro });
                 tablaTotales.AddCell(new PdfPCell(new Phrase(subtotalBase.ToString("N2", culture), normal9)){Colspan = 2,HorizontalAlignment = Element.ALIGN_RIGHT,BackgroundColor = grisClaro});
+
+                if (descGeneralPct > 0)
+                {
+                    tablaTotales.AddCell(new PdfPCell(new Phrase("Desc. General " + descGeneralPct.ToString("N2", culture) + "%", bold9)) { BackgroundColor = grisClaro });
+                    tablaTotales.AddCell(new PdfPCell(new Phrase("-" + descGeneralMonto.ToString("N2", culture), normal9)) { Colspan = 2, HorizontalAlignment = Element.ALIGN_RIGHT, BackgroundColor = grisClaro });
+                }
 
                 tablaTotales.AddCell(new PdfPCell(new Phrase("Total Sin IVA", bold9)) { BackgroundColor = grisClaro });
                 tablaTotales.AddCell(new PdfPCell(new Phrase(totalSinIva.ToString("N2", culture), normal9)) { Colspan = 2, HorizontalAlignment = Element.ALIGN_RIGHT, BackgroundColor = grisClaro });
@@ -776,14 +802,14 @@ namespace Comercial.Clases
 
                 foreach (DataRow row in dt.Rows)
                 {
-                    decimal precioSinIva = Convert.ToDecimal(row["precioSinIva"]);
-                    decimal desc = Convert.ToDecimal(row["descuento_Linea"]);
-                    decimal rec = Convert.ToDecimal(row["recargo_linea"]);
-                    decimal cantidad = Convert.ToDecimal(row["cantidad"]);
-                    decimal precioConIva = Convert.ToDecimal(row["precioConIva"]);
+                    decimal precioSinIva = ToDec(row["precioSinIva"]);
+                    decimal desc = ToDec(row["descuento_Linea"]);
+                    decimal rec = ToDec(row["recargo_linea"]);
+                    decimal cantidad = ToDec(row["cantidad"]);
+                    decimal precioConIva = ToDec(row["precioConIva"]);
 
                     decimal porcentaje = rec > 0 ? rec : -desc;
-                    decimal precioAjustado = Convert.ToDecimal(row["subtotalSinIVA"]);
+                    decimal precioAjustado = ToDec(row["subtotalSinIVA"]);
 
                     ws.Cell(fila, 1).Value = row["codBarras"].ToString();
                     ws.Cell(fila, 2).Value = row["codProveedor"].ToString();
@@ -793,7 +819,7 @@ namespace Comercial.Clases
                     ws.Cell(fila, 6).Value = precioAjustado;
                     ws.Cell(fila, 7).Value = precioConIva;
                     ws.Cell(fila, 8).Value = cantidad;
-                    ws.Cell(fila, 9).Value = Convert.ToDecimal(row["subtotalIVA"]);
+                    ws.Cell(fila, 9).Value = ToDec(row["subtotalIVA"]);
 
                     for (int col = 4; col <= 9; col++)
                     {
@@ -803,8 +829,8 @@ namespace Comercial.Clases
 
                     totalSinIva += precioAjustado * cantidad;
                     totalConIva += precioConIva * cantidad;
-                    impuesto = Convert.ToDecimal(row["impuesto"]);
-                    IVA = Convert.ToDecimal(row["IVA"]);
+                    impuesto = ToDec(row["impuesto"]);
+                    IVA = ToDec(row["IVA"]);
 
                     fila++;
                 }
@@ -845,6 +871,19 @@ namespace Comercial.Clases
                 int filaTot = filaBase;
 
                 decimal ivaCalculado = IVA == 0 ? 0 : totalConIva - totalSinIva;
+
+                // ── Descuento general sobre Total S/IVA (data-driven: ventas.descuento) ──
+                decimal descGeneralPct = dt.Columns.Contains("descuento") && cab["descuento"] != DBNull.Value
+                    ? ToDec(cab["descuento"]) : 0m;
+                decimal descGeneralMonto = 0m;
+                if (descGeneralPct > 0)
+                {
+                    decimal baseNeta = Math.Round(totalSinIva * (1m - descGeneralPct / 100m), 2, MidpointRounding.AwayFromZero);
+                    descGeneralMonto = totalSinIva - baseNeta;
+                    ivaCalculado = IVA == 0 ? 0 : Math.Round(baseNeta * (IVA / 100m), 2, MidpointRounding.AwayFromZero);
+                    totalSinIva = baseNeta;
+                }
+
                 decimal percepcion = impuesto == 0 ? 0 : totalSinIva * (impuesto / 100);
                 decimal totalGeneral = totalSinIva + ivaCalculado + percepcion;
 
@@ -870,6 +909,9 @@ namespace Comercial.Clases
 
                     filaTot++;
                 }
+
+                if (descGeneralPct > 0)
+                    SetTotal("Desc. General " + descGeneralPct.ToString("N2", culture) + "%", 0, -descGeneralMonto);
 
                 ws.Cell(filaTot, colInicio).Value = "Total Sin IVA";
                 ws.Cell(filaTot, colInicio + 1).Value = totalSinIva;
@@ -1004,12 +1046,12 @@ namespace Comercial.Clases
                 var culture = new System.Globalization.CultureInfo("es-AR");
                 foreach (DataRow row in dt.Rows)
                 {
-                    decimal precioSinIva = Convert.ToDecimal(row["precioSinIva"]);
-                    decimal desc = Convert.ToDecimal(row["descuento_Linea"]);
-                    decimal rec = Convert.ToDecimal(row["recargo_linea"]);
+                    decimal precioSinIva = ToDec(row["precioSinIva"]);
+                    decimal desc = ToDec(row["descuento_Linea"]);
+                    decimal rec = ToDec(row["recargo_linea"]);
                     decimal porcentaje = rec > 0 ? rec : -desc;
 
-                    decimal precioAjustado = Convert.ToDecimal(row["subtotalSinIVA"]);
+                    decimal precioAjustado = ToDec(row["subtotalSinIVA"]);
 
                     // C. Barras
                     table.AddCell(new PdfPCell(new Phrase(row["codBarras"].ToString(), normal8)));
@@ -1036,17 +1078,17 @@ namespace Comercial.Clases
                     table.AddCell(c3);
 
                     // 🔹 P C/IVA
-                    PdfPCell c4 = new PdfPCell(new Phrase(Convert.ToDecimal(row["precioConIva"]).ToString("N2", culture), normal8));
+                    PdfPCell c4 = new PdfPCell(new Phrase(ToDec(row["precioConIva"]).ToString("N2", culture), normal8));
                     c4.HorizontalAlignment = Element.ALIGN_RIGHT;
                     table.AddCell(c4);
 
                     // 🔹 Cantidad (solo alineado, sin miles obligatorio)
-                    PdfPCell c5 = new PdfPCell(new Phrase(Convert.ToDecimal(row["cantidad"]).ToString("N2", culture), normal8));
+                    PdfPCell c5 = new PdfPCell(new Phrase(ToDec(row["cantidad"]).ToString("N2", culture), normal8));
                     c5.HorizontalAlignment = Element.ALIGN_RIGHT;
                     table.AddCell(c5);
 
                     // 🔹 Subtotal
-                    PdfPCell c6 = new PdfPCell(new Phrase(Convert.ToDecimal(row["subtotalIVA"]).ToString("N2", culture), normal8));
+                    PdfPCell c6 = new PdfPCell(new Phrase(ToDec(row["subtotalIVA"]).ToString("N2", culture), normal8));
                     c6.HorizontalAlignment = Element.ALIGN_RIGHT;
                     table.AddCell(c6);
                 }
@@ -1062,23 +1104,38 @@ namespace Comercial.Clases
                 // 🔹 recorrer nuevamente o acumular en el foreach anterior
                 foreach (DataRow row in dt.Rows)
                 {
-                    decimal precioSinIva = Convert.ToDecimal(row["subtotalSinIVA"]);
-                    decimal precioConIva = Convert.ToDecimal(row["precioConIva"]);
-                    decimal cantidad = Convert.ToDecimal(row["cantidad"]);
-                    decimal desc = Convert.ToDecimal(row["descuento_Linea"]);
-                    decimal rec = Convert.ToDecimal(row["recargo_linea"]);
+                    decimal precioSinIva = ToDec(row["subtotalSinIVA"]);
+                    decimal precioConIva = ToDec(row["precioConIva"]);
+                    decimal cantidad = ToDec(row["cantidad"]);
+                    decimal desc = ToDec(row["descuento_Linea"]);
+                    decimal rec = ToDec(row["recargo_linea"]);
 
 
                     totalSinIva += precioSinIva * cantidad;
                     totalConIva += precioConIva * cantidad;
 
-                    impuesto = Convert.ToDecimal(row["impuesto"]); // toma uno (si es el mismo para todos)
-                    IVA = Convert.ToDecimal(row["IVA"]);
+                    impuesto = ToDec(row["impuesto"]); // toma uno (si es el mismo para todos)
+                    IVA = ToDec(row["IVA"]);
                 }
 
 
 
                 decimal ivaCalculado = IVA == 0 ? 0 : totalConIva - totalSinIva;
+
+                // ── Descuento general sobre Total S/IVA (data-driven: Devoluciones.descuento) ──
+                // El % ya representa la porción devuelta (prorrateo automático). IVA e IIBB se
+                // recalculan sobre la base neta; el detalle por línea no cambia.
+                decimal descGeneralPct = dt.Columns.Contains("descuento") && cab["descuento"] != DBNull.Value
+                    ? ToDec(cab["descuento"]) : 0m;
+                decimal descGeneralMonto = 0m;
+                if (descGeneralPct > 0)
+                {
+                    decimal baseNeta = Math.Round(totalSinIva * (1m - descGeneralPct / 100m), 2, MidpointRounding.AwayFromZero);
+                    descGeneralMonto = totalSinIva - baseNeta;
+                    ivaCalculado = IVA == 0 ? 0 : Math.Round(baseNeta * (IVA / 100m), 2, MidpointRounding.AwayFromZero);
+                    totalSinIva = baseNeta;
+                }
+
                 decimal percepcion = impuesto == 0 ? 0 : totalSinIva * (impuesto / 100);
 
                 decimal totalGeneral = totalSinIva + ivaCalculado + percepcion;
@@ -1095,6 +1152,12 @@ namespace Comercial.Clases
                 // 🔹 Fuentes
                 Font bold9 = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 9);
                 Font normal9 = FontFactory.GetFont(FontFactory.HELVETICA, 9);
+
+                if (descGeneralPct > 0)
+                {
+                    tablaTotales.AddCell(new PdfPCell(new Phrase("Desc. General " + descGeneralPct.ToString("N2", culture) + "%", bold9)) { BackgroundColor = grisClaro });
+                    tablaTotales.AddCell(new PdfPCell(new Phrase("-" + descGeneralMonto.ToString("N2", culture), normal9)) { Colspan = 2, HorizontalAlignment = Element.ALIGN_RIGHT, BackgroundColor = grisClaro });
+                }
 
                 PdfPCell f1c1 = new PdfPCell(new Phrase("Total Sin IVA", bold9));
                 f1c1.BackgroundColor = grisClaro;
@@ -1400,14 +1463,14 @@ namespace Comercial.Clases
 
                 foreach (DataRow row in dt.Rows)
                 {
-                    decimal precioSinIva = Convert.ToDecimal(row["precioSinIva"]);
-                    decimal desc = Convert.ToDecimal(row["descuento_Linea"]);
-                    decimal rec = Convert.ToDecimal(row["recargo_linea"]);
-                    decimal cantidad = Convert.ToDecimal(row["cantidad"]);
-                    decimal precioConIva = Convert.ToDecimal(row["precioConIva"]);
+                    decimal precioSinIva = ToDec(row["precioSinIva"]);
+                    decimal desc = ToDec(row["descuento_Linea"]);
+                    decimal rec = ToDec(row["recargo_linea"]);
+                    decimal cantidad = ToDec(row["cantidad"]);
+                    decimal precioConIva = ToDec(row["precioConIva"]);
 
                     decimal porcentaje = rec > 0 ? rec : -desc;
-                    decimal precioAjustado = Convert.ToDecimal(row["subtotalSinIVA"]);
+                    decimal precioAjustado = ToDec(row["subtotalSinIVA"]);
 
                     ws.Cell(fila, 1).Value = row["codBarras"].ToString();
                     ws.Cell(fila, 2).Value = row["codProveedor"].ToString();
@@ -1418,7 +1481,7 @@ namespace Comercial.Clases
                     ws.Cell(fila, 6).Value = precioAjustado;
                     ws.Cell(fila, 7).Value = precioConIva;
                     ws.Cell(fila, 8).Value = cantidad;
-                    ws.Cell(fila, 9).Value = Convert.ToDecimal(row["subtotalIVA"]);
+                    ws.Cell(fila, 9).Value = ToDec(row["subtotalIVA"]);
 
                     for (int col = 4; col <= 9; col++)
                     {
@@ -1429,8 +1492,8 @@ namespace Comercial.Clases
                     totalSinIva += precioAjustado * cantidad;
                     totalConIva += precioConIva * cantidad;
 
-                    impuesto = Convert.ToDecimal(row["impuesto"]);
-                    IVA = Convert.ToDecimal(row["IVA"]);
+                    impuesto = ToDec(row["impuesto"]);
+                    IVA = ToDec(row["IVA"]);
 
                     fila++;
                 }
@@ -1441,6 +1504,19 @@ namespace Comercial.Clases
                 int colInicio = 6;
 
                 decimal ivaCalculado = IVA == 0 ? 0 : totalConIva - totalSinIva;
+
+                // ── Descuento general sobre Total S/IVA (data-driven: Devoluciones.descuento) ──
+                decimal descGeneralPct = dt.Columns.Contains("descuento") && cab["descuento"] != DBNull.Value
+                    ? ToDec(cab["descuento"]) : 0m;
+                decimal descGeneralMonto = 0m;
+                if (descGeneralPct > 0)
+                {
+                    decimal baseNeta = Math.Round(totalSinIva * (1m - descGeneralPct / 100m), 2, MidpointRounding.AwayFromZero);
+                    descGeneralMonto = totalSinIva - baseNeta;
+                    ivaCalculado = IVA == 0 ? 0 : Math.Round(baseNeta * (IVA / 100m), 2, MidpointRounding.AwayFromZero);
+                    totalSinIva = baseNeta;
+                }
+
                 decimal percepcion = impuesto == 0 ? 0 : totalSinIva * (impuesto / 100);
                 decimal totalGeneral = totalSinIva + ivaCalculado + percepcion;
 
@@ -1465,6 +1541,9 @@ namespace Comercial.Clases
 
                     fila++;
                 }
+
+                if (descGeneralPct > 0)
+                    SetTotalRow("Desc. General " + descGeneralPct.ToString("N2", culture) + "%", 0, -descGeneralMonto);
 
                 ws.Cell(fila, colInicio).Value = "Total Sin IVA";
                 ws.Cell(fila, colInicio).Style.Font.Bold = true;
@@ -1692,16 +1771,29 @@ namespace Comercial.Clases
                 banner.SpacingAfter = 10f;
                 doc.Add(banner);
 
+                // Nueva modalidad: solo cuando bonificacionPorLinea == 1 se contemplan los
+                // recargos por línea y el descuento general sobre el Total S/IVA
+                // (pedidos.descuento, devuelto como 'descuentoGeneral'). En cualquier otro modo
+                // se preserva EXACTAMENTE el cálculo anterior.
+                int bonifPorLinea = Clases.ClassParametros.buscarParametro("ventas", "bonificacionesPorDetalle") == "1" ? 1 : 0;
+                decimal descGeneralPct = (bonifPorLinea == 1 && dt.Columns.Contains("descuentoGeneral") && cab["descuentoGeneral"] != DBNull.Value)
+                    ? ToDec(cab["descuentoGeneral"]) : 0m;
+
                 // ═════════════════════════════════════════════════════════════
                 // DATOS CABECERA (grid 3 columnas, fondo gris claro)
                 // ═════════════════════════════════════════════════════════════
-                decimal ivaPct       = cab.Table.Columns.Contains("iva")       && cab["iva"]       != DBNull.Value ? Convert.ToDecimal(cab["iva"])       : 0m;
-                decimal descuentoCab = cab.Table.Columns.Contains("descuento") && cab["descuento"] != DBNull.Value ? Convert.ToDecimal(cab["descuento"]) : 0m;
-                decimal recargoCab   = cab.Table.Columns.Contains("recargo")   && cab["recargo"]   != DBNull.Value ? Convert.ToDecimal(cab["recargo"])   : 0m;
+                decimal ivaPct       = cab.Table.Columns.Contains("iva")       && cab["iva"]       != DBNull.Value ? ToDec(cab["iva"])       : 0m;
+                decimal descuentoCab = cab.Table.Columns.Contains("descuento") && cab["descuento"] != DBNull.Value ? ToDec(cab["descuento"]) : 0m;
+                decimal recargoCab   = cab.Table.Columns.Contains("recargo")   && cab["recargo"]   != DBNull.Value ? ToDec(cab["recargo"])   : 0m;
                 string  nombreClie   = cab["nombreComercial"].ToString();
                 string  observacion  = cab.Table.Columns.Contains("observacion") ? cab["observacion"].ToString() : "";
 
-                bool mostrarDescRecGlobal = descuentoCab != 0 || recargoCab != 0;
+                // En modo bonificación por línea, el "global" real es el descuento general
+                // (pedidos.descuento). En modo ≠1 se mantiene el comportamiento anterior
+                // (descuento/recargo de cabecera tal como llega en la primera fila).
+                bool mostrarDescRecGlobal = bonifPorLinea == 1
+                    ? descGeneralPct != 0
+                    : (descuentoCab != 0 || recargoCab != 0);
 
                 PdfPTable cabGrid = new PdfPTable(3);
                 cabGrid.WidthPercentage = 100;
@@ -1730,8 +1822,16 @@ namespace Comercial.Clases
                 if (mostrarDescRecGlobal)
                 {
                     string txt = "";
-                    if (descuentoCab != 0) txt += "Dto " + descuentoCab.ToString("N2", culture) + "%";
-                    if (recargoCab   != 0) txt += "  Rec " + recargoCab.ToString("N2", culture) + "%";
+                    if (bonifPorLinea == 1)
+                    {
+                        // Descuento general sobre Total S/IVA (no hay recargo general)
+                        txt = "Dto " + descGeneralPct.ToString("N2", culture) + "%";
+                    }
+                    else
+                    {
+                        if (descuentoCab != 0) txt += "Dto " + descuentoCab.ToString("N2", culture) + "%";
+                        if (recargoCab   != 0) txt += "  Rec " + recargoCab.ToString("N2", culture) + "%";
+                    }
                     addCabItem("Desc / Rec global", txt);
                 }
                 else
@@ -1804,10 +1904,10 @@ namespace Comercial.Clases
                 int idx = 0;
                 foreach (DataRow l in dt.Rows)
                 {
-                    decimal precioSIva = l["Precio_S_IVA"] != DBNull.Value ? Convert.ToDecimal(l["Precio_S_IVA"]) : 0m;
-                    decimal cant       = l["Cantidad"]    != DBNull.Value ? Convert.ToDecimal(l["Cantidad"])    : 0m;
-                    decimal dLinea     = l.Table.Columns.Contains("descuento") && l["descuento"] != DBNull.Value ? Convert.ToDecimal(l["descuento"]) : 0m;
-                    decimal rLinea     = l.Table.Columns.Contains("recargo")   && l["recargo"]   != DBNull.Value ? Convert.ToDecimal(l["recargo"])   : 0m;
+                    decimal precioSIva = l["Precio_S_IVA"] != DBNull.Value ? ToDec(l["Precio_S_IVA"]) : 0m;
+                    decimal cant       = l["Cantidad"]    != DBNull.Value ? ToDec(l["Cantidad"])    : 0m;
+                    decimal dLinea     = l.Table.Columns.Contains("descuento") && l["descuento"] != DBNull.Value ? ToDec(l["descuento"]) : 0m;
+                    decimal rLinea     = (bonifPorLinea == 1 && l.Table.Columns.Contains("recargo") && l["recargo"] != DBNull.Value) ? ToDec(l["recargo"]) : 0m;
                     decimal descRecPct = (dLinea * -1m) + rLinea;
 
                     decimal subSIva    = precioSIva * (1m + descRecPct / 100m);
@@ -1865,7 +1965,7 @@ namespace Comercial.Clases
 
                     // Stock
                     decimal stock = l.Table.Columns.Contains("Stock") && l["Stock"] != DBNull.Value
-                                    ? Convert.ToDecimal(l["Stock"]) : 0m;
+                                    ? ToDec(l["Stock"]) : 0m;
                     addCell(stock.ToString("N" + cantStock, culture), fTbody, true);
 
                     // Cantidad
@@ -1879,6 +1979,18 @@ namespace Comercial.Clases
 
                 det.SpacingAfter = 8f;
                 doc.Add(det);
+
+                // ─── Descuento general sobre Total S/IVA (solo bonificacionPorLinea == 1) ───
+                // Se aplica sobre el subtotal s/IVA acumulado; IVA y TOTAL se recalculan sobre
+                // la base neta, igual que en frmPedidos. El subtotal por línea no se altera.
+                decimal descGeneralMonto = 0m;
+                if (descGeneralPct > 0)
+                {
+                    decimal baseNeta = Math.Round(totSubtSIva * (1m - descGeneralPct / 100m), 2, MidpointRounding.AwayFromZero);
+                    descGeneralMonto = totSubtSIva - baseNeta;
+                    totIva   = Math.Round(baseNeta * ivaRate, 2, MidpointRounding.AwayFromZero);
+                    totTotal = baseNeta + totIva;
+                }
 
                 // ═════════════════════════════════════════════════════════════
                 // TOTALES (cuadro a la derecha, mitad del ancho)
@@ -1916,8 +2028,11 @@ namespace Comercial.Clases
                 totRow("Precio s/IVA",     "$" + totPrecioSIva.ToString("N2", culture), cBlanco,    fTotLab, fTotVal);
                 totRow("Desc / Rec",       "$" + totDescRec.ToString("N2", culture),    cGrisFondo, fTotLab, fTotVal);
                 totRow("Subtotal s/IVA",   "$" + totSubtSIva.ToString("N2", culture),   cBlanco,    fTotLab, fTotVal);
+                if (descGeneralPct > 0)
+                    totRow("Desc. General " + descGeneralPct.ToString("N2", culture) + "%",
+                                           "-$" + descGeneralMonto.ToString("N2", culture), cGrisFondo, fTotLab, fTotVal);
                 totRow("IVA " + ivaPct.ToString("N0", culture) + "%",
-                                           "$" + totIva.ToString("N2", culture),        cGrisFondo, fTotLab, fTotVal);
+                                           "$" + totIva.ToString("N2", culture),        cBlanco,    fTotLab, fTotVal);
                 totRow("TOTAL",            "$" + totTotal.ToString("N2", culture),      cAzul,      fTotTotLab, fTotTotVal);
 
                 PdfPCell totCell = new PdfPCell(tot);
@@ -2077,12 +2192,12 @@ namespace Comercial.Clases
                 int idx = 0;
                 foreach (DataRow row in dt.Rows)
                 {
-                    decimal totalCIVA  = row["TotalCIVA"]  != DBNull.Value ? Convert.ToDecimal(row["TotalCIVA"])  : 0m;
-                    decimal iva        = row["IVA"]        != DBNull.Value ? Convert.ToDecimal(row["IVA"])        : 0m;
-                    decimal totalSIVA  = row["totalSIVA"]  != DBNull.Value ? Convert.ToDecimal(row["totalSIVA"])  : 0m;
-                    decimal costo      = row["Costo"]      != DBNull.Value ? Convert.ToDecimal(row["Costo"])      : 0m;
-                    decimal pCom       = row["P_Com"]      != DBNull.Value ? Convert.ToDecimal(row["P_Com"])      : 0m;
-                    decimal comision   = row["Comision"]   != DBNull.Value ? Convert.ToDecimal(row["Comision"])   : 0m;
+                    decimal totalCIVA  = row["TotalCIVA"]  != DBNull.Value ? ToDec(row["TotalCIVA"])  : 0m;
+                    decimal iva        = row["IVA"]        != DBNull.Value ? ToDec(row["IVA"])        : 0m;
+                    decimal totalSIVA  = row["totalSIVA"]  != DBNull.Value ? ToDec(row["totalSIVA"])  : 0m;
+                    decimal costo      = row["Costo"]      != DBNull.Value ? ToDec(row["Costo"])      : 0m;
+                    decimal pCom       = row["P_Com"]      != DBNull.Value ? ToDec(row["P_Com"])      : 0m;
+                    decimal comision   = row["Comision"]   != DBNull.Value ? ToDec(row["Comision"])   : 0m;
 
                     sumTotalCIVA += totalCIVA;
                     sumIVA       += iva;
@@ -2308,11 +2423,11 @@ namespace Comercial.Clases
                 int idx = 0;
                 foreach (DataRow row in dt.Rows)
                 {
-                    decimal stock   = row["Stock"]   != DBNull.Value ? Convert.ToDecimal(row["Stock"])   : 0m;
-                    decimal cMin    = row["C_Min"]   != DBNull.Value ? Convert.ToDecimal(row["C_Min"])   : 0m;
-                    decimal costo   = row["Costo"]   != DBNull.Value ? Convert.ToDecimal(row["Costo"])   : 0m;
-                    decimal pProv   = row["P_Prov"]  != DBNull.Value ? Convert.ToDecimal(row["P_Prov"])  : 0m;
-                    decimal pLista  = row["P_Lista"] != DBNull.Value ? Convert.ToDecimal(row["P_Lista"]) : 0m;
+                    decimal stock   = row["Stock"]   != DBNull.Value ? ToDec(row["Stock"])   : 0m;
+                    decimal cMin    = row["C_Min"]   != DBNull.Value ? ToDec(row["C_Min"])   : 0m;
+                    decimal costo   = row["Costo"]   != DBNull.Value ? ToDec(row["Costo"])   : 0m;
+                    decimal pProv   = row["P_Prov"]  != DBNull.Value ? ToDec(row["P_Prov"])  : 0m;
+                    decimal pLista  = row["P_Lista"] != DBNull.Value ? ToDec(row["P_Lista"]) : 0m;
 
                     sumStock  += stock;
                     sumCosto  += costo  * stock;
@@ -2511,8 +2626,8 @@ namespace Comercial.Clases
                 int idx = 0;
                 foreach (DataRow row in dt.Rows)
                 {
-                    decimal precio    = row["precio"]    != DBNull.Value ? Convert.ToDecimal(row["precio"])    : 0m;
-                    decimal precioIva = row["PrecioIVA"] != DBNull.Value ? Convert.ToDecimal(row["PrecioIVA"]) : 0m;
+                    decimal precio    = row["precio"]    != DBNull.Value ? ToDec(row["precio"])    : 0m;
+                    decimal precioIva = row["PrecioIVA"] != DBNull.Value ? ToDec(row["PrecioIVA"]) : 0m;
 
                     BaseColor bg = (idx % 2 == 0) ? cBlanco : cGrisFondo;
 
@@ -2662,12 +2777,12 @@ namespace Comercial.Clases
                 int idx = 0;
                 foreach (DataRow row in dt.Rows)
                 {
-                    decimal stock   = row["Stock"]   != DBNull.Value ? Convert.ToDecimal(row["Stock"])   : 0m;
-                    decimal ingreso = row["Ingreso"] != DBNull.Value ? Convert.ToDecimal(row["Ingreso"]) : 0m;
-                    decimal ventas  = row["Ventas"]  != DBNull.Value ? Convert.ToDecimal(row["Ventas"])  : 0m;
-                    decimal pProv   = row["P_Prov"]  != DBNull.Value ? Convert.ToDecimal(row["P_Prov"])  : 0m;
-                    decimal costo   = row["Costo"]   != DBNull.Value ? Convert.ToDecimal(row["Costo"])   : 0m;
-                    decimal pLista  = row["P_Lista"] != DBNull.Value ? Convert.ToDecimal(row["P_Lista"]) : 0m;
+                    decimal stock   = row["Stock"]   != DBNull.Value ? ToDec(row["Stock"])   : 0m;
+                    decimal ingreso = row["Ingreso"] != DBNull.Value ? ToDec(row["Ingreso"]) : 0m;
+                    decimal ventas  = row["Ventas"]  != DBNull.Value ? ToDec(row["Ventas"])  : 0m;
+                    decimal pProv   = row["P_Prov"]  != DBNull.Value ? ToDec(row["P_Prov"])  : 0m;
+                    decimal costo   = row["Costo"]   != DBNull.Value ? ToDec(row["Costo"])   : 0m;
+                    decimal pLista  = row["P_Lista"] != DBNull.Value ? ToDec(row["P_Lista"]) : 0m;
 
                     BaseColor bg = (idx % 2 == 0) ? cBlanco : cGrisFondo;
 
@@ -2770,10 +2885,10 @@ namespace Comercial.Clases
             string fecha    = Convert.ToDateTime(cab["fecha"]).ToString("dd/MM/yyyy");
             string proveedor = cab["nombreComercial"].ToString();
             string dirProv   = cab["direccion"] != DBNull.Value ? cab["direccion"].ToString() : string.Empty;
-            decimal total    = cab["total"]    != DBNull.Value ? Convert.ToDecimal(cab["total"])    : 0m;
-            decimal iva      = cab["iva"]      != DBNull.Value ? Convert.ToDecimal(cab["iva"])      : 0m;
-            decimal recargo  = cab["recargo"]  != DBNull.Value ? Convert.ToDecimal(cab["recargo"])  : 0m;
-            decimal descuento= cab["descuento"]!= DBNull.Value ? Convert.ToDecimal(cab["descuento"]): 0m;
+            decimal total    = cab["total"]    != DBNull.Value ? ToDec(cab["total"])    : 0m;
+            decimal iva      = cab["iva"]      != DBNull.Value ? ToDec(cab["iva"])      : 0m;
+            decimal recargo  = cab["recargo"]  != DBNull.Value ? ToDec(cab["recargo"])  : 0m;
+            decimal descuento= cab["descuento"]!= DBNull.Value ? ToDec(cab["descuento"]): 0m;
 
             string fmtDec   = "N" + cantDec.ToString();
             string fmtStock = "N" + cantStock.ToString();
@@ -2922,9 +3037,9 @@ namespace Comercial.Clases
                 int rowIdx = 0;
                 foreach (DataRow row in dt.Rows)
                 {
-                    decimal cantidad   = row["cantidad"]       != DBNull.Value ? Convert.ToDecimal(row["cantidad"])       : 0m;
-                    decimal precioProv = row["precioProveedor"]!= DBNull.Value ? Convert.ToDecimal(row["precioProveedor"]) : 0m;
-                    decimal subtotal   = row["subtotal"]       != DBNull.Value ? Convert.ToDecimal(row["subtotal"])       : 0m;
+                    decimal cantidad   = row["cantidad"]       != DBNull.Value ? ToDec(row["cantidad"])       : 0m;
+                    decimal precioProv = row["precioProveedor"]!= DBNull.Value ? ToDec(row["precioProveedor"]) : 0m;
+                    decimal subtotal   = row["subtotal"]       != DBNull.Value ? ToDec(row["subtotal"])       : 0m;
 
                     BaseColor bg = (rowIdx % 2 == 0) ? cBlanco : cGrisFondo;
 
@@ -3009,6 +3124,198 @@ namespace Comercial.Clases
                 doc.Add(totT);
                 doc.Close();
             }
+
+            Process.Start(new ProcessStartInfo()
+            {
+                FileName = path,
+                UseShellExecute = true
+            });
+        }
+
+        // ════════════════════════════════════════════════════════════════════════
+        // ORDEN DE COMPRA — Excel (ClosedXML), mismo formato/columnas que el PDF
+        // Data: ClassProveedores.traerOrdenCompra(idOrden)
+        // ════════════════════════════════════════════════════════════════════════
+        public void GenerarOrdenCompraExcel(long idOrden, int cantDec, int cantStock)
+        {
+            var instProv = new ClassProveedores();
+            DataTable dt = instProv.traerOrdenCompra(idOrden);
+
+            if (dt.Rows.Count == 0)
+            {
+                System.Windows.Forms.MessageBox.Show(
+                    "No se encontraron datos para la orden seleccionada.", "Sin datos",
+                    System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Information);
+                return;
+            }
+
+            string downloads = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+            string path = Path.Combine(downloads,
+                $"OrdenCompra_{idOrden}_{DateTime.Now:ddMMyyyy_HHmmss}.xlsx");
+
+            var culture = new CultureInfo("es-AR");
+
+            DataRow cab      = dt.Rows[0];
+            string nroOrden  = cab["id"].ToString();
+            string fecha     = Convert.ToDateTime(cab["fecha"]).ToString("dd/MM/yyyy");
+            string proveedor = cab["nombreComercial"].ToString();
+            string dirProv   = cab["direccion"] != DBNull.Value ? cab["direccion"].ToString() : string.Empty;
+            decimal total    = cab["total"]     != DBNull.Value ? ToDec(cab["total"])     : 0m;
+            decimal iva      = cab["iva"]       != DBNull.Value ? ToDec(cab["iva"])       : 0m;
+            decimal recargo  = cab["recargo"]   != DBNull.Value ? ToDec(cab["recargo"])   : 0m;
+            decimal descuento= cab["descuento"] != DBNull.Value ? ToDec(cab["descuento"]) : 0m;
+
+            string fmtDec   = "#,##0." + new string('0', cantDec);
+            string fmtStock = "#,##0." + new string('0', cantStock);
+
+            string empNombre = Clases.ClassValidacion.traerEmpresa();
+            string empRazon  = Clases.ClassValidacion.traerRazonSocial();
+            string empDir    = Clases.ClassValidacion.traerEmpresaDireccion();
+            string empLocal  = Clases.ClassValidacion.traerEmpresaCiudad();
+            string empCuit   = Clases.ClassValidacion.traerEmpresaCuit();
+            string empTel    = Clases.ClassValidacion.traerEmpresaTelefono();
+
+            var cAzul  = ClosedXML.Excel.XLColor.FromArgb(26, 58, 92);
+            var cGris  = ClosedXML.Excel.XLColor.FromArgb(220, 220, 230);
+            var cBlanco = ClosedXML.Excel.XLColor.White;
+
+            using (var wb = new ClosedXML.Excel.XLWorkbook())
+            {
+                var ws = wb.Worksheets.Add("Orden de Compra");
+
+                ws.Column(1).Width = 18;
+                ws.Column(2).Width = 40;
+                ws.Column(3).Width = 12;
+                ws.Column(4).Width = 15;
+                ws.Column(5).Width = 15;
+
+                // ── Logo ──
+                if (cab["imagen"] != DBNull.Value)
+                {
+                    try
+                    {
+                        byte[] imageBytes = (byte[])cab["imagen"];
+                        using (var ms = new MemoryStream(imageBytes))
+                        {
+                            ws.AddPicture(ms).MoveTo(ws.Cell("A1"), 5, 5).WithSize(90, 45);
+                        }
+                    }
+                    catch { }
+                }
+
+                // ── Datos empresa ──
+                var empText = new StringBuilder();
+                empText.AppendLine(empNombre);
+                if (!string.IsNullOrEmpty(empRazon)) empText.AppendLine(empRazon);
+                if (!string.IsNullOrEmpty(empDir))   empText.AppendLine(empDir);
+                if (!string.IsNullOrEmpty(empLocal)) empText.AppendLine(empLocal);
+                if (!string.IsNullOrEmpty(empCuit))  empText.AppendLine("CUIT: " + empCuit);
+                if (!string.IsNullOrEmpty(empTel))   empText.Append("Tel: " + empTel);
+                ws.Range("B1:C5").Merge().Value = empText.ToString();
+                ws.Range("B1:C5").Style.Alignment.WrapText = true;
+                ws.Cell("B1").Style.Font.Bold = true;
+
+                // ── Bloque orden (azul, texto blanco) ──
+                ws.Range("D1:E1").Merge().Value = "ORDEN DE COMPRA";
+                ws.Range("D2:E2").Merge().Value = "N°  " + nroOrden;
+                ws.Range("D3:E3").Merge().Value = "Fecha:  " + fecha;
+                var bloque = ws.Range("D1:E3");
+                bloque.Style.Fill.BackgroundColor = cAzul;
+                bloque.Style.Font.FontColor = cBlanco;
+                bloque.Style.Font.Bold = true;
+                bloque.Style.Alignment.Horizontal = ClosedXML.Excel.XLAlignmentHorizontalValues.Center;
+
+                int fila = 7;
+
+                // ── Sección Proveedor ──
+                var celProvHdr = ws.Range(fila, 1, fila, 5).Merge();
+                celProvHdr.Value = "PROVEEDOR";
+                celProvHdr.Style.Fill.BackgroundColor = cAzul;
+                celProvHdr.Style.Font.FontColor = cBlanco;
+                celProvHdr.Style.Font.Bold = true;
+                fila++;
+
+                ws.Range(fila, 1, fila, 5).Merge().Value =
+                    proveedor + (string.IsNullOrEmpty(dirProv) ? "" : "  -  " + dirProv);
+                fila += 2;
+
+                // ── Encabezados detalle ──
+                string[] heads = { "Cód. Prov.", "Descripción", "Cantidad", "P. Proveedor", "Subtotal" };
+                for (int i = 0; i < heads.Length; i++)
+                {
+                    var c = ws.Cell(fila, i + 1);
+                    c.Value = heads[i];
+                    c.Style.Font.Bold = true;
+                    c.Style.Fill.BackgroundColor = cAzul;
+                    c.Style.Font.FontColor = cBlanco;
+                    c.Style.Alignment.Horizontal = i <= 1
+                        ? ClosedXML.Excel.XLAlignmentHorizontalValues.Left
+                        : ClosedXML.Excel.XLAlignmentHorizontalValues.Right;
+                }
+                fila++;
+
+                // ── Detalle ──
+                foreach (DataRow row in dt.Rows)
+                {
+                    decimal cantidad   = row["cantidad"]        != DBNull.Value ? ToDec(row["cantidad"])        : 0m;
+                    decimal precioProv = row["precioProveedor"] != DBNull.Value ? ToDec(row["precioProveedor"]) : 0m;
+                    decimal subtotal   = row["subtotal"]        != DBNull.Value ? ToDec(row["subtotal"])        : 0m;
+
+                    ws.Cell(fila, 1).Value = row["codProveedor"].ToString();
+                    ws.Cell(fila, 2).Value = row["descripcion"].ToString();
+                    ws.Cell(fila, 3).Value = cantidad;
+                    ws.Cell(fila, 4).Value = precioProv;
+                    ws.Cell(fila, 5).Value = subtotal;
+
+                    ws.Cell(fila, 3).Style.NumberFormat.Format = fmtStock;
+                    ws.Cell(fila, 4).Style.NumberFormat.Format = fmtDec;
+                    ws.Cell(fila, 5).Style.NumberFormat.Format = fmtDec;
+                    ws.Range(fila, 3, fila, 5).Style.Alignment.Horizontal = ClosedXML.Excel.XLAlignmentHorizontalValues.Right;
+
+                    fila++;
+                }
+
+                fila++;
+
+                // ── Totales (col 4 = etiqueta, col 5 = valor) ──
+                void SetTot(string label, decimal val, bool bold)
+                {
+                    ws.Cell(fila, 4).Value = label;
+                    ws.Cell(fila, 4).Style.Font.Bold = true;
+                    ws.Cell(fila, 4).Style.Alignment.Horizontal = ClosedXML.Excel.XLAlignmentHorizontalValues.Right;
+
+                    ws.Cell(fila, 5).Value = val;
+                    ws.Cell(fila, 5).Style.NumberFormat.Format = fmtDec;
+                    ws.Cell(fila, 5).Style.Alignment.Horizontal = ClosedXML.Excel.XLAlignmentHorizontalValues.Right;
+
+                    if (bold)
+                    {
+                        ws.Range(fila, 4, fila, 5).Style.Fill.BackgroundColor = cAzul;
+                        ws.Range(fila, 4, fila, 5).Style.Font.FontColor = cBlanco;
+                        ws.Range(fila, 4, fila, 5).Style.Font.Bold = true;
+                    }
+                    else
+                    {
+                        ws.Range(fila, 4, fila, 5).Style.Fill.BackgroundColor = cGris;
+                    }
+                    fila++;
+                }
+
+                if (descuento != 0) SetTot("Descuento:", descuento, false);
+                if (recargo   != 0) SetTot("Recargo:",   recargo,   false);
+                if (iva       != 0) SetTot("IVA:",        iva,       false);
+                SetTot("TOTAL:", total, true);
+
+                ws.Columns().AdjustToContents();
+                wb.SaveAs(path);
+            }
+
+            System.Windows.Forms.MessageBox.Show(
+                "Archivo descargado en:\n" + path, "Descarga finalizada",
+                System.Windows.Forms.MessageBoxButtons.OK,
+                System.Windows.Forms.MessageBoxIcon.Information);
 
             Process.Start(new ProcessStartInfo()
             {

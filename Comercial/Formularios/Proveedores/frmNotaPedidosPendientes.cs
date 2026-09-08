@@ -82,7 +82,15 @@ namespace Comercial.Formularios.Proveedores
             {
                 long idOrden = long.Parse(dgvOrden.CurrentRow.Cells["id"].Value.ToString());
                 var instReportes = new Clases.ClassReportesITextSharp();
-                instReportes.GenerarOrdenCompraPDF(idOrden, cantDec, cantStock);
+
+                DialogResult result = MessageBox.Show("¿Desea descargar en formato PDF?\n(Sí = PDF / No = Excel)",
+                                                      "Exportar", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if (result == DialogResult.Cancel) return;
+
+                if (result == DialogResult.Yes)
+                    instReportes.GenerarOrdenCompraPDF(idOrden, cantDec, cantStock);
+                else
+                    instReportes.GenerarOrdenCompraExcel(idOrden, cantDec, cantStock);
             }
         }
 

@@ -187,7 +187,7 @@ namespace Comercial.Formularios.Ventas
                 if (cboFiltro.SelectedIndex == 0)
                 {
                     // Búsqueda por código proveedor
-                    producto = instProd.traeProductosPpal(" where baja = 0 and codProveedor = '" + txtFiltro.Text.Trim() + "'");
+                    producto = instProd.traeProductosPpal(" where IFNULL(baja, 0) = 0 and codProveedor = '" + txtFiltro.Text.Trim() + "'");
                 }
                 else if (cboFiltro.SelectedIndex == 1)
                 {
@@ -214,7 +214,7 @@ namespace Comercial.Formularios.Ventas
                             textoBusqueda = codigoBarrasParte;
                         }
 
-                        producto = instProd.traeProductosPpal(" where baja = 0 and codBarras = " + textoBusqueda);
+                        producto = instProd.traeProductosPpal(" where IFNULL(baja, 0) = 0 and codBarras = " + textoBusqueda);
                     }
                     else
                     {
@@ -231,7 +231,7 @@ namespace Comercial.Formularios.Ventas
                             var productoBalanzaId = Clases.ClassProductosBalanza.ExtraerPorPosicion(txtFiltro.Text.Trim(), posicionProductoBalanza);
                             if (productoBalanzaId == null) return;
 
-                            producto = instProd.traeProductosPpal(" where baja = 0 and codBarras = " + productoBalanzaId.Trim());
+                            producto = instProd.traeProductosPpal(" where IFNULL(baja, 0) = 0 and codBarras = " + productoBalanzaId.Trim());
                             if (producto.Rows.Count > 0)
                             {
                                 productoDeBalanzaEncontrado = true;
@@ -254,13 +254,13 @@ namespace Comercial.Formularios.Ventas
                         }
                         else
                         {
-                            producto = instProd.traeProductosPpal(" where baja = 0 and codBarras = " + txtFiltro.Text.Trim());
+                            producto = instProd.traeProductosPpal(" where IFNULL(baja, 0) = 0 and codBarras = " + txtFiltro.Text.Trim());
                         }
                     }
                 }
                 else
                 {
-                    producto = instProd.traeProductosPpal(" where baja = 0 and id = " + txtFiltro.Text.Trim());
+                    producto = instProd.traeProductosPpal(" where IFNULL(baja, 0) = 0 and id = " + txtFiltro.Text.Trim());
                 }
             }
 
@@ -733,7 +733,7 @@ namespace Comercial.Formularios.Ventas
             if (texto.Length < 2) { lbDesc.Visible = false; return; }
 
             DataTable dt = instProd.traeProductosPpal(
-                " where baja = 0 and descripcion like '%" + texto.Replace("'", "''") + "%' limit 20");
+                " where IFNULL(baja, 0) = 0 and descripcion like '%" + texto.Replace("'", "''") + "%' limit 20");
 
             lbDesc.Items.Clear();
             foreach (DataRow row in dt.Rows)

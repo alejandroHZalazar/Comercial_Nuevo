@@ -78,6 +78,8 @@
             this.label6 = new System.Windows.Forms.Label();
             this.nudDescuento = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
+            this.nudDescuentoGeneral = new System.Windows.Forms.NumericUpDown();
+            this.lblDescGeneral = new System.Windows.Forms.Label();
             this.pbProceso = new System.Windows.Forms.ProgressBar();
             this.backgroundWorkerTarea = new System.ComponentModel.BackgroundWorker();
             this.btnAltaCliente = new System.Windows.Forms.Button();
@@ -107,6 +109,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvPedido)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecargo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDescuento)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDescuentoGeneral)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.panelSelGrilla.SuspendLayout();
             this.SuspendLayout();
@@ -547,9 +550,39 @@
             this.label5.Size = new System.Drawing.Size(67, 15);
             this.label5.TabIndex = 25;
             this.label5.Text = "Descuento";
-            // 
+            //
+            // lblDescGeneral
+            //
+            this.lblDescGeneral.AutoSize = true;
+            this.lblDescGeneral.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDescGeneral.Location = new System.Drawing.Point(510, 626);
+            this.lblDescGeneral.Name = "lblDescGeneral";
+            this.lblDescGeneral.Size = new System.Drawing.Size(90, 15);
+            this.lblDescGeneral.TabIndex = 68;
+            this.lblDescGeneral.Text = "Desc. Gral % S/IVA";
+            this.lblDescGeneral.Visible = false;
+            //
+            // nudDescuentoGeneral
+            //
+            this.nudDescuentoGeneral.DecimalPlaces = 2;
+            this.nudDescuentoGeneral.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nudDescuentoGeneral.Location = new System.Drawing.Point(625, 622);
+            this.nudDescuentoGeneral.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nudDescuentoGeneral.Name = "nudDescuentoGeneral";
+            this.nudDescuentoGeneral.Size = new System.Drawing.Size(56, 23);
+            this.nudDescuentoGeneral.TabIndex = 5;
+            this.nudDescuentoGeneral.Visible = false;
+            this.nudDescuentoGeneral.ValueChanged += new System.EventHandler(this.nudDescuentoGeneral_ValueChanged);
+            this.nudDescuentoGeneral.Enter += new System.EventHandler(this.nudDescuentoGeneral_Enter);
+            this.nudDescuentoGeneral.KeyDown += new System.Windows.Forms.KeyEventHandler(this.nudDescuentoGeneral_KeyDown);
+            this.nudDescuentoGeneral.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nudDescuentoGeneral_KeyPress);
+            //
             // pbProceso
-            // 
+            //
             this.pbProceso.Location = new System.Drawing.Point(930, 622);
             this.pbProceso.Name = "pbProceso";
             this.pbProceso.Size = new System.Drawing.Size(300, 23);
@@ -831,6 +864,8 @@
             this.Controls.Add(this.label6);
             this.Controls.Add(this.nudDescuento);
             this.Controls.Add(this.label5);
+            this.Controls.Add(this.nudDescuentoGeneral);
+            this.Controls.Add(this.lblDescGeneral);
             this.Controls.Add(this.cboIVA);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.panelSelGrilla);
@@ -856,6 +891,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvPedido)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecargo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDescuento)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDescuentoGeneral)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.panelSelGrilla.ResumeLayout(false);
@@ -888,6 +924,8 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.NumericUpDown nudDescuento;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.NumericUpDown nudDescuentoGeneral;
+        private System.Windows.Forms.Label lblDescGeneral;
         private System.Windows.Forms.ProgressBar pbProceso;
         private System.ComponentModel.BackgroundWorker backgroundWorkerTarea;
         private System.Windows.Forms.Button btnAltaCliente;

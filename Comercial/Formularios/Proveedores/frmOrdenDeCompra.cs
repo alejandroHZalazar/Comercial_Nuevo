@@ -428,7 +428,13 @@ namespace Comercial.Formularios.Proveedores
                     }
 
                     var instReportes = new Clases.ClassReportesITextSharp();
-                    instReportes.GenerarOrdenCompraPDF(salida, cantDec, cantStock);
+                    DialogResult result = MessageBox.Show("¿Desea descargar en formato PDF?\n(Sí = PDF / No = Excel)",
+                                                          "Exportar", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                    if (result == DialogResult.Yes)
+                        instReportes.GenerarOrdenCompraPDF(salida, cantDec, cantStock);
+                    else if (result == DialogResult.No)
+                        instReportes.GenerarOrdenCompraExcel(salida, cantDec, cantStock);
+                    // Cancelar: la orden ya quedó grabada; simplemente no se genera comprobante.
                     salida = 0;
                     estadoInicial();
 

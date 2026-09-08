@@ -196,6 +196,10 @@ namespace Comercial.Formularios.Ventas
             cboVendedores.SelectedIndex = -1;
             dgvProductos.Columns["Sel"].Visible = bonificacionPorLinea == 1;
             panelSelGrilla.Visible = bonificacionPorLinea == 1;
+            // Descuento general sobre Total S/IVA: solo disponible en modo bonificación por línea
+            nudDescuentoGeneral.Value = 0;
+            nudDescuentoGeneral.Visible = bonificacionPorLinea == 1;
+            lblDescGeneral.Visible = bonificacionPorLinea == 1;
             verificarParametros();
         }
 
@@ -227,7 +231,7 @@ namespace Comercial.Formularios.Ventas
         private void cargarProductos()
         {
             resgProducto.Clear();
-            DataTable productos = instProd.traeProductosPpal(" where baja = 0 order by descripcion");
+            DataTable productos = instProd.traeProductosPpal(" where IFNULL(baja, 0) = 0 order by descripcion");
 
             if (productos.Rows.Count > 0)
             {
@@ -292,11 +296,12 @@ namespace Comercial.Formularios.Ventas
             {
                 unPedido = unPed;
 
-                // Si la cabecera tiene descuento/recargo global se aplica igual a todas las filas:
-                //   descRec = (descuento * -1) + recargo
-                // Si es null significa que el pedido usa bonificación por línea:
-                //   se lee descuento/recargo de cada fila de PedidoDetalle
-                bool tieneGlobal = unDescuento.HasValue || unRecargo.HasValue;
+                // En modo bonificación por línea, el descuento de cabecera del pedido es el
+                // descuento GENERAL sobre Total S/IVA: se carga en nudDescuentoGeneral y NO se
+                // distribuye por línea (el desc/rec por línea se lee de PedidoDetalle).
+                // En modo ≠1 se conserva el comportamiento actual (global aplicado a todas las filas).
+                bool modoPorLinea = bonificacionPorLinea == 1;
+                bool tieneGlobal = !modoPorLinea && (unDescuento.HasValue || unRecargo.HasValue);
                 decimal descRecGlobal = tieneGlobal
                     ? ((unDescuento ?? 0) * -1) + (unRecargo ?? 0)
                     : 0;
@@ -333,6 +338,9 @@ namespace Comercial.Formularios.Ventas
             unPedido = 0;
             nudDescuento.Value = 0;
             nudRecargo.Value = 0;
+            // Cargar el descuento general del pedido (modo bonificación por línea)
+            if (bonificacionPorLinea == 1)
+                nudDescuentoGeneral.Value = (unDescuento.HasValue && unDescuento.Value > 0) ? unDescuento.Value : 0;
             cboIVA.Text = unIva.ToString();
             procesoTotales();
             btnCambioPrecio.Enabled = true;
@@ -571,8 +579,24 @@ namespace Comercial.Formularios.Ventas
             if (dgvProductos.RowCount > 0)
             {
                 txtSubSinIVA.Text = totalSIVA.ToString("F2");
-                txtDescuento.Text = totalDescRec.ToString("F2");
                 var totalGeneralSInIVA = totalSIVA + totalDescRec;
+
+                // ── Descuento general sobre Total S/IVA (solo modo bonificación por línea) ──
+                // Se aplica DESPUÉS del cálculo por línea, sobre el neto. IVA e IIBB se recalculan
+                // sobre la base neta (IVA único del comprobante). El detalle por línea no se altera.
+                bool aplicaDescGeneral = bonificacionPorLinea == 1 && nudDescuentoGeneral.Value > 0;
+                decimal descGeneralMonto = 0;
+                if (aplicaDescGeneral)
+                {
+                    decimal dg = nudDescuentoGeneral.Value;
+                    decimal baseNeta = Math.Round(totalGeneralSInIVA * (1 - dg / 100), cantDec, MidpointRounding.AwayFromZero);
+                    descGeneralMonto = totalGeneralSInIVA - baseNeta;
+                    totalGeneralSInIVA = baseNeta;
+                    totalIVA = Math.Round(baseNeta * (decimal.Parse(cboIVA.Text) / 100), cantDec, MidpointRounding.AwayFromZero);
+                }
+
+                // totalDescRec es negativo para descuentos; el importe general (positivo) se resta
+                txtDescuento.Text = (totalDescRec - descGeneralMonto).ToString("F2");
                 txtTotalSinIva.Text = totalGeneralSInIVA.ToString("F2");
 
                 txtIVA.Text = totalIVA.ToString("F2");
@@ -585,19 +609,27 @@ namespace Comercial.Formularios.Ventas
 
                 txtIB.Text = totalIB.ToString("F2");
 
-                decimal totalCalculado = totalFinal + totalIB;
-                decimal totalEsperado = Math.Round(totalGeneralSInIVA + totalIVA + totalIB, cantDec);
-
-                // 🔥 Diferencia
-                decimal diferencia = totalEsperado - totalCalculado;
-
-                // 👉 Ajustar SOLO si hay diferencia mínima
-                if (Math.Abs(diferencia) > 0 && Math.Abs(diferencia) <= 0.05m)
+                if (aplicaDescGeneral)
                 {
-                    totalCalculado += diferencia;
+                    // Con descuento general el total sale de la base neta (base + IVA + IIBB)
+                    txtTotGeneral.Text = Math.Round(totalGeneralSInIVA + totalIVA + totalIB, cantDec).ToString("F2");
                 }
+                else
+                {
+                    decimal totalCalculado = totalFinal + totalIB;
+                    decimal totalEsperado = Math.Round(totalGeneralSInIVA + totalIVA + totalIB, cantDec);
 
-                txtTotGeneral.Text = totalCalculado.ToString("F2");
+                    // 🔥 Diferencia
+                    decimal diferencia = totalEsperado - totalCalculado;
+
+                    // 👉 Ajustar SOLO si hay diferencia mínima
+                    if (Math.Abs(diferencia) > 0 && Math.Abs(diferencia) <= 0.05m)
+                    {
+                        totalCalculado += diferencia;
+                    }
+
+                    txtTotGeneral.Text = totalCalculado.ToString("F2");
+                }
             }
         }
 
@@ -615,7 +647,7 @@ namespace Comercial.Formularios.Ventas
             {
                 if (cboFiltro.SelectedIndex == 0)
                 {
-                    producto = instProd.traeProductosPpal(" where baja = 0 and codProveedor = '" + txtFiltro.Text.Trim() + "'");
+                    producto = instProd.traeProductosPpal(" where IFNULL(baja, 0) = 0 and codProveedor = '" + txtFiltro.Text.Trim() + "'");
                 }
                 else if (cboFiltro.SelectedIndex == 1)
                 {
@@ -643,7 +675,7 @@ namespace Comercial.Formularios.Ventas
                             textoBusqueda = codigoBarrasParte;
                         }
 
-                        producto = instProd.traeProductosPpal(" where baja = 0 and codBarras = " + textoBusqueda);
+                        producto = instProd.traeProductosPpal(" where IFNULL(baja, 0) = 0 and codBarras = " + textoBusqueda);
                     }
                     else
                     {
@@ -658,7 +690,7 @@ namespace Comercial.Formularios.Ventas
 
                             if (productoBalanzaId == null) return;
 
-                            producto = instProd.traeProductosPpal(" where baja = 0 and codBarras = " + productoBalanzaId.Trim());
+                            producto = instProd.traeProductosPpal(" where IFNULL(baja, 0) = 0 and codBarras = " + productoBalanzaId.Trim());
                             if (producto.Rows.Count > 0)
                             {
                                 productoDeBalanzaEncontrado = true;
@@ -686,14 +718,14 @@ namespace Comercial.Formularios.Ventas
                         }
                         else
                         {
-                            producto = instProd.traeProductosPpal(" where baja = 0 and codBarras = " + txtFiltro.Text.Trim());
+                            producto = instProd.traeProductosPpal(" where IFNULL(baja, 0) = 0 and codBarras = " + txtFiltro.Text.Trim());
                         }
 
                     }
                 }
                 else
 
-                    producto = instProd.traeProductosPpal(" where baja = 0 and id = " + txtFiltro.Text.Trim());
+                    producto = instProd.traeProductosPpal(" where IFNULL(baja, 0) = 0 and id = " + txtFiltro.Text.Trim());
 
             }
 
@@ -758,7 +790,7 @@ namespace Comercial.Formularios.Ventas
 
         private void prepararProducto()
         {
-            DataTable producto = instProd.traeProductosPpal(" where baja = 0 and descripcion = '" + lbDesc.SelectedItem.ToString() + "'");
+            DataTable producto = instProd.traeProductosPpal(" where IFNULL(baja, 0) = 0 and descripcion = '" + lbDesc.SelectedItem.ToString() + "'");
 
             if (producto.Rows.Count > 0)
             {
@@ -916,6 +948,30 @@ namespace Comercial.Formularios.Ventas
         }
 
         private void nudRecargo_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == '.')
+            {
+                e.KeyChar = ',';
+            }
+        }
+
+        private void nudDescuentoGeneral_ValueChanged(object sender, EventArgs e)
+        {
+            procesoTotales();
+        }
+
+        private void nudDescuentoGeneral_Enter(object sender, EventArgs e)
+        {
+            Clases.ClassValidacion.seleccionarTodoNumericUpDown(nudDescuentoGeneral);
+        }
+
+        private void nudDescuentoGeneral_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Enter)
+                procesoTotales();
+        }
+
+        private void nudDescuentoGeneral_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == '.')
             {
@@ -1208,9 +1264,16 @@ namespace Comercial.Formularios.Ventas
                 });
             }
 
-            var ticket = new TicketPrinter(items, ventaDT.Rows[0]["Vendedor"].ToString(), ventaDT.Rows[0]["nombreComercial"].ToString(), decimal.Parse(ventaDT.Rows[0]["totalVenta"].ToString()),
-                                            DateTime.Parse(ventaDT.Rows[0]["fecha"].ToString()), ventaDT.Rows[0]["nroVenta"].ToString(), decimal.Parse(ventaDT.Rows[0]["descuento"].ToString())
-                                            , decimal.Parse(ventaDT.Rows[0]["recargo"].ToString()), anchoTk == 80 ? 42 : 32); // 42 = 80mm
+            // Descuento a mostrar: si hay descuento general de cabecera (modo bonificación por línea)
+            // se usa ese %; si no, se conserva el descuento por línea (comportamiento anterior).
+            DataRow rTk = ventaDT.Rows[0];
+            decimal descGeneralTk = rTk.Table.Columns.Contains("descuentoGeneral") && rTk["descuentoGeneral"] != DBNull.Value
+                ? decimal.Parse(rTk["descuentoGeneral"].ToString()) : 0;
+            decimal descTicket = descGeneralTk > 0 ? descGeneralTk : decimal.Parse(rTk["descuento"].ToString());
+
+            var ticket = new TicketPrinter(items, rTk["Vendedor"].ToString(), rTk["nombreComercial"].ToString(), decimal.Parse(rTk["totalVenta"].ToString()),
+                                            DateTime.Parse(rTk["fecha"].ToString()), rTk["nroVenta"].ToString(), descTicket
+                                            , decimal.Parse(rTk["recargo"].ToString()), anchoTk == 80 ? 42 : 32); // 42 = 80mm
             ticket.Imprimir();
         }
         private void txtDesc_TextChanged(object sender, EventArgs e)
@@ -1395,7 +1458,12 @@ namespace Comercial.Formularios.Ventas
 
                 }
 
-                salida = instVentas.grabarVenta(decimal.Parse(txtTotGeneral.Text), unCosto, unCliente, int.Parse(Environment.GetEnvironmentVariable("idUser")), decimal.Parse(cboIVA.Text),null, null, int.Parse(cboVendedores.SelectedValue.ToString()), nudComision.Value / 100, decimal.Parse(cboIngBrutos.Text), detalle, llevaCC, imputaEnVenta, tieneMediosPagos, imputacion, detalleFormasPago, tieneCaja, CajaId);
+                // Descuento general (% sobre Total S/IVA): se persiste en ventas.descuento vía unDescuento.
+                // Solo en modo bonificación por línea y > 0; en otro caso null (comportamiento actual).
+                decimal? descuentoGeneral = (bonificacionPorLinea == 1 && nudDescuentoGeneral.Value > 0)
+                    ? (decimal?)nudDescuentoGeneral.Value
+                    : null;
+                salida = instVentas.grabarVenta(decimal.Parse(txtTotGeneral.Text), unCosto, unCliente, int.Parse(Environment.GetEnvironmentVariable("idUser")), decimal.Parse(cboIVA.Text),descuentoGeneral, null, int.Parse(cboVendedores.SelectedValue.ToString()), nudComision.Value / 100, decimal.Parse(cboIngBrutos.Text), detalle, llevaCC, imputaEnVenta, tieneMediosPagos, imputacion, detalleFormasPago, tieneCaja, CajaId);
 
                 // Guardar componentes de promociones detectadas automáticamente
                 if (salida != -1 && _promosAplicadas.Count > 0)

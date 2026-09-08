@@ -45,6 +45,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.lbDesc = new System.Windows.Forms.ListBox();
             this.nudDescuento = new System.Windows.Forms.NumericUpDown();
+            this.nudDescuentoGeneral = new System.Windows.Forms.NumericUpDown();
+            this.lblDescGeneral = new System.Windows.Forms.Label();
             this.dgvProductos = new System.Windows.Forms.DataGridView();
             this.Sel = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Cod_Barras = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -120,6 +122,7 @@
             this.btnTodos = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecargo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDescuento)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDescuentoGeneral)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvProductos)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCantidad)).BeginInit();
             this.gbFiltro.SuspendLayout();
@@ -181,9 +184,39 @@
             this.label5.Size = new System.Drawing.Size(67, 15);
             this.label5.TabIndex = 43;
             this.label5.Text = "Descuento";
-            // 
+            //
+            // lblDescGeneral
+            //
+            this.lblDescGeneral.AutoSize = true;
+            this.lblDescGeneral.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDescGeneral.Location = new System.Drawing.Point(335, 596);
+            this.lblDescGeneral.Name = "lblDescGeneral";
+            this.lblDescGeneral.Size = new System.Drawing.Size(103, 15);
+            this.lblDescGeneral.TabIndex = 70;
+            this.lblDescGeneral.Text = "Desc. Gral % S/IVA";
+            this.lblDescGeneral.Visible = false;
+            //
+            // nudDescuentoGeneral
+            //
+            this.nudDescuentoGeneral.DecimalPlaces = 2;
+            this.nudDescuentoGeneral.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nudDescuentoGeneral.Location = new System.Drawing.Point(445, 592);
+            this.nudDescuentoGeneral.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nudDescuentoGeneral.Name = "nudDescuentoGeneral";
+            this.nudDescuentoGeneral.Size = new System.Drawing.Size(83, 23);
+            this.nudDescuentoGeneral.TabIndex = 9;
+            this.nudDescuentoGeneral.Visible = false;
+            this.nudDescuentoGeneral.ValueChanged += new System.EventHandler(this.nudDescuentoGeneral_ValueChanged);
+            this.nudDescuentoGeneral.Enter += new System.EventHandler(this.nudDescuentoGeneral_Enter);
+            this.nudDescuentoGeneral.KeyDown += new System.Windows.Forms.KeyEventHandler(this.nudDescuentoGeneral_KeyDown);
+            this.nudDescuentoGeneral.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nudDescuentoGeneral_KeyPress);
+            //
             // cboIVA
-            // 
+            //
             this.cboIVA.FormattingEnabled = true;
             this.cboIVA.Location = new System.Drawing.Point(199, 46);
             this.cboIVA.Name = "cboIVA";
@@ -1020,6 +1053,8 @@
             this.Controls.Add(this.label5);
             this.Controls.Add(this.lbDesc);
             this.Controls.Add(this.nudDescuento);
+            this.Controls.Add(this.nudDescuentoGeneral);
+            this.Controls.Add(this.lblDescGeneral);
             this.Controls.Add(this.dgvProductos);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cboTipo);
@@ -1042,6 +1077,7 @@
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmVentas_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.nudRecargo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDescuento)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDescuentoGeneral)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvProductos)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCantidad)).EndInit();
             this.gbFiltro.ResumeLayout(false);
@@ -1065,6 +1101,8 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ListBox lbDesc;
         private System.Windows.Forms.NumericUpDown nudDescuento;
+        private System.Windows.Forms.NumericUpDown nudDescuentoGeneral;
+        private System.Windows.Forms.Label lblDescGeneral;
         private System.Windows.Forms.DataGridView dgvProductos;
         private System.Windows.Forms.Label lblDescripcion;
         private System.Windows.Forms.Button btnAgregar;

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -250,191 +251,121 @@ namespace Comercial.Clases
 
                 if (unaDevolucion > 0)
                 {
-                    DataTable cabecera = instVentas.TraerCabeceraNC(unaDevolucion);
-                    if (cabecera.Rows.Count == 0) return false;
+                    DataTable cabeceraDt = instVentas.TraerCabeceraNC(unaDevolucion);
+                    if (cabeceraDt.Rows.Count == 0) return false;
+                    DataRow cabecera = cabeceraDt.Rows[0];
 
-                    FacturaRequest facturaRequest = new FacturaRequest();
-                    facturaRequest.cliente = new Cliente();
-                    facturaRequest.comprobante = new Comprobante();
+                    Cliente cliente = CrearCliente(cabecera, null);
 
-                    facturaRequest.usertoken = this.userToken;
-                    facturaRequest.apikey = this.apiKey;
-                    facturaRequest.apitoken = this.apiToken;
-
-                    facturaRequest.cliente = CrearCliente(cabecera.Rows[0], null);
-
-                    string claveNotaCredito = $"Tipo_Comprobante_NC{cabecera.Rows[0]["letra"].ToString().ToUpper()}";
+                    string claveNotaCredito = $"Tipo_Comprobante_NC{cabecera["letra"].ToString().ToUpper()}";
                     string tipoComprobante = Resource.ResourceManager.GetString(claveNotaCredito);
 
-                    string claveComprobanteAsoc = $"Tipo_Comprobante_F{cabecera.Rows[0]["letra"].ToString().ToUpper()}";
+                    string claveComprobanteAsoc = $"Tipo_Comprobante_F{cabecera["letra"].ToString().ToUpper()}";
                     string tipoComprobanteAsoc = Resource.ResourceManager.GetString(claveComprobanteAsoc);
 
-                    facturaRequest.comprobante = CrearComprobante(tipoComprobante);
-
-                    facturaRequest.comprobante.comprobantes_asociados = new List<ComprobanteAsociado>();
-                    var unCOmprobanteAsociado = CrearComprobanteAsociado(
+                    // Mismo comprobante asociado (la factura original) para todos los lotes que se emitan.
+                    var comprobanteAsociado = CrearComprobanteAsociado(
                         tipoComprobanteAsoc,
                         FacturaAsociada,
                         fechaFacturaAsociada,
-                        long.Parse(cabecera.Rows[0]["cuil"].ToString())
+                        long.Parse(cabecera["cuil"].ToString())
                     );
-                    facturaRequest.comprobante.comprobantes_asociados.Add(unCOmprobanteAsociado);
 
                     DataTable detalle = instVentas.TraerDetalleNC(unaDevolucion);
                     if (detalle.Rows.Count == 0) return false;
 
-                    decimal neto = 0m;
-                    decimal ivaTotal = 0m;
-                    decimal recargoTotal = 0m;
+                    // ── División en lotes: la API rechaza comprobantes con más de 130 líneas ──
+                    int tamanioLote = CalcularTamanioLote(detalle);
+                    var lotes = DividirEnLotes(detalle, tamanioLote);
 
-                    facturaRequest.comprobante.detalle = new List<DetalleFactura>();
+                    var comprobantesEmitidos = new List<(string numero, string pdf)>();
+                    string errorParte = null;
 
-                    foreach (DataRow fila in detalle.Rows)
+                    for (int i = 0; i < lotes.Count; i++)
                     {
-                        decimal cantidad = Math.Round((decimal)fila["cantidad"], 2);
-                        decimal precioBase = (decimal)fila["precioSinIva"];
+                        var (detalleLote, neto, ivaTotal) = ConstruirDetalleLote(lotes[i], cabecera);
+                        var (bonificacionGeneral, ivaConGeneral, tributos, totalFinal) = CalcularAgregadosLote(neto, ivaTotal, cabecera);
 
-                        decimal precioUnitario = Math.Round(
-                            (decimal)cabecera.Rows[0]["IVA"] == 0
-                                ? precioBase / 1.21m
-                                : precioBase
-                        , 3);
+                        FacturaRequest facturaRequest = new FacturaRequest();
+                        facturaRequest.usertoken = this.userToken;
+                        facturaRequest.apikey = this.apiKey;
+                        facturaRequest.apitoken = this.apiToken;
+                        facturaRequest.cliente = cliente;
+                        facturaRequest.comprobante = CrearComprobante(tipoComprobante);
+                        facturaRequest.comprobante.comprobantes_asociados = new List<ComprobanteAsociado> { comprobanteAsociado };
+                        facturaRequest.comprobante.detalle = detalleLote;
+                        facturaRequest.comprobante.bonificacion = bonificacionGeneral;
+                        facturaRequest.comprobante.tributos = tributos;
+                        facturaRequest.comprobante.total = totalFinal;
 
-                        decimal bonif = Math.Round((decimal)fila["descuento"], 2);
-                        decimal alicuota = (decimal)cabecera.Rows[0]["IVA"] == 0 ? 21 : (decimal)cabecera.Rows[0]["IVA"];
-
-                        decimal subtotal = precioUnitario * cantidad;
-
-                        if (bonif > 0)
-                            subtotal -= subtotal * (bonif / 100m);
-
-                        neto += subtotal;
-
-                        decimal ivaLinea = Math.Round(subtotal * (alicuota / 100m), 2);
-                        ivaTotal += ivaLinea;
-
-                        if ((decimal)fila["recargo"] > 0)
+                        FacturaResponse respuesta = await emitirConReintentos(facturaRequest, unaDevolucion);
+                        if (respuesta == null)
                         {
-                            decimal recargoLinea = subtotal * ((decimal)fila["recargo"] / 100m);
-                            recargoTotal += recargoLinea;
+                            // Un CAE ya emitido no se puede anular: se conservan los lotes ya emitidos
+                            // y se detiene el proceso, sin reintentar automáticamente el resto.
+                            errorParte = $"Se emitieron {comprobantesEmitidos.Count} de {lotes.Count} notas de crédito. Falló la parte {i + 1}.";
+                            break;
                         }
 
-                        facturaRequest.comprobante.detalle.Add(new DetalleFactura
+                        // ✅ ÉXITO → guardar este comprobante inmediatamente (no esperar a los demás lotes)
+                        Fiscal unTk = new Fiscal();
+
+                        string cae = respuesta.cae.Trim();
+                        string vencimientoCAE = respuesta.vencimiento_cae;
+                        string numero = respuesta.comprobante_nro;
+                        string pdf = respuesta.comprobante_pdf_url;
+                        string qr = respuesta.afip_qr;
+
+                        ComprobanteFiscal unComprobante = new ComprobanteFiscal
                         {
-                            cantidad = cantidad,
-                            afecta_stock = "S",
-                            bonificacion_porcentaje = bonif,
-                            producto = new Producto
-                            {
-                                descripcion = fila["descripcion"].ToString(),
-                                unidad_bulto = 1,
-                                lista_precios = "Lista de Precios",
-                                codigo = codigoDetalle == "CodProveedor"
-                                            ? fila["codProveedor"].ToString()
-                                            : codigoDetalle == "CodBarras"
-                                                ? fila["codBarras"].ToString()
-                                                : fila["Producto"].ToString(),
-                                precio_unitario_sin_iva = precioUnitario,
-                                alicuota = alicuota,
-                                unidad_medida = 7,
-                                actualiza_precio = "N",
-                                rg5329 = "N"
-                            }
-                        });
-                    }
-
-                    if (recargoTotal > 0)
-                    {
-                        decimal recargoRedondeado = Math.Round(recargoTotal, 3);
-                        neto += recargoTotal;
-
-                        facturaRequest.comprobante.detalle.Add(new DetalleFactura
-                        {
-                            cantidad = 1,
-                            afecta_stock = "S",
-                            producto = new Producto
-                            {
-                                descripcion = "Recargo",
-                                unidad_bulto = 1,
-                                lista_precios = "Lista de Precios",
-                                codigo = "1",
-                                precio_unitario_sin_iva = recargoRedondeado,
-                                alicuota = (decimal)cabecera.Rows[0]["IVA"] == 0 ? 21 : (decimal)cabecera.Rows[0]["IVA"],
-                                unidad_medida = 7,
-                                actualiza_precio = "N",
-                                rg5329 = "N"
-                            }
-                        });
-                    }
-
-                    decimal totalTributos = 0m;
-
-                    if ((decimal)cabecera.Rows[0]["impuesto"] > 0)
-                    {
-                        decimal alicuotaTributo = Math.Round((decimal)cabecera.Rows[0]["impuesto"], 2);
-                        decimal totalTributo = Math.Round(neto * (alicuotaTributo / 100m), 2);
-
-                        totalTributos = totalTributo;
-
-                        facturaRequest.comprobante.tributos = new List<Tributo>
-                        {
-                            new Tributo
-                            {
-                                tipo = tributoIIBB,
-                                regimen = regimenIIBB,
-                                base_imponible = neto,
-                                alicuota = alicuotaTributo,
-                                total = totalTributo
-                            }
+                            TipoComprobante = "Nota de Crédito",
+                            Letra = cabecera["letra"].ToString(),
+                            PuntoVenta = puntoVenta,
+                            Numero = numero.Split('-')[1].TrimStart('0'),
+                            FechaEmision = DateTime.Now,
+                            CreatedAt = DateTime.Now,
+                            NroReferencia = int.Parse(unaDevolucion.ToString()),
+                            FkCliente = int.Parse(cabecera["Cliente"].ToString()),
+                            RazonSocial = cabecera["razonSocial"].ToString(),
+                            Cuit = cabecera["Cliente"].ToString() == clienteConsumidorFinal.ToString()
+                                        ? "99999999"
+                                        : cabecera["cuil"].ToString(),
+                            ImporteTotal = totalFinal,
+                            Estado = "Emitido",
+                            Cae = cae,
+                            FechaVencimientoCae = DateTime.ParseExact(vencimientoCAE, "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                            urlComprobante = pdf,
+                            qrAfip = qr
                         };
+
+                        unTk.almacenarComprobanteFiscal(unComprobante);
+                        comprobantesEmitidos.Add((numero, pdf));
                     }
 
-                    decimal totalFinal = Math.Round(neto + ivaTotal + totalTributos, 2);
-                    facturaRequest.comprobante.total = totalFinal;
-
-                    FacturaResponse respuesta = await emitirConReintentos(facturaRequest, unaDevolucion);
-                    if (respuesta == null) return false;
-
-                    // ✅ ÉXITO → guardar comprobante
-                    Fiscal unTk = new Fiscal();
-
-                    string cae = respuesta.cae.Trim();
-                    string vencimientoCAE = respuesta.vencimiento_cae;
-                    string numero = respuesta.comprobante_nro;
-                    string pdf = respuesta.comprobante_pdf_url;
-                    string qr = respuesta.afip_qr;
-
-                    ComprobanteFiscal unComprobante = new ComprobanteFiscal
+                    foreach (var c in comprobantesEmitidos)
                     {
-                        TipoComprobante = "Nota de Crédito",
-                        Letra = cabecera.Rows[0]["letra"].ToString(),
-                        PuntoVenta = puntoVenta,
-                        Numero = numero.Split('-')[1].TrimStart('0'),
-                        FechaEmision = DateTime.Now,
-                        CreatedAt = DateTime.Now,
-                        NroReferencia = int.Parse(unaDevolucion.ToString()),
-                        FkCliente = int.Parse(cabecera.Rows[0]["Cliente"].ToString()),
-                        RazonSocial = cabecera.Rows[0]["razonSocial"].ToString(),
-                        Cuit = cabecera.Rows[0]["Cliente"].ToString() == clienteConsumidorFinal.ToString()
-                                    ? "99999999"
-                                    : cabecera.Rows[0]["cuil"].ToString(),
-                        ImporteTotal = totalFinal,
-                        Estado = "Emitido",
-                        Cae = cae,
-                        FechaVencimientoCae = DateTime.ParseExact(vencimientoCAE, "dd/MM/yyyy", CultureInfo.InvariantCulture),
-                        urlComprobante = pdf,
-                        qrAfip = qr
-                    };
+                        System.Diagnostics.Process.Start(new ProcessStartInfo
+                        {
+                            FileName = c.pdf,
+                            UseShellExecute = true
+                        });
+                    }
 
-                    unTk.almacenarComprobanteFiscal(unComprobante);
-
-                    System.Diagnostics.Process.Start(new ProcessStartInfo
+                    // Con más de 1 lote se informa un resumen; con 1 solo lote se preserva el
+                    // comportamiento anterior (sin mensaje extra en éxito).
+                    if (lotes.Count > 1)
                     {
-                        FileName = pdf,
-                        UseShellExecute = true
-                    });
+                        string resumen = errorParte == null
+                            ? $"Se generaron {comprobantesEmitidos.Count} notas de crédito:\n" + string.Join("\n", comprobantesEmitidos.ConvertAll(c => c.numero))
+                            : errorParte + (comprobantesEmitidos.Count > 0
+                                ? "\nComprobantes ya emitidos:\n" + string.Join("\n", comprobantesEmitidos.ConvertAll(c => c.numero))
+                                : string.Empty);
 
-                    return true;
+                        MessageBox.Show(resumen, "FACTURACION", MessageBoxButton.OK,
+                            errorParte == null ? MessageBoxImage.Information : MessageBoxImage.Warning);
+                    }
+
+                    return errorParte == null;
                 }
                 else
                 {
@@ -588,178 +519,111 @@ namespace Comercial.Clases
                 if (string.IsNullOrEmpty(userToken) || string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiToken)) return false;
                 if (puntoVenta == 0) return false;
 
-                DataTable cabecera = instVentas.TraerCabeceraFactura(unaVenta);
-                if (cabecera.Rows.Count == 0) return false;
+                DataTable cabeceraDt = instVentas.TraerCabeceraFactura(unaVenta);
+                if (cabeceraDt.Rows.Count == 0) return false;
+                DataRow cabecera = cabeceraDt.Rows[0];
 
-                FacturaRequest facturaRequest = new FacturaRequest();
-                facturaRequest.cliente = new Cliente();
-                facturaRequest.comprobante = new Comprobante();
+                Cliente cliente = CrearCliente(cabecera, unaVenta);
 
-                facturaRequest.usertoken = this.userToken;
-                facturaRequest.apikey = this.apiKey;
-                facturaRequest.apitoken = this.apiToken;
-
-                facturaRequest.cliente = CrearCliente(cabecera.Rows[0], unaVenta);
-
-                string claveFactura = $"Tipo_Comprobante_F{cabecera.Rows[0]["letra"].ToString().ToUpper()}";
+                string claveFactura = $"Tipo_Comprobante_F{cabecera["letra"].ToString().ToUpper()}";
                 string tipoComprobante = Resource.ResourceManager.GetString(claveFactura);
-                facturaRequest.comprobante = CrearComprobante(tipoComprobante);
 
                 DataTable detalle = instVentas.TraerDetalleFactura(unaVenta);
                 if (detalle.Rows.Count == 0) return false;
 
-                decimal neto = 0m;
-                decimal ivaTotal = 0m;
-                decimal recargoTotal = 0m;
+                // ── División en lotes: la API rechaza comprobantes con más de 130 líneas ──
+                int tamanioLote = CalcularTamanioLote(detalle);
+                var lotes = DividirEnLotes(detalle, tamanioLote);
 
-                facturaRequest.comprobante.detalle = new List<DetalleFactura>();
+                var comprobantesEmitidos = new List<(string numero, string pdf)>();
+                string errorParte = null;
 
-                foreach (DataRow fila in detalle.Rows)
+                for (int i = 0; i < lotes.Count; i++)
                 {
-                    decimal cantidad = Math.Round((decimal)fila["cantidad"], 2);
-                    decimal precioBase = (decimal)fila["precioSinIva"];
+                    var (detalleLote, neto, ivaTotal) = ConstruirDetalleLote(lotes[i], cabecera);
+                    var (bonificacionGeneral, ivaConGeneral, tributos, totalFinal) = CalcularAgregadosLote(neto, ivaTotal, cabecera);
 
-                    decimal precioUnitario = Math.Round(
-                        (decimal)cabecera.Rows[0]["IVA"] == 0
-                            ? precioBase / 1.21m
-                            : precioBase
-                    , 3);
+                    FacturaRequest facturaRequest = new FacturaRequest();
+                    facturaRequest.usertoken = this.userToken;
+                    facturaRequest.apikey = this.apiKey;
+                    facturaRequest.apitoken = this.apiToken;
+                    facturaRequest.cliente = cliente;
+                    facturaRequest.comprobante = CrearComprobante(tipoComprobante);
+                    facturaRequest.comprobante.detalle = detalleLote;
+                    facturaRequest.comprobante.bonificacion = bonificacionGeneral;
+                    facturaRequest.comprobante.tributos = tributos;
+                    facturaRequest.comprobante.total = totalFinal;
 
-                    decimal bonif = Math.Round((decimal)fila["descuento"], 2);
-                    decimal alicuota = (decimal)cabecera.Rows[0]["IVA"] == 0 ? 21 : (decimal)cabecera.Rows[0]["IVA"];
-
-                    decimal subtotal = precioUnitario * cantidad;
-
-                    if (bonif > 0)
-                        subtotal -= subtotal * (bonif / 100m);
-
-                    neto += subtotal;
-
-                    decimal ivaLinea = Math.Round(subtotal * (alicuota / 100m), 2);
-                    ivaTotal += ivaLinea;
-
-                    if ((decimal)fila["recargo"] > 0)
+                    FacturaResponse respuesta = await emitirConReintentos(facturaRequest, unaVenta, mostrarMensajeError: true);
+                    if (respuesta == null)
                     {
-                        decimal recargoLinea = subtotal * ((decimal)fila["recargo"] / 100m);
-                        recargoTotal += recargoLinea;
+                        // Un CAE ya emitido no se puede anular: se conservan los lotes ya emitidos
+                        // y se detiene el proceso, sin reintentar automáticamente el resto.
+                        errorParte = $"Se emitieron {comprobantesEmitidos.Count} de {lotes.Count} comprobantes. Falló la parte {i + 1}.";
+                        break;
                     }
 
-                    facturaRequest.comprobante.detalle.Add(new DetalleFactura
+                    // ✅ ÉXITO → guardar este comprobante inmediatamente (no esperar a los demás lotes)
+                    Fiscal unTk = new Fiscal();
+
+                    string cae = respuesta.cae.Trim();
+                    string vencimientoCAE = respuesta.vencimiento_cae;
+                    string numero = respuesta.comprobante_nro;
+                    string pdf = respuesta.comprobante_pdf_url;
+                    string qr = respuesta.afip_qr;
+
+                    ComprobanteFiscal unComprobante = new ComprobanteFiscal
                     {
-                        cantidad = cantidad,
-                        afecta_stock = "S",
-                        bonificacion_porcentaje = bonif,
-                        producto = new Producto
-                        {
-                            descripcion = fila["descripcion"].ToString(),
-                            unidad_bulto = 1,
-                            lista_precios = "Lista de Precios",
-                            codigo = codigoDetalle == "CodProveedor"
-                                        ? fila["codProveedor"].ToString()
-                                        : codigoDetalle == "CodBarras"
-                                            ? fila["codBarras"].ToString()
-                                            : fila["Producto"].ToString(),
-                            precio_unitario_sin_iva = precioUnitario,
-                            alicuota = alicuota,
-                            unidad_medida = 7,
-                            actualiza_precio = "N",
-                            rg5329 = "N"
-                        }
+                        TipoComprobante = "Factura",
+                        Letra = cabecera["letra"].ToString(),
+                        PuntoVenta = puntoVenta,
+                        Numero = numero.Split('-')[1].TrimStart('0'),
+                        FechaEmision = DateTime.Now,
+                        CreatedAt = DateTime.Now,
+                        NroReferencia = int.Parse(unaVenta.ToString()),
+                        FkCliente = int.Parse(cabecera["Cliente"].ToString()),
+                        RazonSocial = cabecera["razonSocial"].ToString(),
+                        Cuit = cabecera["Cliente"].ToString() == clienteConsumidorFinal.ToString()
+                                    ? "99999999"
+                                    : cabecera["cuil"].ToString(),
+                        // Con un único comprobante se preserva exactamente el valor histórico
+                        // (totalVenta de cabecera); con varios, cada fila lleva el total de SU parte.
+                        ImporteTotal = lotes.Count == 1 ? decimal.Parse(cabecera["totalVenta"].ToString()) : totalFinal,
+                        Estado = "Emitido",
+                        Cae = cae,
+                        FechaVencimientoCae = DateTime.ParseExact(vencimientoCAE, "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                        urlComprobante = pdf,
+                        qrAfip = qr
+                    };
+
+                    unTk.almacenarComprobanteFiscal(unComprobante);
+                    comprobantesEmitidos.Add((numero, pdf));
+                }
+
+                foreach (var c in comprobantesEmitidos)
+                {
+                    System.Diagnostics.Process.Start(new ProcessStartInfo
+                    {
+                        FileName = c.pdf,
+                        UseShellExecute = true
                     });
                 }
 
-                if (recargoTotal > 0)
+                // Con más de 1 lote se informa un resumen; con 1 solo lote se preserva el
+                // comportamiento anterior (sin mensaje extra en éxito; en error ya avisó emitirConReintentos).
+                if (lotes.Count > 1)
                 {
-                    decimal recargoRedondeado = Math.Round(recargoTotal, 3);
-                    neto += recargoTotal;
+                    string resumen = errorParte == null
+                        ? $"Se generaron {comprobantesEmitidos.Count} comprobantes:\n" + string.Join("\n", comprobantesEmitidos.ConvertAll(c => c.numero))
+                        : errorParte + (comprobantesEmitidos.Count > 0
+                            ? "\nComprobantes ya emitidos:\n" + string.Join("\n", comprobantesEmitidos.ConvertAll(c => c.numero))
+                            : string.Empty);
 
-                    facturaRequest.comprobante.detalle.Add(new DetalleFactura
-                    {
-                        cantidad = 1,
-                        afecta_stock = "S",
-                        producto = new Producto
-                        {
-                            descripcion = "Recargo",
-                            unidad_bulto = 1,
-                            lista_precios = "Lista de Precios",
-                            codigo = "1",
-                            precio_unitario_sin_iva = recargoRedondeado,
-                            alicuota = (decimal)cabecera.Rows[0]["IVA"] == 0 ? 21 : (decimal)cabecera.Rows[0]["IVA"],
-                            unidad_medida = 7,
-                            actualiza_precio = "N",
-                            rg5329 = "N"
-                        }
-                    });
+                    MessageBox.Show(resumen, "FACTURACION", MessageBoxButton.OK,
+                        errorParte == null ? MessageBoxImage.Information : MessageBoxImage.Warning);
                 }
 
-                decimal totalTributos = 0m;
-
-                if ((decimal)cabecera.Rows[0]["impuesto"] > 0)
-                {
-                    decimal alicuotaTributo = Math.Round((decimal)cabecera.Rows[0]["impuesto"], 2);
-                    decimal totalTributo = Math.Round(neto * (alicuotaTributo / 100m), 2);
-
-                    totalTributos = totalTributo;
-
-                    facturaRequest.comprobante.tributos = new List<Tributo>
-            {
-                new Tributo
-                {
-                    tipo = tributoIIBB,
-                    regimen = regimenIIBB,
-                    base_imponible = neto,
-                    alicuota = alicuotaTributo,
-                    total = totalTributo
-                }
-            };
-                }
-
-                decimal totalFinal = Math.Round(neto + ivaTotal + totalTributos, 2);
-                facturaRequest.comprobante.total = totalFinal;
-
-                FacturaResponse respuesta = await emitirConReintentos(facturaRequest, unaVenta, mostrarMensajeError: true);
-                if (respuesta == null) return false;
-
-                // ✅ ÉXITO → guardar comprobante
-                Fiscal unTk = new Fiscal();
-
-                string cae = respuesta.cae.Trim();
-                string vencimientoCAE = respuesta.vencimiento_cae;
-                string numero = respuesta.comprobante_nro;
-                string pdf = respuesta.comprobante_pdf_url;
-                string qr = respuesta.afip_qr;
-
-                ComprobanteFiscal unComprobante = new ComprobanteFiscal
-                {
-                    TipoComprobante = "Factura",
-                    Letra = cabecera.Rows[0]["letra"].ToString(),
-                    PuntoVenta = puntoVenta,
-                    Numero = numero.Split('-')[1].TrimStart('0'),
-                    FechaEmision = DateTime.Now,
-                    CreatedAt = DateTime.Now,
-                    NroReferencia = int.Parse(unaVenta.ToString()),
-                    FkCliente = int.Parse(cabecera.Rows[0]["Cliente"].ToString()),
-                    RazonSocial = cabecera.Rows[0]["razonSocial"].ToString(),
-                    Cuit = cabecera.Rows[0]["Cliente"].ToString() == clienteConsumidorFinal.ToString()
-                                ? "99999999"
-                                : cabecera.Rows[0]["cuil"].ToString(),
-                    ImporteTotal = decimal.Parse(cabecera.Rows[0]["totalVenta"].ToString()),
-                    Estado = "Emitido",
-                    Cae = cae,
-                    FechaVencimientoCae = DateTime.ParseExact(vencimientoCAE, "dd/MM/yyyy", CultureInfo.InvariantCulture),
-                    urlComprobante = pdf,
-                    qrAfip = qr
-                };
-
-                unTk.almacenarComprobanteFiscal(unComprobante);
-
-                System.Diagnostics.Process.Start(new ProcessStartInfo
-                {
-                    FileName = pdf,
-                    UseShellExecute = true
-                });
-
-                return true;
+                return errorParte == null;
             }
             catch
             {
@@ -876,6 +740,170 @@ namespace Comercial.Clases
             {
                 return null;
             }
+        }
+
+        // La API (tusfacturas.app) rechaza comprobantes con más de 130 líneas de detalle.
+        // Ventas/devoluciones más grandes se dividen en varios comprobantes (ver EmitirVentaOdevolucion*).
+        private const int MAX_DETALLES_POR_COMPROBANTE = 130;
+
+        /// <summary>
+        /// Divide las filas de detalle en lotes de a lo sumo <paramref name="tamanioLote"/> filas,
+        /// preservando el orden. Cada lote se convierte luego en un comprobante independiente.
+        /// </summary>
+        private static List<List<DataRow>> DividirEnLotes(DataTable detalle, int tamanioLote)
+        {
+            var lotes = new List<List<DataRow>>();
+            var filas = detalle.AsEnumerable().ToList();
+            for (int i = 0; i < filas.Count; i += tamanioLote)
+                lotes.Add(filas.Skip(i).Take(tamanioLote).ToList());
+            return lotes;
+        }
+
+        /// <summary>
+        /// Tamaño de lote a usar para no superar nunca las 130 líneas por comprobante.
+        /// Si algún renglón de la operación tiene recargo, se reserva 1 lugar (129 productos)
+        /// porque cada lote con recargo agrega una línea sintética "Recargo" adicional.
+        /// </summary>
+        private static int CalcularTamanioLote(DataTable detalle)
+        {
+            bool hayAlgunRecargo = detalle.AsEnumerable().Any(f => (decimal)f["recargo"] > 0);
+            return hayAlgunRecargo ? MAX_DETALLES_POR_COMPROBANTE - 1 : MAX_DETALLES_POR_COMPROBANTE;
+        }
+
+        /// <summary>
+        /// Construye el detalle de UN comprobante (lote) a partir de sus filas y acumula neto/IVA.
+        /// Misma lógica de línea que ya existía (precio, bonificación por línea, IVA, recargo),
+        /// aplicada solo sobre las filas del lote — compartida entre Factura y Nota de Crédito.
+        /// </summary>
+        private (List<DetalleFactura> detalle, decimal neto, decimal ivaTotal) ConstruirDetalleLote(List<DataRow> filasLote, DataRow cabecera)
+        {
+            decimal neto = 0m;
+            decimal ivaTotal = 0m;
+            decimal recargoTotal = 0m;
+            decimal ivaCab = (decimal)cabecera["IVA"];
+
+            var detalleLote = new List<DetalleFactura>();
+
+            foreach (DataRow fila in filasLote)
+            {
+                decimal cantidad = Math.Round((decimal)fila["cantidad"], 2);
+                decimal precioBase = (decimal)fila["precioSinIva"];
+
+                decimal precioUnitario = Math.Round(
+                    ivaCab == 0 ? precioBase / 1.21m : precioBase
+                , 3);
+
+                decimal bonif = Math.Round((decimal)fila["descuento"], 2);
+                decimal alicuota = ivaCab == 0 ? 21 : ivaCab;
+
+                decimal subtotal = precioUnitario * cantidad;
+
+                if (bonif > 0)
+                    subtotal -= subtotal * (bonif / 100m);
+
+                neto += subtotal;
+
+                decimal ivaLinea = Math.Round(subtotal * (alicuota / 100m), 2);
+                ivaTotal += ivaLinea;
+
+                if ((decimal)fila["recargo"] > 0)
+                {
+                    decimal recargoLinea = subtotal * ((decimal)fila["recargo"] / 100m);
+                    recargoTotal += recargoLinea;
+                }
+
+                detalleLote.Add(new DetalleFactura
+                {
+                    cantidad = cantidad,
+                    afecta_stock = "S",
+                    bonificacion_porcentaje = bonif,
+                    producto = new Producto
+                    {
+                        descripcion = fila["descripcion"].ToString(),
+                        unidad_bulto = 1,
+                        lista_precios = "Lista de Precios",
+                        codigo = codigoDetalle == "CodProveedor"
+                                    ? fila["codProveedor"].ToString()
+                                    : codigoDetalle == "CodBarras"
+                                        ? fila["codBarras"].ToString()
+                                        : fila["Producto"].ToString(),
+                        precio_unitario_sin_iva = precioUnitario,
+                        alicuota = alicuota,
+                        unidad_medida = 7,
+                        actualiza_precio = "N",
+                        rg5329 = "N"
+                    }
+                });
+            }
+
+            if (recargoTotal > 0)
+            {
+                decimal recargoRedondeado = Math.Round(recargoTotal, 3);
+                neto += recargoTotal;
+
+                detalleLote.Add(new DetalleFactura
+                {
+                    cantidad = 1,
+                    afecta_stock = "S",
+                    producto = new Producto
+                    {
+                        descripcion = "Recargo",
+                        unidad_bulto = 1,
+                        lista_precios = "Lista de Precios",
+                        codigo = "1",
+                        precio_unitario_sin_iva = recargoRedondeado,
+                        alicuota = ivaCab == 0 ? 21 : ivaCab,
+                        unidad_medida = 7,
+                        actualiza_precio = "N",
+                        rg5329 = "N"
+                    }
+                });
+            }
+
+            return (detalleLote, neto, ivaTotal);
+        }
+
+        /// <summary>
+        /// Calcula, para UN lote, la bonificación general (misma % de la cabecera aplicada sobre el
+        /// neto del lote), el IVA ajustado, los tributos (IIBB) y el total del comprobante.
+        /// Misma fórmula que ya existía para el comprobante completo, aplicada por lote.
+        /// </summary>
+        private (decimal bonificacionGeneral, decimal ivaConGeneral, List<Tributo> tributos, decimal total) CalcularAgregadosLote(decimal neto, decimal ivaTotal, DataRow cabecera)
+        {
+            decimal ivaCab = (decimal)cabecera["IVA"];
+            decimal descGeneralPct = cabecera.Table.Columns.Contains("descuento") && cabecera["descuento"] != DBNull.Value
+                ? (decimal)cabecera["descuento"] : 0m;
+            decimal alicuotaGeneral = ivaCab == 0 ? 21 : ivaCab;
+            decimal bonificacionGeneral = descGeneralPct > 0 ? Math.Round(neto * (descGeneralPct / 100m), 2) : 0m;
+            decimal netoConGeneral = neto - bonificacionGeneral;
+
+            List<Tributo> tributos = null;
+            decimal totalTributos = 0m;
+
+            if ((decimal)cabecera["impuesto"] > 0)
+            {
+                decimal alicuotaTributo = Math.Round((decimal)cabecera["impuesto"], 2);
+                decimal totalTributo = Math.Round(netoConGeneral * (alicuotaTributo / 100m), 2);
+
+                totalTributos = totalTributo;
+
+                tributos = new List<Tributo>
+                {
+                    new Tributo
+                    {
+                        tipo = tributoIIBB,
+                        regimen = regimenIIBB,
+                        base_imponible = netoConGeneral,
+                        alicuota = alicuotaTributo,
+                        total = totalTributo
+                    }
+                };
+            }
+
+            decimal ivaConGeneral = ivaTotal - Math.Round(bonificacionGeneral * (alicuotaGeneral / 100m), 2);
+            decimal total = Math.Round(netoConGeneral + ivaConGeneral + totalTributos, 2);
+
+            return (bonificacionGeneral, ivaConGeneral, tributos, total);
         }
 
         private ComprobanteAsociado CrearComprobanteAsociado(string tipoComp, int numeroAsoc, string fechaAsociado, long cuitAsoc)
