@@ -62,6 +62,8 @@
             this.cbDolarizado = new System.Windows.Forms.CheckBox();
             this.chkEsPromocion = new System.Windows.Forms.CheckBox();
             this.btnConfigurarPromocion = new System.Windows.Forms.Button();
+            this.label14 = new System.Windows.Forms.Label();
+            this.nudCantMinimaVenta = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.nudCosto)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudLista)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudStock)).BeginInit();
@@ -70,6 +72,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudProveedor)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDescuento)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudGanancia)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudCantMinimaVenta)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -399,7 +402,7 @@
             // chkEsPromocion
             // 
             this.chkEsPromocion.AutoSize = true;
-            this.chkEsPromocion.Location = new System.Drawing.Point(12, 398);
+            this.chkEsPromocion.Location = new System.Drawing.Point(12, 436);
             this.chkEsPromocion.Name = "chkEsPromocion";
             this.chkEsPromocion.Size = new System.Drawing.Size(99, 19);
             this.chkEsPromocion.TabIndex = 24;
@@ -410,7 +413,7 @@
             // btnConfigurarPromocion
             // 
             this.btnConfigurarPromocion.Enabled = false;
-            this.btnConfigurarPromocion.Location = new System.Drawing.Point(159, 394);
+            this.btnConfigurarPromocion.Location = new System.Drawing.Point(227, 392);
             this.btnConfigurarPromocion.Name = "btnConfigurarPromocion";
             this.btnConfigurarPromocion.Size = new System.Drawing.Size(150, 26);
             this.btnConfigurarPromocion.TabIndex = 25;
@@ -418,12 +421,48 @@
             this.btnConfigurarPromocion.UseVisualStyleBackColor = true;
             this.btnConfigurarPromocion.Click += new System.EventHandler(this.btnConfigurarPromocion_Click);
             // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(12, 398);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(94, 15);
+            this.label14.TabIndex = 26;
+            this.label14.Text = "Cant. Mín. Venta";
+            // 
+            // nudCantMinimaVenta
+            // 
+            this.nudCantMinimaVenta.DecimalPlaces = 2;
+            this.nudCantMinimaVenta.Location = new System.Drawing.Point(107, 394);
+            this.nudCantMinimaVenta.Maximum = new decimal(new int[] {
+            999999999,
+            0,
+            0,
+            0});
+            this.nudCantMinimaVenta.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudCantMinimaVenta.Name = "nudCantMinimaVenta";
+            this.nudCantMinimaVenta.Size = new System.Drawing.Size(94, 23);
+            this.nudCantMinimaVenta.TabIndex = 27;
+            this.nudCantMinimaVenta.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudCantMinimaVenta.Enter += new System.EventHandler(this.nudCantMinimaVenta_Enter);
+            this.nudCantMinimaVenta.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nudCantMinimaVenta_KeyPress);
+            // 
             // frmAltaModifProductos
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(444, 480);
+            this.ClientSize = new System.Drawing.Size(444, 518);
+            this.Controls.Add(this.nudCantMinimaVenta);
+            this.Controls.Add(this.label14);
             this.Controls.Add(this.btnConfigurarPromocion);
             this.Controls.Add(this.chkEsPromocion);
             this.Controls.Add(this.cbDolarizado);
@@ -475,6 +514,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudProveedor)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDescuento)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudGanancia)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudCantMinimaVenta)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -514,5 +554,7 @@
         private System.Windows.Forms.CheckBox cbDolarizado;
         private System.Windows.Forms.CheckBox chkEsPromocion;
         private System.Windows.Forms.Button btnConfigurarPromocion;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.NumericUpDown nudCantMinimaVenta;
     }
 }

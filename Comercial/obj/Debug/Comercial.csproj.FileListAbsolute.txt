@@ -3,7 +3,6 @@ C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\bin\Debug\SqlServerT
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\bin\Debug\SqlServerTypes\x86\msvcr120.dll
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\bin\Debug\SqlServerTypes\x86\SqlServerSpatial140.dll
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\bin\Debug\Comercial.exe.config
-C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\bin\Debug\Comercial.exe
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\bin\Debug\Comercial.pdb
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\bin\Debug\Microsoft.Win32.Primitives.dll
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\bin\Debug\netstandard.dll
@@ -282,6 +281,7 @@ C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Ventas.frmAvisoPromociones.resources
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.csproj.AssemblyReference.cache
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.Formularios.Productos.frmPickProducto.resources
+C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\bin\Debug\Comercial.exe
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\RdlCompile.cache
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\RdlCompile.compiled
 C:\Desarrollos\Comercial-master\Comercial - copia\Comercial\obj\Debug\Comercial.csproj.CopyComplete

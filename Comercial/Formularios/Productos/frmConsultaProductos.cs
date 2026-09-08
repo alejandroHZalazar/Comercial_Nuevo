@@ -42,6 +42,7 @@ namespace Comercial.Formularios.Productos
             lblCosto.Text = string.Empty;
             lblStock.Text = string.Empty;
             lblPProveedor.Text = string.Empty;
+            lblCantMinimaVenta.Text = string.Empty;
             ocultarPreciosPorProducto();
             txtFiltro.Focus();
         }
@@ -220,6 +221,7 @@ namespace Comercial.Formularios.Productos
                 lblCosto.Text = (Math.Round(decimal.Parse(Prod.Rows[0]["costo"].ToString()), cantDec)).ToString();
                 lblStock .Text = (Math.Round(decimal.Parse(Prod.Rows[0]["cantidad"].ToString()), cantStock)).ToString();
                 lblPProveedor .Text = (Math.Round(decimal.Parse(Prod.Rows[0]["P_Proveedor"].ToString()), cantDec)).ToString();
+                lblCantMinimaVenta.Text = (Math.Round(decimal.Parse(Prod.Rows[0]["cantidadMinimaVenta"].ToString()), cantDec)).ToString();
 
                 actualizarPreciosPorProducto(int.Parse(dgvProductos.CurrentRow.Cells["ID"].Value.ToString()));
             }

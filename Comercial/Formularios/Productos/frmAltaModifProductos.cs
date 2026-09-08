@@ -89,11 +89,11 @@ namespace Comercial.Formularios.Productos
 
                 if (unAccion == 1)
                 {
-                    resul = instProd.ABMProductos(txtCodProveedor.Text.Trim(), txtCodBarras.Text.Trim(), int.Parse(cboRubro.SelectedValue.ToString()), txtDescripcion.Text.Trim(), idProveedor, nudCosto.Value, nudLista.Value, nudStock.Value, nudMinima.Value, 1, 0,nudProveedor .Value,cbFraccionado.Checked, cbDolarizado.Checked, chkEsPromocion.Checked, unGanancia, unDescuento);
+                    resul = instProd.ABMProductos(txtCodProveedor.Text.Trim(), txtCodBarras.Text.Trim(), int.Parse(cboRubro.SelectedValue.ToString()), txtDescripcion.Text.Trim(), idProveedor, nudCosto.Value, nudLista.Value, nudStock.Value, nudMinima.Value, 1, 0,nudProveedor .Value,cbFraccionado.Checked, cbDolarizado.Checked, chkEsPromocion.Checked, unGanancia, unDescuento, nudCantMinimaVenta.Value);
                 }
                 else
                 {
-                    resul = instProd .ABMProductos( txtCodProveedor.Text.Trim(), txtCodBarras.Text.Trim(), int.Parse(cboRubro.SelectedValue.ToString()),  txtDescripcion.Text.Trim(), idProveedor, nudCosto.Value, nudLista.Value, nudStock.Value, nudMinima.Value, 2,unProducto,nudProveedor .Value, cbFraccionado.Checked, cbDolarizado.Checked, chkEsPromocion.Checked, unGanancia, unDescuento);
+                    resul = instProd .ABMProductos( txtCodProveedor.Text.Trim(), txtCodBarras.Text.Trim(), int.Parse(cboRubro.SelectedValue.ToString()),  txtDescripcion.Text.Trim(), idProveedor, nudCosto.Value, nudLista.Value, nudStock.Value, nudMinima.Value, 2,unProducto,nudProveedor .Value, cbFraccionado.Checked, cbDolarizado.Checked, chkEsPromocion.Checked, unGanancia, unDescuento, nudCantMinimaVenta.Value);
                 }
 
                 if (resul == -1)
@@ -137,6 +137,12 @@ namespace Comercial.Formularios.Productos
                 return false;
             }
 
+            if (nudCantMinimaVenta.Value < 1)
+            {
+                errorProvider1.SetError(nudCantMinimaVenta, "La cantidad mínima de venta debe ser mayor o igual a 1");
+                return false;
+            }
+
             return true;
 
         }
@@ -172,6 +178,7 @@ namespace Comercial.Formularios.Productos
             nudLista.Value = decimal.Parse(producto .Rows [0]["precio"].ToString ());
             nudStock.Value = decimal.Parse(producto.Rows[0]["cantidad"].ToString());
             nudMinima.Value = decimal.Parse(producto.Rows[0]["cantidadMinima"].ToString());
+            nudCantMinimaVenta.Value = decimal.Parse(producto.Rows[0]["cantidadMinimaVenta"].ToString());
             nudProveedor.Value = decimal.Parse(producto.Rows[0]["P_Proveedor"].ToString());
             cbFraccionado.Checked = Convert.ToBoolean(producto.Rows[0]["fraccionado"]);
             cbDolarizado.Checked = Clases.ClassParametros.buscarParametro("productos", "dolarizaProductos") != "1" ? false : producto.Rows[0]["dolarizado"].ToString() == ""?false: Convert.ToBoolean(producto.Rows[0]["dolarizado"]);
@@ -320,6 +327,19 @@ namespace Comercial.Formularios.Productos
             {
                 e.KeyChar = ',';
             }
+        }
+
+        private void nudCantMinimaVenta_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == '.')
+            {
+                e.KeyChar = ',';
+            }
+        }
+
+        private void nudCantMinimaVenta_Enter(object sender, EventArgs e)
+        {
+            Clases.ClassValidacion.seleccionarTodoNumericUpDown(nudCantMinimaVenta);
         }
 
         private void chkEsPromocion_CheckedChanged(object sender, EventArgs e)

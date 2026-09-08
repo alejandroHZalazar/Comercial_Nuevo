@@ -295,7 +295,7 @@ namespace Comercial.Clases
 
         public int ABMProductos(string unCodProveedor, string unCodBarras, int unRubro, string unaDescripcion, int unProveedor, decimal unCosto,
                                 decimal unPrecio, decimal unStock, decimal unaCantMinima, int unaAccion, int unProducto, decimal unPrecioProveedor, bool esFraccionado, bool esDolarizado, bool esPromocion,
-                                decimal? unGanancia = null, decimal? unDescuento = null)
+                                decimal? unGanancia = null, decimal? unDescuento = null, decimal? unaCantidadMinimaVenta = null)
         {
             try
             {
@@ -322,6 +322,8 @@ namespace Comercial.Clases
                 // NULL cuando el proveedor NO usa precios por producto → el SP no altera esos campos
                 cmd.Parameters.AddWithValue("unGanancia", unGanancia.HasValue ? (object)unGanancia.Value : DBNull.Value);
                 cmd.Parameters.AddWithValue("unDescuento", unDescuento.HasValue ? (object)unDescuento.Value : DBNull.Value);
+                // NULL cuando no se envía → el SP setea el campo en 1 por defecto
+                cmd.Parameters.AddWithValue("unaCantidadMinimaVenta", unaCantidadMinimaVenta.HasValue ? (object)unaCantidadMinimaVenta.Value : DBNull.Value);
 
 
                 MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int32);

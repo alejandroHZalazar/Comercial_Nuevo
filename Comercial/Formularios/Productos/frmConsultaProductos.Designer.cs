@@ -64,6 +64,8 @@
             this.lblGanancia = new System.Windows.Forms.Label();
             this.lblDescuentoCaption = new System.Windows.Forms.Label();
             this.lblDescuento = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.lblCantMinimaVenta = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvProductos)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -263,6 +265,8 @@
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.Color.Silver;
+            this.groupBox1.Controls.Add(this.lblCantMinimaVenta);
+            this.groupBox1.Controls.Add(this.label15);
             this.groupBox1.Controls.Add(this.lblGananciaCaption);
             this.groupBox1.Controls.Add(this.lblGanancia);
             this.groupBox1.Controls.Add(this.lblDescuentoCaption);
@@ -463,6 +467,25 @@
             this.lblDescuento.Text = "label3";
             this.lblDescuento.Visible = false;
             //
+            // label15
+            //
+            this.label15.AutoSize = true;
+            this.label15.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label15.Location = new System.Drawing.Point(417, 143);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(112, 15);
+            this.label15.TabIndex = 34;
+            this.label15.Text = "Cant. Mín. Venta:";
+            //
+            // lblCantMinimaVenta
+            //
+            this.lblCantMinimaVenta.AutoSize = true;
+            this.lblCantMinimaVenta.Location = new System.Drawing.Point(531, 143);
+            this.lblCantMinimaVenta.Name = "lblCantMinimaVenta";
+            this.lblCantMinimaVenta.Size = new System.Drawing.Size(38, 15);
+            this.lblCantMinimaVenta.TabIndex = 35;
+            this.lblCantMinimaVenta.Text = "label3";
+            //
             // frmConsultaProductos
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -535,5 +558,7 @@
         private System.Windows.Forms.Label lblGanancia;
         private System.Windows.Forms.Label lblDescuentoCaption;
         private System.Windows.Forms.Label lblDescuento;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label lblCantMinimaVenta;
     }
 }
