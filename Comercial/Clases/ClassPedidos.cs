@@ -14,7 +14,7 @@ namespace Comercial.Clases
         Clases.classDatos instDatos = new classDatos();
 
 
-        public int pedidosAddCabecera(decimal unTotal, int unCliente, decimal unIva, decimal? unRecargo, decimal? unDescuento,int unVendedor, string  unaObserv)
+        public int pedidosAddCabecera(decimal unTotal, int unCliente, decimal unIva, decimal? unRecargo, decimal? unDescuento,int unVendedor, string  unaObserv, bool esEcommerce = false)
         {
             try
             {
@@ -30,6 +30,7 @@ namespace Comercial.Clases
                 cmd.Parameters.AddWithValue("unDescuento", unDescuento.HasValue ? (object)unDescuento.Value : DBNull.Value);
                 cmd.Parameters.AddWithValue("unVendedor", unVendedor );
                 cmd.Parameters.AddWithValue("unaObserv", unaObserv);
+                cmd.Parameters.AddWithValue("unEsEcommerce", esEcommerce ? 1 : 0);
 
                 MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int32);
                 salida.Direction = ParameterDirection.Output;

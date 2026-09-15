@@ -34,6 +34,8 @@ namespace Comercial.Formularios.Ventas
         // Descuento/recargo de cabecera al editar un pedido existente (null = usar por línea)
         decimal? _descuentoCabecera = null;
         decimal? _recargoCabecera = null;
+        // Si el pedido original (al editar) tenía esEcommerce = 1, el nuevo pedido que lo reemplaza debe conservarlo
+        bool _esEcommerceOriginal = false;
         int productosDolarizados = Clases.ClassParametros.buscarParametro("productos", "dolarizaProductos") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("productos", "dolarizaProductos"));
         decimal valorDolar = Clases.ClassParametros.buscarParametro("productos", "cotizacionDolar") == "" ? 0 : decimal.Parse(Clases.ClassParametros.buscarParametro("productos", "cotizacionDolar"));
         int tieneProductosBalanza = Clases.ClassParametros.buscarParametro("productos", "tieneProductosBalanza") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("productos", "tieneProductosBalanza"));
@@ -151,6 +153,7 @@ namespace Comercial.Formularios.Ventas
             nudCantidad.DecimalPlaces = cantStock;
             _descuentoCabecera = null;
             _recargoCabecera = null;
+            _esEcommerceOriginal = false;
             dgvPedido.Columns["Sel"].Visible = bonificacionPorLinea == 1;
             panelSelGrilla.Visible = bonificacionPorLinea == 1;
             // Descuento general sobre Total S/IVA: solo disponible en modo bonificación por línea
@@ -203,10 +206,11 @@ namespace Comercial.Formularios.Ventas
             }
         }
 
-        public void cargarDatosCabecera(string unVendedor, string unaObserv, decimal? unDescuento, decimal? unRecargo, int unIVA)
+        public void cargarDatosCabecera(string unVendedor, string unaObserv, decimal? unDescuento, decimal? unRecargo, int unIVA, bool esEcommerce = false)
         {
             cboVendedores.Text = unVendedor;
             rtbObserv.Text = unaObserv;
+            _esEcommerceOriginal = esEcommerce;
             if (bonificacionPorLinea == 1)
             {
                 // Modo por línea: pedidos.descuento es el descuento GENERAL sobre Total S/IVA.
@@ -967,7 +971,7 @@ namespace Comercial.Formularios.Ventas
                 decimal? descuentoGeneral = (bonificacionPorLinea == 1 && nudDescuentoGeneral.Value > 0)
                     ? (decimal?)nudDescuentoGeneral.Value
                     : null;
-                salida = instPedidos.pedidosAddCabecera(decimal.Parse(txtTotGeneral.Text), clientePed, decimal.Parse(cboIVA.Text), null, descuentoGeneral, int.Parse(cboVendedores.SelectedValue.ToString()), rtbObserv.Text.Trim());
+                salida = instPedidos.pedidosAddCabecera(decimal.Parse(txtTotGeneral.Text), clientePed, decimal.Parse(cboIVA.Text), null, descuentoGeneral, int.Parse(cboVendedores.SelectedValue.ToString()), rtbObserv.Text.Trim(), _esEcommerceOriginal);
 
                 if (salida != -1)
                 {

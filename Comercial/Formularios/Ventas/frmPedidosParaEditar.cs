@@ -88,6 +88,7 @@ namespace Comercial.Formularios.Ventas
                 dgvOrden.Columns["Recargo"].DefaultCellStyle.Format = "N" + cantDec.ToString();
                 dgvOrden.Columns["Descuento"].DefaultCellStyle.Format = "N" + cantDec.ToString();
                 dgvOrden.Columns["total"].DefaultCellStyle.Format = "N" + cantDec.ToString();
+                dgvOrden.Columns["Es Ecommerce"].DefaultCellStyle.NullValue = "No";
             }
         }
 
@@ -148,7 +149,11 @@ namespace Comercial.Formularios.Ventas
                     ? (decimal?)null
                     : decimal.Parse(dgvOrden.CurrentRow.Cells["Recargo"].Value.ToString());
 
-                ((frmPedidos)this.llamador).cargarDatosCabecera(dgvOrden.CurrentRow.Cells["Vendedor"].Value.ToString(), rtbObserv.Text, descCab, recCab, instPed.traerIdIVA(decimal.Parse(dgvOrden.CurrentRow.Cells["IVA"].Value.ToString())));
+                // Si el pedido original era de ecommerce, el pedido nuevo que lo reemplaza debe conservarlo
+                object esEcommerceVal = dgvOrden.CurrentRow.Cells["Es Ecommerce"].Value;
+                bool esEcommerce = esEcommerceVal != null && esEcommerceVal != DBNull.Value && Convert.ToBoolean(esEcommerceVal);
+
+                ((frmPedidos)this.llamador).cargarDatosCabecera(dgvOrden.CurrentRow.Cells["Vendedor"].Value.ToString(), rtbObserv.Text, descCab, recCab, instPed.traerIdIVA(decimal.Parse(dgvOrden.CurrentRow.Cells["IVA"].Value.ToString())), esEcommerce);
                 ((frmPedidos)this.llamador).cargarDetallePedidoEditar(int.Parse(dgvOrden.CurrentRow.Cells["id"].Value.ToString()));
                 this.Close();
             }
