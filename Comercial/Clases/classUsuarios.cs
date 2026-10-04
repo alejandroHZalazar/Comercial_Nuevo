@@ -36,6 +36,21 @@ namespace Comercial.Clases
             return dt;
         }
 
+        public void cambiarPassword(int unId, string unPass)
+        {
+            try
+            {
+                MySqlCommand cmd = new MySqlCommand("update usuarios set password = @pass where id = @id", instDatos.abrirConexion());
+                cmd.Parameters.AddWithValue("@pass", unPass);
+                cmd.Parameters.AddWithValue("@id", unId);
+                cmd.ExecuteNonQuery();
+            }
+            finally
+            {
+                instDatos.cerrarConexion();
+            }
+        }
+
         public DataTable traerVendedores()
         {
             MySqlDataAdapter rows = new MySqlDataAdapter("select id, nombre from usuarios where tipo in ( (select valor from parametros where modulo = 'configuracion' and parametro = 'vendedor'))", instDatos.abrirConexion());

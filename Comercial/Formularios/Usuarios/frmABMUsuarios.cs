@@ -37,6 +37,8 @@ namespace Comercial.Formularios.Usuarios
             cboTipo .SelectedIndex  = 0;
             txtContraseña.Text = string.Empty;
             txtRepContraseña.Text = string.Empty;
+            txtNombre.Enabled = true;
+            cboTipo.Enabled = true;
 
             if (dgvUsuarios.Width == 355)
             {
@@ -55,11 +57,13 @@ namespace Comercial.Formularios.Usuarios
             {
                 btnEditar.Enabled = true;
                 btnEliminar.Enabled = true;
+                btnCambiarPass.Enabled = true;
             }
             else
             {
                 btnEditar.Enabled = false;
                 btnEliminar.Enabled = false;
+                btnCambiarPass.Enabled = false;
             }
 
         }
@@ -91,8 +95,25 @@ namespace Comercial.Formularios.Usuarios
             btnAgregar.Enabled = false;
             btnEditar.Enabled = false;
             btnEliminar.Enabled = false;
+            btnCambiarPass.Enabled = false;
             dgvUsuarios.Width = 355;
 
+        }
+
+        private void btnCambiarPass_Click(object sender, EventArgs e)
+        {
+            estadoAM();
+            accion = 3;
+            txtNombre.Text = dgvUsuarios.CurrentRow.Cells["nombre"].Value.ToString();
+            cboTipo.SelectedValue = int.Parse(dgvUsuarios.CurrentRow.Cells["tipo"].Value.ToString());
+            txtNombre.Enabled = false;
+            cboTipo.Enabled = false;
+            txtContraseña.Text = string.Empty;
+            txtRepContraseña.Text = string.Empty;
+            txtContraseña.Enabled = true;
+            txtRepContraseña.Enabled = true;
+            userId = int.Parse(dgvUsuarios.CurrentRow.Cells["id"].Value.ToString());
+            txtContraseña.Focus();
         }
 
         private void btnEditar_Click(object sender, EventArgs e)
@@ -131,6 +152,11 @@ namespace Comercial.Formularios.Usuarios
                 if (accion == 2)
                 {
                     instConfig.ABMUsuarios(userId, txtNombre .Text .Trim (),"", int.Parse (cboTipo .SelectedValue .ToString ()), 2);
+                }
+                if (accion == 3)
+                {
+                    new Clases.classUsuarios().cambiarPassword(userId, txtContraseña.Text.Trim());
+                    MessageBox.Show(this, "Contraseña actualizada con éxito", "USUARIOS", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 estadoInicial();
             }

@@ -46,6 +46,7 @@
             this.cboTipo = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.txtRepContraseña = new System.Windows.Forms.TextBox();
+            this.btnCambiarPass = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvUsuarios)).BeginInit();
             this.gbDatos.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
@@ -229,13 +230,26 @@
             this.txtRepContraseña.Size = new System.Drawing.Size(127, 23);
             this.txtRepContraseña.TabIndex = 3;
             this.txtRepContraseña.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtRepContraseña_KeyPress);
-            // 
+            //
+            // btnCambiarPass
+            //
+            this.btnCambiarPass.BackColor = System.Drawing.Color.Silver;
+            this.btnCambiarPass.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCambiarPass.Location = new System.Drawing.Point(376, 268);
+            this.btnCambiarPass.Name = "btnCambiarPass";
+            this.btnCambiarPass.Size = new System.Drawing.Size(150, 35);
+            this.btnCambiarPass.TabIndex = 5;
+            this.btnCambiarPass.Text = "Cambiar contraseña";
+            this.btnCambiarPass.UseVisualStyleBackColor = false;
+            this.btnCambiarPass.Click += new System.EventHandler(this.btnCambiarPass_Click);
+            //
             // frmABMUsuarios
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ClientSize = new System.Drawing.Size(651, 310);
+            this.Controls.Add(this.btnCambiarPass);
             this.Controls.Add(this.dgvUsuarios);
             this.Controls.Add(this.gbDatos);
             this.Controls.Add(this.btnEliminar);
@@ -280,5 +294,6 @@
         private System.Windows.Forms.TextBox txtRepContraseña;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox cboTipo;
+        private System.Windows.Forms.Button btnCambiarPass;
     }
 }
