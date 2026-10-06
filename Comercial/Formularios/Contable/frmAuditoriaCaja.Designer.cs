@@ -30,6 +30,12 @@ namespace Comercial.Formularios.Contable
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmAuditoriaCaja));
+            System.Windows.Forms.DataGridViewCellStyle hdrCajas = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle altCajas = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle hdrMov = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle altMov = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle hdrDet = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle altDet = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.btnBuscar = new System.Windows.Forms.Button();
@@ -79,7 +85,7 @@ namespace Comercial.Formularios.Contable
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(933, 687);
+            this.tabControl1.Size = new System.Drawing.Size(940, 640);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage2
@@ -97,16 +103,17 @@ namespace Comercial.Formularios.Contable
             this.tabPage2.Location = new System.Drawing.Point(4, 24);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(925, 659);
+            this.tabPage2.Size = new System.Drawing.Size(932, 612);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Resumen";
             // 
             // btnBuscar
             // 
             this.btnBuscar.BackColor = System.Drawing.Color.Silver;
-            this.btnBuscar.Location = new System.Drawing.Point(756, 29);
+            this.btnBuscar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBuscar.Location = new System.Drawing.Point(756, 28);
             this.btnBuscar.Name = "btnBuscar";
-            this.btnBuscar.Size = new System.Drawing.Size(105, 24);
+            this.btnBuscar.Size = new System.Drawing.Size(105, 28);
             this.btnBuscar.TabIndex = 8;
             this.btnBuscar.Text = "Buscar";
             this.btnBuscar.UseVisualStyleBackColor = false;
@@ -116,20 +123,34 @@ namespace Comercial.Formularios.Contable
             // 
             this.dgvCajas.AllowUserToAddRows = false;
             this.dgvCajas.AllowUserToDeleteRows = false;
+            this.dgvCajas.AlternatingRowsDefaultCellStyle = altCajas;
+            this.dgvCajas.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvCajas.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.dgvCajas.BackgroundColor = System.Drawing.Color.White;
+            this.dgvCajas.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            altCajas.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            hdrCajas.BackColor = System.Drawing.Color.DimGray;
+            hdrCajas.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            hdrCajas.ForeColor = System.Drawing.Color.White;
+            hdrCajas.SelectionBackColor = System.Drawing.Color.DimGray;
+            hdrCajas.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvCajas.ColumnHeadersDefaultCellStyle = hdrCajas;
             this.dgvCajas.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvCajas.EnableHeadersVisualStyles = false;
             this.dgvCajas.Location = new System.Drawing.Point(24, 74);
             this.dgvCajas.Name = "dgvCajas";
             this.dgvCajas.ReadOnly = true;
+            this.dgvCajas.RowHeadersVisible = false;
             this.dgvCajas.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvCajas.Size = new System.Drawing.Size(741, 165);
+            this.dgvCajas.Size = new System.Drawing.Size(884, 165);
             this.dgvCajas.TabIndex = 7;
             this.dgvCajas.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCajas_CellEnter);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.Location = new System.Drawing.Point(526, 12);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(44, 15);
@@ -161,7 +182,7 @@ namespace Comercial.Formularios.Contable
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(283, 12);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(48, 15);
@@ -171,7 +192,7 @@ namespace Comercial.Formularios.Contable
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(24, 12);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(57, 15);
@@ -187,16 +208,20 @@ namespace Comercial.Formularios.Contable
             this.panelResumen.Controls.Add(this.rtbObservaciones);
             this.panelResumen.Controls.Add(this.dgvMovimiento);
             this.panelResumen.Controls.Add(this.btnExportar);
+            this.panelResumen.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.panelResumen.Location = new System.Drawing.Point(11, 245);
             this.panelResumen.Name = "panelResumen";
-            this.panelResumen.Size = new System.Drawing.Size(909, 406);
+            this.panelResumen.Size = new System.Drawing.Size(910, 359);
             this.panelResumen.TabIndex = 0;
             // 
             // lblTotalHaber
             // 
+            this.lblTotalHaber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblTotalHaber.AutoSize = true;
-            this.lblTotalHaber.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTotalHaber.Location = new System.Drawing.Point(665, 278);
+            this.lblTotalHaber.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTotalHaber.Location = new System.Drawing.Point(665, 240);
             this.lblTotalHaber.Name = "lblTotalHaber";
             this.lblTotalHaber.Size = new System.Drawing.Size(87, 16);
             this.lblTotalHaber.TabIndex = 20;
@@ -204,9 +229,10 @@ namespace Comercial.Formularios.Contable
             // 
             // label7
             // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(564, 278);
+            this.label7.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(564, 240);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(95, 16);
             this.label7.TabIndex = 19;
@@ -214,9 +240,10 @@ namespace Comercial.Formularios.Contable
             // 
             // lblTotalDebe
             // 
+            this.lblTotalDebe.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblTotalDebe.AutoSize = true;
-            this.lblTotalDebe.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTotalDebe.Location = new System.Drawing.Point(381, 278);
+            this.lblTotalDebe.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTotalDebe.Location = new System.Drawing.Point(381, 240);
             this.lblTotalDebe.Name = "lblTotalDebe";
             this.lblTotalDebe.Size = new System.Drawing.Size(87, 16);
             this.lblTotalDebe.TabIndex = 18;
@@ -224,9 +251,10 @@ namespace Comercial.Formularios.Contable
             // 
             // label5
             // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(285, 278);
+            this.label5.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(285, 240);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(90, 16);
             this.label5.TabIndex = 17;
@@ -234,10 +262,14 @@ namespace Comercial.Formularios.Contable
             // 
             // rtbObservaciones
             // 
-            this.rtbObservaciones.Location = new System.Drawing.Point(13, 307);
+            this.rtbObservaciones.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rtbObservaciones.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.rtbObservaciones.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtbObservaciones.Location = new System.Drawing.Point(13, 268);
             this.rtbObservaciones.Name = "rtbObservaciones";
             this.rtbObservaciones.ReadOnly = true;
-            this.rtbObservaciones.Size = new System.Drawing.Size(741, 81);
+            this.rtbObservaciones.Size = new System.Drawing.Size(884, 80);
             this.rtbObservaciones.TabIndex = 10;
             this.rtbObservaciones.Text = "";
             // 
@@ -245,19 +277,35 @@ namespace Comercial.Formularios.Contable
             // 
             this.dgvMovimiento.AllowUserToAddRows = false;
             this.dgvMovimiento.AllowUserToDeleteRows = false;
+            this.dgvMovimiento.AlternatingRowsDefaultCellStyle = altMov;
+            this.dgvMovimiento.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvMovimiento.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.dgvMovimiento.BackgroundColor = System.Drawing.Color.White;
+            this.dgvMovimiento.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            altMov.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            hdrMov.BackColor = System.Drawing.Color.DimGray;
+            hdrMov.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            hdrMov.ForeColor = System.Drawing.Color.White;
+            hdrMov.SelectionBackColor = System.Drawing.Color.DimGray;
+            hdrMov.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvMovimiento.ColumnHeadersDefaultCellStyle = hdrMov;
             this.dgvMovimiento.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvMovimiento.EnableHeadersVisualStyles = false;
             this.dgvMovimiento.Location = new System.Drawing.Point(13, 17);
             this.dgvMovimiento.Name = "dgvMovimiento";
             this.dgvMovimiento.ReadOnly = true;
-            this.dgvMovimiento.Size = new System.Drawing.Size(741, 245);
+            this.dgvMovimiento.RowHeadersVisible = false;
+            this.dgvMovimiento.Size = new System.Drawing.Size(837, 214);
             this.dgvMovimiento.TabIndex = 9;
             // 
             // btnExportar
             // 
+            this.btnExportar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExportar.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnExportar.Image = ((System.Drawing.Image)(resources.GetObject("btnExportar.Image")));
-            this.btnExportar.Location = new System.Drawing.Point(857, 3);
+            this.btnExportar.Location = new System.Drawing.Point(857, 17);
             this.btnExportar.Name = "btnExportar";
             this.btnExportar.Size = new System.Drawing.Size(49, 28);
             this.btnExportar.TabIndex = 9;
@@ -283,15 +331,16 @@ namespace Comercial.Formularios.Contable
             this.tabPage3.Location = new System.Drawing.Point(4, 24);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(925, 659);
+            this.tabPage3.Size = new System.Drawing.Size(932, 612);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Detalle";
             // 
             // lblEgresos
             // 
+            this.lblEgresos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblEgresos.AutoSize = true;
-            this.lblEgresos.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblEgresos.Location = new System.Drawing.Point(402, 619);
+            this.lblEgresos.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblEgresos.Location = new System.Drawing.Point(402, 582);
             this.lblEgresos.Name = "lblEgresos";
             this.lblEgresos.Size = new System.Drawing.Size(87, 16);
             this.lblEgresos.TabIndex = 24;
@@ -299,9 +348,10 @@ namespace Comercial.Formularios.Contable
             // 
             // label10
             // 
+            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label10.AutoSize = true;
-            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(289, 619);
+            this.label10.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label10.Location = new System.Drawing.Point(289, 582);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(110, 16);
             this.label10.TabIndex = 23;
@@ -309,9 +359,10 @@ namespace Comercial.Formularios.Contable
             // 
             // lblIngresos
             // 
+            this.lblIngresos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblIngresos.AutoSize = true;
-            this.lblIngresos.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblIngresos.Location = new System.Drawing.Point(131, 619);
+            this.lblIngresos.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblIngresos.Location = new System.Drawing.Point(131, 582);
             this.lblIngresos.Name = "lblIngresos";
             this.lblIngresos.Size = new System.Drawing.Size(52, 16);
             this.lblIngresos.TabIndex = 22;
@@ -319,9 +370,10 @@ namespace Comercial.Formularios.Contable
             // 
             // label12
             // 
+            this.label12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label12.AutoSize = true;
-            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label12.Location = new System.Drawing.Point(13, 619);
+            this.label12.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label12.Location = new System.Drawing.Point(13, 582);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(112, 16);
             this.label12.TabIndex = 21;
@@ -329,9 +381,10 @@ namespace Comercial.Formularios.Contable
             // 
             // btnDescargarDetalle
             // 
+            this.btnDescargarDetalle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDescargarDetalle.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnDescargarDetalle.Image = ((System.Drawing.Image)(resources.GetObject("btnDescargarDetalle.Image")));
-            this.btnDescargarDetalle.Location = new System.Drawing.Point(868, 79);
+            this.btnDescargarDetalle.Location = new System.Drawing.Point(872, 79);
             this.btnDescargarDetalle.Name = "btnDescargarDetalle";
             this.btnDescargarDetalle.Size = new System.Drawing.Size(49, 28);
             this.btnDescargarDetalle.TabIndex = 17;
@@ -342,21 +395,37 @@ namespace Comercial.Formularios.Contable
             // 
             this.dgvDetalle.AllowUserToAddRows = false;
             this.dgvDetalle.AllowUserToDeleteRows = false;
+            this.dgvDetalle.AlternatingRowsDefaultCellStyle = altDet;
+            this.dgvDetalle.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvDetalle.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.dgvDetalle.BackgroundColor = System.Drawing.Color.White;
+            this.dgvDetalle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            altDet.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            hdrDet.BackColor = System.Drawing.Color.DimGray;
+            hdrDet.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            hdrDet.ForeColor = System.Drawing.Color.White;
+            hdrDet.SelectionBackColor = System.Drawing.Color.DimGray;
+            hdrDet.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvDetalle.ColumnHeadersDefaultCellStyle = hdrDet;
             this.dgvDetalle.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvDetalle.EnableHeadersVisualStyles = false;
             this.dgvDetalle.Location = new System.Drawing.Point(13, 79);
             this.dgvDetalle.Name = "dgvDetalle";
             this.dgvDetalle.ReadOnly = true;
+            this.dgvDetalle.RowHeadersVisible = false;
             this.dgvDetalle.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvDetalle.Size = new System.Drawing.Size(837, 526);
+            this.dgvDetalle.Size = new System.Drawing.Size(851, 493);
             this.dgvDetalle.TabIndex = 16;
             // 
             // btnBuscarDetalle
             // 
             this.btnBuscarDetalle.BackColor = System.Drawing.Color.Silver;
-            this.btnBuscarDetalle.Location = new System.Drawing.Point(745, 31);
+            this.btnBuscarDetalle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBuscarDetalle.Location = new System.Drawing.Point(745, 30);
             this.btnBuscarDetalle.Name = "btnBuscarDetalle";
-            this.btnBuscarDetalle.Size = new System.Drawing.Size(105, 24);
+            this.btnBuscarDetalle.Size = new System.Drawing.Size(105, 28);
             this.btnBuscarDetalle.TabIndex = 15;
             this.btnBuscarDetalle.Text = "Buscar";
             this.btnBuscarDetalle.UseVisualStyleBackColor = false;
@@ -365,7 +434,7 @@ namespace Comercial.Formularios.Contable
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.Location = new System.Drawing.Point(515, 14);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(44, 15);
@@ -397,7 +466,7 @@ namespace Comercial.Formularios.Contable
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.Location = new System.Drawing.Point(272, 14);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(48, 15);
@@ -407,7 +476,7 @@ namespace Comercial.Formularios.Contable
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label8.Location = new System.Drawing.Point(13, 14);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(57, 15);
@@ -419,14 +488,15 @@ namespace Comercial.Formularios.Contable
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(933, 687);
+            this.ClientSize = new System.Drawing.Size(940, 640);
             this.Controls.Add(this.tabControl1);
             this.DoubleBuffered = true;
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(860, 620);
             this.Name = "frmAuditoriaCaja";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Auditoria Caja";

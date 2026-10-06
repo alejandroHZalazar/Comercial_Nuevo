@@ -990,6 +990,9 @@
     <EmbeddedResource Include="Formularios\Ventas\frmVentasADevolver.resx">
       <DependentUpon>frmVentasADevolver.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Ventas\frmVentasMinorista.resx">
+      <DependentUpon>frmVentasMinorista.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Ventas\frmVentasReportes.resx">
       <DependentUpon>frmVentasReportes.cs</DependentUpon>
     </EmbeddedResource>

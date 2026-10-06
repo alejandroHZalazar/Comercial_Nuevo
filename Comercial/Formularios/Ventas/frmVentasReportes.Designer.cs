@@ -29,6 +29,11 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmVentasReportes));
+            System.Windows.Forms.DataGridViewCellStyle dgvCabeceraHeaderStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvCabeceraAltStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvDetalleHeaderStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvDetalleAltStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            this.splitGrillas = new System.Windows.Forms.SplitContainer();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cbCliente = new System.Windows.Forms.CheckBox();
             this.cboCliente = new System.Windows.Forms.ComboBox();
@@ -43,10 +48,17 @@
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvVentasCabecera)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDetalle)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitGrillas)).BeginInit();
+            this.splitGrillas.Panel1.SuspendLayout();
+            this.splitGrillas.Panel2.SuspendLayout();
+            this.splitGrillas.SuspendLayout();
             this.SuspendLayout();
-            // 
+            //
             // groupBox1
-            // 
+            //
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Text = "Filtros";
             this.groupBox1.BackColor = System.Drawing.Color.Silver;
             this.groupBox1.Controls.Add(this.cbCliente);
             this.groupBox1.Controls.Add(this.cboCliente);
@@ -57,7 +69,7 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(959, 113);
+            this.groupBox1.Size = new System.Drawing.Size(833, 113);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             // 
@@ -73,20 +85,26 @@
             // 
             // cboCliente
             // 
+            this.cboCliente.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cboCliente.FormattingEnabled = true;
             this.cboCliente.Location = new System.Drawing.Point(152, 69);
             this.cboCliente.Name = "cboCliente";
-            this.cboCliente.Size = new System.Drawing.Size(429, 23);
+            this.cboCliente.Size = new System.Drawing.Size(550, 23);
             this.cboCliente.TabIndex = 9;
-            // 
+            //
             // btnBuscar
-            // 
+            //
+            this.btnBuscar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBuscar.BackColor = System.Drawing.Color.Gray;
+            this.btnBuscar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnBuscar.Image = global::Comercial.Properties.Resources.musica_searcher;
-            this.btnBuscar.Location = new System.Drawing.Point(599, 61);
+            this.btnBuscar.Location = new System.Drawing.Point(710, 62);
             this.btnBuscar.Name = "btnBuscar";
-            this.btnBuscar.Size = new System.Drawing.Size(54, 36);
+            this.btnBuscar.Size = new System.Drawing.Size(110, 36);
             this.btnBuscar.TabIndex = 8;
+            this.btnBuscar.Text = "Buscar";
+            this.btnBuscar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnBuscar.UseVisualStyleBackColor = false;
             this.btnBuscar.Click += new System.EventHandler(this.btnBuscar_Click);
             // 
@@ -126,14 +144,27 @@
             // 
             this.dgvVentasCabecera.AllowUserToAddRows = false;
             this.dgvVentasCabecera.AllowUserToDeleteRows = false;
+            this.dgvVentasCabecera.AlternatingRowsDefaultCellStyle = dgvCabeceraAltStyle;
             this.dgvVentasCabecera.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.dgvVentasCabecera.BackgroundColor = System.Drawing.Color.White;
+            this.dgvVentasCabecera.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            dgvCabeceraAltStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            dgvCabeceraHeaderStyle.BackColor = System.Drawing.Color.DimGray;
+            dgvCabeceraHeaderStyle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dgvCabeceraHeaderStyle.ForeColor = System.Drawing.Color.White;
+            dgvCabeceraHeaderStyle.SelectionBackColor = System.Drawing.Color.DimGray;
+            dgvCabeceraHeaderStyle.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvVentasCabecera.ColumnHeadersDefaultCellStyle = dgvCabeceraHeaderStyle;
             this.dgvVentasCabecera.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvVentasCabecera.Location = new System.Drawing.Point(12, 131);
+            this.dgvVentasCabecera.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvVentasCabecera.EnableHeadersVisualStyles = false;
+            this.dgvVentasCabecera.Location = new System.Drawing.Point(0, 0);
             this.dgvVentasCabecera.MultiSelect = false;
             this.dgvVentasCabecera.Name = "dgvVentasCabecera";
             this.dgvVentasCabecera.ReadOnly = true;
+            this.dgvVentasCabecera.RowHeadersVisible = false;
             this.dgvVentasCabecera.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvVentasCabecera.Size = new System.Drawing.Size(820, 316);
+            this.dgvVentasCabecera.Size = new System.Drawing.Size(951, 300);
             this.dgvVentasCabecera.TabIndex = 11;
             this.dgvVentasCabecera.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVentasCabecera_CellEnter);
             // 
@@ -141,24 +172,57 @@
             // 
             this.dgvDetalle.AllowUserToAddRows = false;
             this.dgvDetalle.AllowUserToDeleteRows = false;
+            this.dgvDetalle.AlternatingRowsDefaultCellStyle = dgvDetalleAltStyle;
             this.dgvDetalle.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.dgvDetalle.BackgroundColor = System.Drawing.Color.White;
+            this.dgvDetalle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            dgvDetalleAltStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            dgvDetalleHeaderStyle.BackColor = System.Drawing.Color.Gray;
+            dgvDetalleHeaderStyle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dgvDetalleHeaderStyle.ForeColor = System.Drawing.Color.White;
+            dgvDetalleHeaderStyle.SelectionBackColor = System.Drawing.Color.Gray;
+            dgvDetalleHeaderStyle.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvDetalle.ColumnHeadersDefaultCellStyle = dgvDetalleHeaderStyle;
             this.dgvDetalle.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvDetalle.Location = new System.Drawing.Point(12, 453);
+            this.dgvDetalle.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvDetalle.EnableHeadersVisualStyles = false;
+            this.dgvDetalle.Location = new System.Drawing.Point(0, 0);
             this.dgvDetalle.Name = "dgvDetalle";
             this.dgvDetalle.ReadOnly = true;
+            this.dgvDetalle.RowHeadersVisible = false;
             this.dgvDetalle.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvDetalle.Size = new System.Drawing.Size(820, 254);
+            this.dgvDetalle.Size = new System.Drawing.Size(951, 233);
             this.dgvDetalle.TabIndex = 12;
-            // 
+            //
+            // splitGrillas
+            //
+            this.splitGrillas.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitGrillas.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.splitGrillas.Location = new System.Drawing.Point(12, 131);
+            this.splitGrillas.Name = "splitGrillas";
+            this.splitGrillas.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.splitGrillas.Panel1.Controls.Add(this.dgvVentasCabecera);
+            this.splitGrillas.Panel1MinSize = 100;
+            this.splitGrillas.Panel2.Controls.Add(this.dgvDetalle);
+            this.splitGrillas.Panel2MinSize = 100;
+            this.splitGrillas.Size = new System.Drawing.Size(951, 537);
+            this.splitGrillas.SplitterDistance = 300;
+            this.splitGrillas.TabIndex = 13;
+            //
             // btnImprimir
-            // 
+            //
+            this.btnImprimir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImprimir.BackColor = System.Drawing.Color.Silver;
             this.btnImprimir.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnImprimir.Image = global::Comercial.Properties.Resources.printer_1;
-            this.btnImprimir.Location = new System.Drawing.Point(896, 131);
+            this.btnImprimir.Location = new System.Drawing.Point(853, 12);
             this.btnImprimir.Name = "btnImprimir";
-            this.btnImprimir.Size = new System.Drawing.Size(75, 39);
+            this.btnImprimir.Size = new System.Drawing.Size(110, 40);
             this.btnImprimir.TabIndex = 14;
+            this.btnImprimir.Text = "Imprimir";
+            this.btnImprimir.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnImprimir.UseVisualStyleBackColor = false;
             this.btnImprimir.Click += new System.EventHandler(this.btnImprimir_Click);
             // 
@@ -167,17 +231,17 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(975, 749);
+            this.ClientSize = new System.Drawing.Size(975, 680);
+            this.Controls.Add(this.splitGrillas);
             this.Controls.Add(this.btnImprimir);
-            this.Controls.Add(this.dgvDetalle);
-            this.Controls.Add(this.dgvVentasCabecera);
             this.Controls.Add(this.groupBox1);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(760, 560);
             this.Name = "frmVentasReportes";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Reportes de Ventas";
@@ -186,6 +250,10 @@
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvVentasCabecera)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDetalle)).EndInit();
+            this.splitGrillas.Panel1.ResumeLayout(false);
+            this.splitGrillas.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitGrillas)).EndInit();
+            this.splitGrillas.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -203,5 +271,6 @@
         private System.Windows.Forms.DataGridView dgvVentasCabecera;
         private System.Windows.Forms.DataGridView dgvDetalle;
         private System.Windows.Forms.Button btnImprimir;
+        private System.Windows.Forms.SplitContainer splitGrillas;
     }
 }

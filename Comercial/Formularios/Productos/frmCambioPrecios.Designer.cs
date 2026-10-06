@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvAltStyle = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmCambioPrecios));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnListar = new System.Windows.Forms.Button();
@@ -55,9 +56,10 @@
             this.groupBox1.Controls.Add(this.cbRubros);
             this.groupBox1.Controls.Add(this.cboProveedores);
             this.groupBox1.Controls.Add(this.cbProveedor);
-            this.groupBox1.Location = new System.Drawing.Point(3, 12);
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(729, 62);
+            this.groupBox1.Size = new System.Drawing.Size(1121, 62);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filtro";
@@ -66,7 +68,8 @@
             // 
             this.btnListar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnListar.Image = global::Comercial.Properties.Resources.list_with_bullets;
-            this.btnListar.Location = new System.Drawing.Point(631, 13);
+            this.btnListar.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.btnListar.Location = new System.Drawing.Point(1023, 13);
             this.btnListar.Name = "btnListar";
             this.btnListar.Size = new System.Drawing.Size(86, 36);
             this.btnListar.TabIndex = 4;
@@ -115,22 +118,29 @@
             // 
             // dgvProductos
             // 
+            this.dgvProductos.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvProductos.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.dgvProductos.BackgroundColor = System.Drawing.Color.White;
+            this.dgvProductos.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            dgvAltStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            this.dgvProductos.EnableHeadersVisualStyles = false;
+            this.dgvProductos.RowHeadersVisible = false;
             this.dgvProductos.AllowUserToAddRows = false;
             this.dgvProductos.AllowUserToDeleteRows = false;
             this.dgvProductos.AllowUserToOrderColumns = true;
             this.dgvProductos.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.DimGray;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.DimGray;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.White;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dgvProductos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvProductos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvProductos.Location = new System.Drawing.Point(3, 123);
+            this.dgvProductos.Location = new System.Drawing.Point(12, 123);
             this.dgvProductos.Name = "dgvProductos";
-            this.dgvProductos.Size = new System.Drawing.Size(962, 394);
+            this.dgvProductos.Size = new System.Drawing.Size(947, 394);
             this.dgvProductos.TabIndex = 3;
             // 
             // btnCambioPrecios
@@ -139,7 +149,8 @@
             this.btnCambioPrecios.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCambioPrecios.Image = global::Comercial.Properties.Resources.save__1_;
             this.btnCambioPrecios.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnCambioPrecios.Location = new System.Drawing.Point(815, 523);
+            this.btnCambioPrecios.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.btnCambioPrecios.Location = new System.Drawing.Point(983, 523);
             this.btnCambioPrecios.Name = "btnCambioPrecios";
             this.btnCambioPrecios.Size = new System.Drawing.Size(150, 35);
             this.btnCambioPrecios.TabIndex = 4;
@@ -169,6 +180,8 @@
             // 
             // rtbObserv
             // 
+            this.rtbObserv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Right));
+            this.rtbObserv.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.rtbObserv.Location = new System.Drawing.Point(971, 123);
             this.rtbObserv.Name = "rtbObserv";
             this.rtbObserv.Size = new System.Drawing.Size(162, 394);
@@ -196,7 +209,8 @@
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
+            this.MinimumSize = new System.Drawing.Size(900, 450);
             this.MinimizeBox = false;
             this.Name = "frmCambioPrecios";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

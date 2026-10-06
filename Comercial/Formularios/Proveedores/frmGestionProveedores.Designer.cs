@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmGestionProveedores));
+            System.Windows.Forms.DataGridViewCellStyle dgvHeaderStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvAltStyle = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgvProveedores = new System.Windows.Forms.DataGridView();
             this.btnEliminar = new System.Windows.Forms.Button();
             this.btnEditar = new System.Windows.Forms.Button();
@@ -62,7 +64,19 @@
             this.dgvProveedores.AllowUserToAddRows = false;
             this.dgvProveedores.AllowUserToDeleteRows = false;
             this.dgvProveedores.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvProveedores.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvProveedores.BackgroundColor = System.Drawing.Color.White;
+            this.dgvProveedores.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            dgvAltStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            dgvHeaderStyle.BackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dgvHeaderStyle.ForeColor = System.Drawing.Color.White;
+            dgvHeaderStyle.SelectionBackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvProveedores.ColumnHeadersDefaultCellStyle = dgvHeaderStyle;
             this.dgvProveedores.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvProveedores.EnableHeadersVisualStyles = false;
+            this.dgvProveedores.RowHeadersVisible = false;
             this.dgvProveedores.Location = new System.Drawing.Point(13, 13);
             this.dgvProveedores.MultiSelect = false;
             this.dgvProveedores.Name = "dgvProveedores";

@@ -45,18 +45,19 @@ namespace Comercial.Formularios.Contable
             // 
             // cboProveedor
             // 
+            this.cboProveedor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.cboProveedor.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.cboProveedor.FormattingEnabled = true;
-            this.cboProveedor.Location = new System.Drawing.Point(104, 12);
+            this.cboProveedor.Location = new System.Drawing.Point(160, 16);
             this.cboProveedor.Name = "cboProveedor";
-            this.cboProveedor.Size = new System.Drawing.Size(279, 23);
+            this.cboProveedor.Size = new System.Drawing.Size(264, 23);
             this.cboProveedor.TabIndex = 0;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(13, 15);
+            this.label3.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(16, 19);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(85, 16);
             this.label3.TabIndex = 13;
@@ -64,22 +65,24 @@ namespace Comercial.Formularios.Contable
             // 
             // nudPagoProveedor
             // 
+            this.nudPagoProveedor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.nudPagoProveedor.DecimalPlaces = 2;
-            this.nudPagoProveedor.Location = new System.Drawing.Point(147, 53);
+            this.nudPagoProveedor.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nudPagoProveedor.Location = new System.Drawing.Point(160, 56);
             this.nudPagoProveedor.Maximum = new decimal(new int[] {
             1215752191,
             23,
             0,
             0});
             this.nudPagoProveedor.Name = "nudPagoProveedor";
-            this.nudPagoProveedor.Size = new System.Drawing.Size(120, 21);
+            this.nudPagoProveedor.Size = new System.Drawing.Size(264, 27);
             this.nudPagoProveedor.TabIndex = 1;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(13, 55);
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(16, 61);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(132, 16);
             this.label1.TabIndex = 15;
@@ -87,18 +90,21 @@ namespace Comercial.Formularios.Contable
             // 
             // rtbObservacion
             // 
-            this.rtbObservacion.Location = new System.Drawing.Point(13, 110);
+            this.rtbObservacion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.rtbObservacion.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.rtbObservacion.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtbObservacion.Location = new System.Drawing.Point(16, 124);
             this.rtbObservacion.MaxLength = 100;
             this.rtbObservacion.Name = "rtbObservacion";
-            this.rtbObservacion.Size = new System.Drawing.Size(370, 66);
+            this.rtbObservacion.Size = new System.Drawing.Size(408, 100);
             this.rtbObservacion.TabIndex = 2;
             this.rtbObservacion.Text = "";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(13, 90);
+            this.label2.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(16, 100);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(117, 16);
             this.label2.TabIndex = 17;
@@ -107,12 +113,13 @@ namespace Comercial.Formularios.Contable
             // btnPagoProveedores
             // 
             this.btnPagoProveedores.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.btnPagoProveedores.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPagoProveedores.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPagoProveedores.Image = ((System.Drawing.Image)(resources.GetObject("btnPagoProveedores.Image")));
             this.btnPagoProveedores.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnPagoProveedores.Location = new System.Drawing.Point(238, 191);
+            this.btnPagoProveedores.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.btnPagoProveedores.Location = new System.Drawing.Point(254, 238);
             this.btnPagoProveedores.Name = "btnPagoProveedores";
-            this.btnPagoProveedores.Size = new System.Drawing.Size(145, 38);
+            this.btnPagoProveedores.Size = new System.Drawing.Size(170, 40);
             this.btnPagoProveedores.TabIndex = 3;
             this.btnPagoProveedores.Text = "Pagar Proveedor";
             this.btnPagoProveedores.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -128,7 +135,7 @@ namespace Comercial.Formularios.Contable
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(394, 234);
+            this.ClientSize = new System.Drawing.Size(440, 290);
             this.Controls.Add(this.btnPagoProveedores);
             this.Controls.Add(this.rtbObservacion);
             this.Controls.Add(this.label2);
@@ -137,11 +144,12 @@ namespace Comercial.Formularios.Contable
             this.Controls.Add(this.cboProveedor);
             this.Controls.Add(this.label3);
             this.DoubleBuffered = true;
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(400, 330);
             this.Name = "frmPagoProveedores";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Pago Proveedores";

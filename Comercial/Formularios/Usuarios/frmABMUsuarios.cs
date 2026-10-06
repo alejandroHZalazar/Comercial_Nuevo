@@ -42,7 +42,8 @@ namespace Comercial.Formularios.Usuarios
 
             if (dgvUsuarios.Width == 355)
             {
-                dgvUsuarios.Width += gbDatos.Width + 5;
+                dgvUsuarios.Width = ClientSize.Width - 7 - dgvUsuarios.Left;
+                dgvUsuarios.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             }
             dgvUsuarios.BringToFront();
             verificarBotones();
@@ -96,6 +97,7 @@ namespace Comercial.Formularios.Usuarios
             btnEditar.Enabled = false;
             btnEliminar.Enabled = false;
             btnCambiarPass.Enabled = false;
+            dgvUsuarios.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             dgvUsuarios.Width = 355;
 
         }
@@ -241,3 +243,4 @@ namespace Comercial.Formularios.Usuarios
         }
     }
 }
+

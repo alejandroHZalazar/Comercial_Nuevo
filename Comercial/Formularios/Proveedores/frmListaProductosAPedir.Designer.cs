@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmListaProductosAPedir));
+            System.Windows.Forms.DataGridViewCellStyle dgvHeaderStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvAltStyle = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgvListaProdAPedir = new System.Windows.Forms.DataGridView();
             this.label1 = new System.Windows.Forms.Label();
             this.txtCant = new System.Windows.Forms.TextBox();
@@ -55,10 +57,23 @@
             this.dgvListaProdAPedir.AllowUserToAddRows = false;
             this.dgvListaProdAPedir.AllowUserToDeleteRows = false;
             this.dgvListaProdAPedir.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            this.dgvListaProdAPedir.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvListaProdAPedir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.dgvListaProdAPedir.BackgroundColor = System.Drawing.Color.White;
+            this.dgvListaProdAPedir.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            dgvAltStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            dgvHeaderStyle.BackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dgvHeaderStyle.ForeColor = System.Drawing.Color.White;
+            dgvHeaderStyle.SelectionBackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvListaProdAPedir.ColumnHeadersDefaultCellStyle = dgvHeaderStyle;
             this.dgvListaProdAPedir.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvListaProdAPedir.EnableHeadersVisualStyles = false;
+            this.dgvListaProdAPedir.RowHeadersVisible = false;
             this.dgvListaProdAPedir.Location = new System.Drawing.Point(12, 84);
             this.dgvListaProdAPedir.Name = "dgvListaProdAPedir";
-            this.dgvListaProdAPedir.Size = new System.Drawing.Size(1185, 523);
+            this.dgvListaProdAPedir.Size = new System.Drawing.Size(1185, 531);
             this.dgvListaProdAPedir.TabIndex = 0;
             this.dgvListaProdAPedir.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvListaProdAPedir_CellValueChanged);
             this.dgvListaProdAPedir.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.dgvListaProdAPedir_KeyPress);
@@ -66,7 +81,8 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 622);
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.label1.Location = new System.Drawing.Point(12, 630);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(63, 15);
             this.label1.TabIndex = 1;
@@ -74,7 +90,8 @@
             // 
             // txtCant
             // 
-            this.txtCant.Location = new System.Drawing.Point(81, 618);
+            this.txtCant.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.txtCant.Location = new System.Drawing.Point(85, 626);
             this.txtCant.Name = "txtCant";
             this.txtCant.ReadOnly = true;
             this.txtCant.Size = new System.Drawing.Size(100, 23);
@@ -85,7 +102,8 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(191, 622);
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.label2.Location = new System.Drawing.Point(195, 630);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(92, 15);
             this.label2.TabIndex = 3;
@@ -93,7 +111,8 @@
             // 
             // txtPrecioProv
             // 
-            this.txtPrecioProv.Location = new System.Drawing.Point(294, 618);
+            this.txtPrecioProv.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.txtPrecioProv.Location = new System.Drawing.Point(298, 626);
             this.txtPrecioProv.Name = "txtPrecioProv";
             this.txtPrecioProv.ReadOnly = true;
             this.txtPrecioProv.Size = new System.Drawing.Size(100, 23);
@@ -104,7 +123,8 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(404, 622);
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.label3.Location = new System.Drawing.Point(408, 630);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(89, 15);
             this.label3.TabIndex = 5;
@@ -112,7 +132,8 @@
             // 
             // txtPrecioLista
             // 
-            this.txtPrecioLista.Location = new System.Drawing.Point(504, 618);
+            this.txtPrecioLista.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.txtPrecioLista.Location = new System.Drawing.Point(508, 626);
             this.txtPrecioLista.Name = "txtPrecioLista";
             this.txtPrecioLista.ReadOnly = true;
             this.txtPrecioLista.Size = new System.Drawing.Size(100, 23);
@@ -124,7 +145,8 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(970, 620);
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.label4.Location = new System.Drawing.Point(970, 629);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(113, 17);
             this.label4.TabIndex = 7;
@@ -133,7 +155,8 @@
             // txtCosto
             // 
             this.txtCosto.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtCosto.Location = new System.Drawing.Point(1097, 616);
+            this.txtCosto.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.txtCosto.Location = new System.Drawing.Point(1097, 625);
             this.txtCosto.Name = "txtCosto";
             this.txtCosto.ReadOnly = true;
             this.txtCosto.Size = new System.Drawing.Size(100, 25);
@@ -147,9 +170,10 @@
             this.btnCargar.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnCargar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCargar.Image = global::Comercial.Properties.Resources.play_button;
-            this.btnCargar.Location = new System.Drawing.Point(1097, 653);
+            this.btnCargar.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.btnCargar.Location = new System.Drawing.Point(1097, 659);
             this.btnCargar.Name = "btnCargar";
-            this.btnCargar.Size = new System.Drawing.Size(100, 23);
+            this.btnCargar.Size = new System.Drawing.Size(100, 30);
             this.btnCargar.TabIndex = 9;
             this.btnCargar.Text = "Cargar [F2]";
             this.btnCargar.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
@@ -169,6 +193,7 @@
             this.groupBox1.Size = new System.Drawing.Size(695, 66);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Período de movimientos";
             // 
             // btnBuscar
             // 
@@ -230,7 +255,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(1209, 689);
+            this.ClientSize = new System.Drawing.Size(1209, 700);
             this.Controls.Add(this.btnImprimir);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnCargar);
@@ -246,7 +271,8 @@
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
+            this.MinimumSize = new System.Drawing.Size(880, 500);
             this.MinimizeBox = false;
             this.Name = "frmListaProductosAPedir";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

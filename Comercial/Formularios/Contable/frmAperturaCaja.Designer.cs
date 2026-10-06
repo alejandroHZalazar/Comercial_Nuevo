@@ -45,8 +45,8 @@ namespace Comercial.Formularios.Contable
             // lblUsuario
             // 
             this.lblUsuario.AutoSize = true;
-            this.lblUsuario.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblUsuario.Location = new System.Drawing.Point(84, 9);
+            this.lblUsuario.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblUsuario.Location = new System.Drawing.Point(190, 16);
             this.lblUsuario.Name = "lblUsuario";
             this.lblUsuario.Size = new System.Drawing.Size(58, 16);
             this.lblUsuario.TabIndex = 3;
@@ -55,8 +55,8 @@ namespace Comercial.Formularios.Contable
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(12, 9);
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(16, 16);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(66, 16);
             this.label1.TabIndex = 2;
@@ -65,8 +65,8 @@ namespace Comercial.Formularios.Contable
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(12, 41);
+            this.label2.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(16, 44);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(151, 16);
             this.label2.TabIndex = 4;
@@ -75,8 +75,8 @@ namespace Comercial.Formularios.Contable
             // lblCajaAnterior
             // 
             this.lblCajaAnterior.AutoSize = true;
-            this.lblCajaAnterior.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCajaAnterior.Location = new System.Drawing.Point(170, 41);
+            this.lblCajaAnterior.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCajaAnterior.Location = new System.Drawing.Point(190, 44);
             this.lblCajaAnterior.Name = "lblCajaAnterior";
             this.lblCajaAnterior.Size = new System.Drawing.Size(58, 16);
             this.lblCajaAnterior.TabIndex = 5;
@@ -84,21 +84,23 @@ namespace Comercial.Formularios.Contable
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(479, 88);
+            this.label3.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(16, 108);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(352, 57);
+            this.label3.Size = new System.Drawing.Size(488, 46);
             this.label3.TabIndex = 6;
             this.label3.Text = "En el caso de extracción o ingreso de dinero de la caja anterior debe registrar e" +
     "l movimiento al abrir caja";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(12, 72);
+            this.label4.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(16, 72);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(144, 16);
             this.label4.TabIndex = 7;
@@ -108,8 +110,8 @@ namespace Comercial.Formularios.Contable
             // lblFechaUltimoCierre
             // 
             this.lblFechaUltimoCierre.AutoSize = true;
-            this.lblFechaUltimoCierre.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblFechaUltimoCierre.Location = new System.Drawing.Point(170, 72);
+            this.lblFechaUltimoCierre.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblFechaUltimoCierre.Location = new System.Drawing.Point(190, 72);
             this.lblFechaUltimoCierre.Name = "lblFechaUltimoCierre";
             this.lblFechaUltimoCierre.Size = new System.Drawing.Size(58, 16);
             this.lblFechaUltimoCierre.TabIndex = 8;
@@ -117,11 +119,12 @@ namespace Comercial.Formularios.Contable
             // 
             // btnAbrirCaja
             // 
+            this.btnAbrirCaja.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAbrirCaja.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.btnAbrirCaja.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAbrirCaja.Location = new System.Drawing.Point(41, 107);
+            this.btnAbrirCaja.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAbrirCaja.Location = new System.Drawing.Point(364, 280);
             this.btnAbrirCaja.Name = "btnAbrirCaja";
-            this.btnAbrirCaja.Size = new System.Drawing.Size(101, 38);
+            this.btnAbrirCaja.Size = new System.Drawing.Size(140, 40);
             this.btnAbrirCaja.TabIndex = 1;
             this.btnAbrirCaja.Text = "Abrir Caja";
             this.btnAbrirCaja.UseVisualStyleBackColor = false;
@@ -129,18 +132,23 @@ namespace Comercial.Formularios.Contable
             // 
             // rtbObservacion
             // 
-            this.rtbObservacion.Location = new System.Drawing.Point(479, 27);
+            this.rtbObservacion.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rtbObservacion.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.rtbObservacion.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtbObservacion.Location = new System.Drawing.Point(16, 186);
             this.rtbObservacion.MaxLength = 500;
             this.rtbObservacion.Name = "rtbObservacion";
-            this.rtbObservacion.Size = new System.Drawing.Size(349, 58);
+            this.rtbObservacion.Size = new System.Drawing.Size(488, 84);
             this.rtbObservacion.TabIndex = 0;
             this.rtbObservacion.Text = "";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(479, 9);
+            this.label6.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(16, 164);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(117, 16);
             this.label6.TabIndex = 11;
@@ -151,7 +159,7 @@ namespace Comercial.Formularios.Contable
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(843, 157);
+            this.ClientSize = new System.Drawing.Size(520, 336);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.rtbObservacion);
             this.Controls.Add(this.btnAbrirCaja);
@@ -162,11 +170,12 @@ namespace Comercial.Formularios.Contable
             this.Controls.Add(this.label2);
             this.Controls.Add(this.lblUsuario);
             this.Controls.Add(this.label1);
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(460, 370);
             this.Name = "frmAperturaCaja";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Apertura Caja";

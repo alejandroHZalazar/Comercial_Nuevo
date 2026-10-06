@@ -34,7 +34,8 @@ namespace Comercial.Formularios.Configuracion
         {
             if (dgvConceptos.Width == 401)
             {
-                dgvConceptos.Width += gbDatos.Width + 5;
+                dgvConceptos.Width = ClientSize.Width - 9 - dgvConceptos.Left;
+                dgvConceptos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             }
             dgvConceptos.BringToFront();
             cargarGrilla();
@@ -93,6 +94,7 @@ namespace Comercial.Formularios.Configuracion
             btnAgregar.Enabled = false;
             btnEditar.Enabled = false;
             btnEliminar.Enabled = false;
+            dgvConceptos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             dgvConceptos.Width = 401;
             cbMedioPago.SelectedIndex = -1;
         }

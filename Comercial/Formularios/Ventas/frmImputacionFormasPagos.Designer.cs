@@ -90,6 +90,7 @@ namespace Comercial.Formularios.Ventas
             this.cboMedioPago.Items.AddRange(new object[] {
             "Nota de Venta",
             "Facturacion"});
+            this.cboMedioPago.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.cboMedioPago.Location = new System.Drawing.Point(239, 74);
             this.cboMedioPago.Name = "cboMedioPago";
             this.cboMedioPago.Size = new System.Drawing.Size(203, 23);
@@ -111,6 +112,7 @@ namespace Comercial.Formularios.Ventas
             this.btnGrabar.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnGrabar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnGrabar.Image = global::Comercial.Properties.Resources.save__1_;
+            this.btnGrabar.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.btnGrabar.Location = new System.Drawing.Point(473, 63);
             this.btnGrabar.Name = "btnGrabar";
             this.btnGrabar.Size = new System.Drawing.Size(116, 34);
@@ -139,6 +141,7 @@ namespace Comercial.Formularios.Ventas
             // 
             // txtDato3
             // 
+            this.txtDato3.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.txtDato3.Location = new System.Drawing.Point(407, 140);
             this.txtDato3.Name = "txtDato3";
             this.txtDato3.Size = new System.Drawing.Size(182, 21);
@@ -146,6 +149,7 @@ namespace Comercial.Formularios.Ventas
             // 
             // txtDato2
             // 
+            this.txtDato2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.txtDato2.Location = new System.Drawing.Point(212, 140);
             this.txtDato2.Name = "txtDato2";
             this.txtDato2.Size = new System.Drawing.Size(182, 21);
@@ -175,6 +179,7 @@ namespace Comercial.Formularios.Ventas
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.label4.Location = new System.Drawing.Point(407, 120);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(79, 17);
@@ -218,7 +223,8 @@ namespace Comercial.Formularios.Ventas
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
+            this.MinimumSize = new System.Drawing.Size(560, 212);
             this.MinimizeBox = false;
             this.Name = "frmImputacionFormasPagos";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

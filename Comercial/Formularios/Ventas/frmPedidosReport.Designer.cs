@@ -29,6 +29,14 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmPedidosReport));
+            System.Windows.Forms.DataGridViewCellStyle dgvHeaderStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvAltStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            dgvAltStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            dgvHeaderStyle.BackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dgvHeaderStyle.ForeColor = System.Drawing.Color.White;
+            dgvHeaderStyle.SelectionBackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.SelectionForeColor = System.Drawing.Color.White;
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cbVendedor = new System.Windows.Forms.CheckBox();
             this.cboVendedores = new System.Windows.Forms.ComboBox();
@@ -77,6 +85,7 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.dtpHasta);
             this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(1111, 65);
@@ -150,6 +159,13 @@
             this.dgvOrden.AllowUserToDeleteRows = false;
             this.dgvOrden.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
             this.dgvOrden.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvOrden.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvOrden.BackgroundColor = System.Drawing.Color.White;
+            this.dgvOrden.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.dgvOrden.ColumnHeadersDefaultCellStyle = dgvHeaderStyle;
+            this.dgvOrden.EnableHeadersVisualStyles = false;
+            this.dgvOrden.RowHeadersVisible = false;
+            this.dgvOrden.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.dgvOrden.Location = new System.Drawing.Point(12, 83);
             this.dgvOrden.Name = "dgvOrden";
             this.dgvOrden.ReadOnly = true;
@@ -164,6 +180,13 @@
             this.dgvProductos.AllowUserToDeleteRows = false;
             this.dgvProductos.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
             this.dgvProductos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvProductos.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvProductos.BackgroundColor = System.Drawing.Color.White;
+            this.dgvProductos.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.dgvProductos.ColumnHeadersDefaultCellStyle = dgvHeaderStyle;
+            this.dgvProductos.EnableHeadersVisualStyles = false;
+            this.dgvProductos.RowHeadersVisible = false;
+            this.dgvProductos.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.dgvProductos.Location = new System.Drawing.Point(12, 373);
             this.dgvProductos.MultiSelect = false;
             this.dgvProductos.Name = "dgvProductos";
@@ -177,6 +200,7 @@
             this.btnImprimir.BackColor = System.Drawing.Color.Gray;
             this.btnImprimir.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnImprimir.Image = global::Comercial.Properties.Resources.printer_1;
+            this.btnImprimir.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.btnImprimir.Location = new System.Drawing.Point(1048, 328);
             this.btnImprimir.Name = "btnImprimir";
             this.btnImprimir.Size = new System.Drawing.Size(75, 39);
@@ -206,6 +230,7 @@
             this.groupBox2.Controls.Add(this.label9);
             this.groupBox2.Controls.Add(this.lblClienteNombre);
             this.groupBox2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.groupBox2.Location = new System.Drawing.Point(799, 83);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(324, 182);
@@ -335,6 +360,7 @@
             // 
             // rtbObserv
             // 
+            this.rtbObserv.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.rtbObserv.Location = new System.Drawing.Point(799, 296);
             this.rtbObserv.Name = "rtbObserv";
             this.rtbObserv.ReadOnly = true;
@@ -346,6 +372,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.label3.Location = new System.Drawing.Point(799, 276);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(102, 17);
@@ -407,6 +434,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.AutoScroll = true;
+            this.AutoScrollMinSize = new System.Drawing.Size(1135, 668);
             this.ClientSize = new System.Drawing.Size(1135, 668);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.rtbObserv);
@@ -419,7 +448,8 @@
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
+            this.MinimumSize = new System.Drawing.Size(800, 520);
             this.MinimizeBox = false;
             this.Name = "frmPedidosReport";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

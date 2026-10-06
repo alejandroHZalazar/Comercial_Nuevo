@@ -94,9 +94,10 @@
             // 
             this.btnIngresar.BackColor = System.Drawing.Color.Silver;
             this.btnIngresar.Image = global::Comercial.Properties.Resources.door;
-            this.btnIngresar.Location = new System.Drawing.Point(102, 271);
+            this.btnIngresar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnIngresar.Location = new System.Drawing.Point(102, 267);
             this.btnIngresar.Name = "btnIngresar";
-            this.btnIngresar.Size = new System.Drawing.Size(83, 35);
+            this.btnIngresar.Size = new System.Drawing.Size(100, 38);
             this.btnIngresar.TabIndex = 2;
             this.btnIngresar.Text = "Ingresar";
             this.btnIngresar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -107,9 +108,10 @@
             // 
             this.btnSalir.BackColor = System.Drawing.Color.Silver;
             this.btnSalir.Image = global::Comercial.Properties.Resources.back_arrow;
-            this.btnSalir.Location = new System.Drawing.Point(236, 271);
+            this.btnSalir.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSalir.Location = new System.Drawing.Point(219, 267);
             this.btnSalir.Name = "btnSalir";
-            this.btnSalir.Size = new System.Drawing.Size(83, 35);
+            this.btnSalir.Size = new System.Drawing.Size(100, 38);
             this.btnSalir.TabIndex = 3;
             this.btnSalir.Text = "Salir";
             this.btnSalir.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -125,6 +127,7 @@
             this.AcceptButton = this.btnIngresar;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ClientSize = new System.Drawing.Size(331, 314);
             this.ControlBox = false;
             this.Controls.Add(this.btnSalir);

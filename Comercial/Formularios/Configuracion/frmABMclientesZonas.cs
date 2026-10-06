@@ -33,7 +33,8 @@ namespace Comercial.Formularios.Configuracion
 
             if (dgvZonas.Width == 355)
             {
-                dgvZonas.Width += gbDatos.Width + 5;
+                dgvZonas.Width = ClientSize.Width - 9 - dgvZonas.Left;
+                dgvZonas.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             }
             dgvZonas.BringToFront();
             verificarBotones();
@@ -71,6 +72,7 @@ namespace Comercial.Formularios.Configuracion
             btnAgregar.Enabled = false;
             btnEditar.Enabled = false;
             btnEliminar.Enabled = false;
+            dgvZonas.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             dgvZonas.Width = 355;
 
         }

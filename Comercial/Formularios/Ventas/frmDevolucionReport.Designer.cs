@@ -29,6 +29,14 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmDevolucionReport));
+            System.Windows.Forms.DataGridViewCellStyle dgvHeaderStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvAltStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            dgvAltStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            dgvHeaderStyle.BackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dgvHeaderStyle.ForeColor = System.Drawing.Color.White;
+            dgvHeaderStyle.SelectionBackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.SelectionForeColor = System.Drawing.Color.White;
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cbCliente = new System.Windows.Forms.CheckBox();
             this.cboCliente = new System.Windows.Forms.ComboBox();
@@ -55,9 +63,10 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.dtpHasta);
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Location = new System.Drawing.Point(8, 6);
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.groupBox1.Location = new System.Drawing.Point(12, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(959, 113);
+            this.groupBox1.Size = new System.Drawing.Size(951, 113);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             // 
@@ -127,7 +136,8 @@
             this.btnImprimir.BackColor = System.Drawing.Color.Silver;
             this.btnImprimir.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnImprimir.Image = global::Comercial.Properties.Resources.printer_1;
-            this.btnImprimir.Location = new System.Drawing.Point(892, 125);
+            this.btnImprimir.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.btnImprimir.Location = new System.Drawing.Point(888, 125);
             this.btnImprimir.Name = "btnImprimir";
             this.btnImprimir.Size = new System.Drawing.Size(75, 39);
             this.btnImprimir.TabIndex = 18;
@@ -140,11 +150,18 @@
             this.dgvDetalle.AllowUserToDeleteRows = false;
             this.dgvDetalle.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dgvDetalle.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvDetalle.Location = new System.Drawing.Point(8, 447);
+            this.dgvDetalle.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvDetalle.BackgroundColor = System.Drawing.Color.White;
+            this.dgvDetalle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.dgvDetalle.ColumnHeadersDefaultCellStyle = dgvHeaderStyle;
+            this.dgvDetalle.EnableHeadersVisualStyles = false;
+            this.dgvDetalle.RowHeadersVisible = false;
+            this.dgvDetalle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.dgvDetalle.Location = new System.Drawing.Point(12, 447);
             this.dgvDetalle.Name = "dgvDetalle";
             this.dgvDetalle.ReadOnly = true;
             this.dgvDetalle.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvDetalle.Size = new System.Drawing.Size(820, 254);
+            this.dgvDetalle.Size = new System.Drawing.Size(864, 254);
             this.dgvDetalle.TabIndex = 17;
             // 
             // dgvDevCabecera
@@ -153,12 +170,19 @@
             this.dgvDevCabecera.AllowUserToDeleteRows = false;
             this.dgvDevCabecera.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dgvDevCabecera.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvDevCabecera.Location = new System.Drawing.Point(8, 125);
+            this.dgvDevCabecera.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvDevCabecera.BackgroundColor = System.Drawing.Color.White;
+            this.dgvDevCabecera.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.dgvDevCabecera.ColumnHeadersDefaultCellStyle = dgvHeaderStyle;
+            this.dgvDevCabecera.EnableHeadersVisualStyles = false;
+            this.dgvDevCabecera.RowHeadersVisible = false;
+            this.dgvDevCabecera.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.dgvDevCabecera.Location = new System.Drawing.Point(12, 125);
             this.dgvDevCabecera.MultiSelect = false;
             this.dgvDevCabecera.Name = "dgvDevCabecera";
             this.dgvDevCabecera.ReadOnly = true;
             this.dgvDevCabecera.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvDevCabecera.Size = new System.Drawing.Size(820, 316);
+            this.dgvDevCabecera.Size = new System.Drawing.Size(864, 316);
             this.dgvDevCabecera.TabIndex = 16;
             this.dgvDevCabecera.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvDevCabecera_CellEnter);
             // 
@@ -176,7 +200,8 @@
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
+            this.MinimumSize = new System.Drawing.Size(800, 560);
             this.MinimizeBox = false;
             this.Name = "frmDevolucionReport";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

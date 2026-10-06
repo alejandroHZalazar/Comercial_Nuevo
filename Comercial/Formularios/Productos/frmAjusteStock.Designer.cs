@@ -30,6 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmAjusteStock));
+            System.Windows.Forms.DataGridViewCellStyle dgvHeaderStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvAltStyle = new System.Windows.Forms.DataGridViewCellStyle();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnBuscar = new System.Windows.Forms.Button();
             this.txtFiltro = new System.Windows.Forms.TextBox();
@@ -51,6 +53,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.groupBox1.BackColor = System.Drawing.Color.Silver;
             this.groupBox1.Controls.Add(this.cbBaja);
             this.groupBox1.Controls.Add(this.btnBuscar);
@@ -161,11 +164,24 @@
             // 
             this.dgvAjuste.AllowUserToAddRows = false;
             this.dgvAjuste.AllowUserToDeleteRows = false;
+            this.dgvAjuste.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvAjuste.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.dgvAjuste.BackgroundColor = System.Drawing.Color.White;
+            this.dgvAjuste.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            dgvAltStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            dgvHeaderStyle.BackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dgvHeaderStyle.ForeColor = System.Drawing.Color.White;
+            dgvHeaderStyle.SelectionBackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvAjuste.ColumnHeadersDefaultCellStyle = dgvHeaderStyle;
+            this.dgvAjuste.EnableHeadersVisualStyles = false;
+            this.dgvAjuste.RowHeadersVisible = false;
             this.dgvAjuste.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
             this.dgvAjuste.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvAjuste.Location = new System.Drawing.Point(12, 126);
             this.dgvAjuste.Name = "dgvAjuste";
-            this.dgvAjuste.Size = new System.Drawing.Size(971, 372);
+            this.dgvAjuste.Size = new System.Drawing.Size(971, 380);
             this.dgvAjuste.TabIndex = 2;
             this.dgvAjuste.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgvAjuste_CellBeginEdit);
             this.dgvAjuste.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvAjuste_CellEndEdit);
@@ -180,9 +196,10 @@
             this.btnGuardar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnGuardar.Image = global::Comercial.Properties.Resources.save__1_;
             this.btnGuardar.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnGuardar.Location = new System.Drawing.Point(833, 504);
+            this.btnGuardar.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.btnGuardar.Location = new System.Drawing.Point(833, 514);
             this.btnGuardar.Name = "btnGuardar";
-            this.btnGuardar.Size = new System.Drawing.Size(150, 35);
+            this.btnGuardar.Size = new System.Drawing.Size(150, 36);
             this.btnGuardar.TabIndex = 9;
             this.btnGuardar.Text = "       Guardar";
             this.btnGuardar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -198,6 +215,7 @@
             this.cbBaja.AutoSize = true;
             this.cbBaja.Checked = true;
             this.cbBaja.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbBaja.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.cbBaja.Location = new System.Drawing.Point(799, 22);
             this.cbBaja.Name = "cbBaja";
             this.cbBaja.Size = new System.Drawing.Size(105, 19);
@@ -209,16 +227,18 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(995, 551);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.ClientSize = new System.Drawing.Size(995, 562);
             this.Controls.Add(this.btnGuardar);
             this.Controls.Add(this.dgvAjuste);
             this.Controls.Add(this.groupBox1);
             this.DoubleBuffered = true;
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(900, 520);
             this.Name = "frmAjusteStock";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Ajuste de Stock";

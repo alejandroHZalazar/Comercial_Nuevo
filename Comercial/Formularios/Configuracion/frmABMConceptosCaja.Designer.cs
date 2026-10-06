@@ -31,6 +31,8 @@ namespace Comercial.Formularios.Configuracion
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmABMConceptosCaja));
+            System.Windows.Forms.DataGridViewCellStyle dgvHeaderStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvAltStyle = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgvConceptos = new System.Windows.Forms.DataGridView();
             this.gbDatos = new System.Windows.Forms.GroupBox();
             this.cbAfectaEfectivo = new System.Windows.Forms.CheckBox();
@@ -61,18 +63,35 @@ namespace Comercial.Formularios.Configuracion
             // 
             this.dgvConceptos.AllowUserToAddRows = false;
             this.dgvConceptos.AllowUserToDeleteRows = false;
+            this.dgvConceptos.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvConceptos.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvConceptos.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvConceptos.BackgroundColor = System.Drawing.Color.White;
+            this.dgvConceptos.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            dgvAltStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            dgvHeaderStyle.BackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dgvHeaderStyle.ForeColor = System.Drawing.Color.White;
+            dgvHeaderStyle.SelectionBackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvConceptos.ColumnHeadersDefaultCellStyle = dgvHeaderStyle;
             this.dgvConceptos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvConceptos.EnableHeadersVisualStyles = false;
             this.dgvConceptos.Location = new System.Drawing.Point(12, 12);
             this.dgvConceptos.MultiSelect = false;
             this.dgvConceptos.Name = "dgvConceptos";
             this.dgvConceptos.ReadOnly = true;
+            this.dgvConceptos.RowHeadersVisible = false;
             this.dgvConceptos.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvConceptos.Size = new System.Drawing.Size(401, 254);
             this.dgvConceptos.TabIndex = 0;
             // 
             // gbDatos
             // 
+            this.gbDatos.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gbDatos.BackColor = System.Drawing.Color.Silver;
             this.gbDatos.Controls.Add(this.cbTipoOperacion);
             this.gbDatos.Controls.Add(this.lblTipoOperacion);
@@ -93,6 +112,7 @@ namespace Comercial.Formularios.Configuracion
             this.gbDatos.Size = new System.Drawing.Size(314, 254);
             this.gbDatos.TabIndex = 4;
             this.gbDatos.TabStop = false;
+            this.gbDatos.Text = "Datos del Concepto";
             // 
             // cbAfectaEfectivo
             // 
@@ -116,13 +136,15 @@ namespace Comercial.Formularios.Configuracion
             // 
             // cboTipoMovimiento
             // 
+            this.cboTipoMovimiento.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cboTipoMovimiento.FormattingEnabled = true;
             this.cboTipoMovimiento.Items.AddRange(new object[] {
             "I",
             "E"});
             this.cboTipoMovimiento.Location = new System.Drawing.Point(110, 45);
             this.cboTipoMovimiento.Name = "cboTipoMovimiento";
-            this.cboTipoMovimiento.Size = new System.Drawing.Size(182, 23);
+            this.cboTipoMovimiento.Size = new System.Drawing.Size(192, 23);
             this.cboTipoMovimiento.TabIndex = 1;
             // 
             // label2
@@ -145,9 +167,11 @@ namespace Comercial.Formularios.Configuracion
             // 
             // txtNombre
             // 
+            this.txtNombre.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtNombre.Location = new System.Drawing.Point(110, 16);
             this.txtNombre.Name = "txtNombre";
-            this.txtNombre.Size = new System.Drawing.Size(182, 21);
+            this.txtNombre.Size = new System.Drawing.Size(192, 23);
             this.txtNombre.TabIndex = 0;
             // 
             // btnCancelar
@@ -180,6 +204,7 @@ namespace Comercial.Formularios.Configuracion
             // 
             // btnEliminar
             // 
+            this.btnEliminar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnEliminar.BackColor = System.Drawing.Color.Silver;
             this.btnEliminar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEliminar.Image = global::Comercial.Properties.Resources.rubbish_bin__1_;
@@ -194,6 +219,7 @@ namespace Comercial.Formularios.Configuracion
             // 
             // btnEditar
             // 
+            this.btnEditar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnEditar.BackColor = System.Drawing.Color.Silver;
             this.btnEditar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEditar.Image = global::Comercial.Properties.Resources.pencil_edit_button__1_;
@@ -208,6 +234,7 @@ namespace Comercial.Formularios.Configuracion
             // 
             // btnAgregar
             // 
+            this.btnAgregar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnAgregar.BackColor = System.Drawing.Color.Silver;
             this.btnAgregar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAgregar.Image = global::Comercial.Properties.Resources.plus;
@@ -226,6 +253,7 @@ namespace Comercial.Formularios.Configuracion
             // 
             // btnAgregarTiposGastos
             // 
+            this.btnAgregarTiposGastos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnAgregarTiposGastos.BackColor = System.Drawing.Color.Silver;
             this.btnAgregarTiposGastos.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAgregarTiposGastos.Image = ((System.Drawing.Image)(resources.GetObject("btnAgregarTiposGastos.Image")));
@@ -269,13 +297,15 @@ namespace Comercial.Formularios.Configuracion
             // 
             // cbMedioPago
             // 
+            this.cbMedioPago.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cbMedioPago.FormattingEnabled = true;
             this.cbMedioPago.Items.AddRange(new object[] {
             "I",
             "E"});
             this.cbMedioPago.Location = new System.Drawing.Point(110, 135);
             this.cbMedioPago.Name = "cbMedioPago";
-            this.cbMedioPago.Size = new System.Drawing.Size(182, 23);
+            this.cbMedioPago.Size = new System.Drawing.Size(192, 23);
             this.cbMedioPago.TabIndex = 11;
             // 
             // lblTipoOperacion
@@ -289,6 +319,8 @@ namespace Comercial.Formularios.Configuracion
             // 
             // cbTipoOperacion
             // 
+            this.cbTipoOperacion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cbTipoOperacion.FormattingEnabled = true;
             this.cbTipoOperacion.Items.AddRange(new object[] {
             "Ventas",
@@ -296,7 +328,7 @@ namespace Comercial.Formularios.Configuracion
             "Pagos"});
             this.cbTipoOperacion.Location = new System.Drawing.Point(110, 165);
             this.cbTipoOperacion.Name = "cbTipoOperacion";
-            this.cbTipoOperacion.Size = new System.Drawing.Size(182, 23);
+            this.cbTipoOperacion.Size = new System.Drawing.Size(192, 23);
             this.cbTipoOperacion.TabIndex = 13;
             // 
             // frmABMConceptosCaja
@@ -312,12 +344,13 @@ namespace Comercial.Formularios.Configuracion
             this.Controls.Add(this.btnEditar);
             this.Controls.Add(this.btnAgregar);
             this.DoubleBuffered = true;
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(4);
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(758, 356);
             this.Name = "frmABMConceptosCaja";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ABM Conceptos Caja";

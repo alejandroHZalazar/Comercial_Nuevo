@@ -30,6 +30,8 @@ namespace Comercial.Formularios.Clientes
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmClientesCC));
+            System.Windows.Forms.DataGridViewCellStyle dgvHeaderStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvAltStyle = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgvCC = new System.Windows.Forms.DataGridView();
             this.btnCobrar = new System.Windows.Forms.Button();
             this.btnNC = new System.Windows.Forms.Button();
@@ -45,24 +47,41 @@ namespace Comercial.Formularios.Clientes
             // 
             this.dgvCC.AllowUserToAddRows = false;
             this.dgvCC.AllowUserToDeleteRows = false;
+            this.dgvCC.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvCC.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgvCC.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvCC.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
+            this.dgvCC.BackgroundColor = System.Drawing.Color.White;
+            this.dgvCC.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            dgvAltStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            dgvHeaderStyle.BackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dgvHeaderStyle.ForeColor = System.Drawing.Color.White;
+            dgvHeaderStyle.SelectionBackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvCC.ColumnHeadersDefaultCellStyle = dgvHeaderStyle;
             this.dgvCC.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvCC.EnableHeadersVisualStyles = false;
             this.dgvCC.Location = new System.Drawing.Point(12, 12);
             this.dgvCC.Name = "dgvCC";
             this.dgvCC.ReadOnly = true;
+            this.dgvCC.RowHeadersVisible = false;
             this.dgvCC.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvCC.Size = new System.Drawing.Size(678, 388);
+            this.dgvCC.Size = new System.Drawing.Size(677, 398);
             this.dgvCC.TabIndex = 0;
             this.dgvCC.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCC_CellEnter);
             this.dgvCC.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvCC_CellMouseDoubleClick);
             // 
             // btnCobrar
             // 
+            this.btnCobrar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCobrar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.btnCobrar.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCobrar.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCobrar.Image = ((System.Drawing.Image)(resources.GetObject("btnCobrar.Image")));
             this.btnCobrar.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnCobrar.Location = new System.Drawing.Point(696, 12);
+            this.btnCobrar.Location = new System.Drawing.Point(697, 12);
             this.btnCobrar.Name = "btnCobrar";
             this.btnCobrar.Size = new System.Drawing.Size(171, 55);
             this.btnCobrar.TabIndex = 1;
@@ -72,11 +91,12 @@ namespace Comercial.Formularios.Clientes
             // 
             // btnNC
             // 
+            this.btnNC.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnNC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.btnNC.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnNC.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnNC.Image = ((System.Drawing.Image)(resources.GetObject("btnNC.Image")));
             this.btnNC.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnNC.Location = new System.Drawing.Point(696, 73);
+            this.btnNC.Location = new System.Drawing.Point(697, 73);
             this.btnNC.Name = "btnNC";
             this.btnNC.Size = new System.Drawing.Size(171, 55);
             this.btnNC.TabIndex = 2;
@@ -87,8 +107,9 @@ namespace Comercial.Formularios.Clientes
             // 
             // txtSaldo
             // 
-            this.txtSaldo.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtSaldo.Location = new System.Drawing.Point(539, 406);
+            this.txtSaldo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSaldo.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtSaldo.Location = new System.Drawing.Point(538, 422);
             this.txtSaldo.Name = "txtSaldo";
             this.txtSaldo.Size = new System.Drawing.Size(151, 24);
             this.txtSaldo.TabIndex = 3;
@@ -96,9 +117,10 @@ namespace Comercial.Formularios.Clientes
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(480, 411);
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(478, 426);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(53, 16);
             this.label1.TabIndex = 4;
@@ -106,11 +128,12 @@ namespace Comercial.Formularios.Clientes
             // 
             // btnND
             // 
+            this.btnND.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnND.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.btnND.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnND.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnND.Image = ((System.Drawing.Image)(resources.GetObject("btnND.Image")));
             this.btnND.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnND.Location = new System.Drawing.Point(696, 134);
+            this.btnND.Location = new System.Drawing.Point(697, 134);
             this.btnND.Name = "btnND";
             this.btnND.Size = new System.Drawing.Size(171, 55);
             this.btnND.TabIndex = 3;
@@ -121,13 +144,14 @@ namespace Comercial.Formularios.Clientes
             // 
             // btnImprimirCC
             // 
+            this.btnImprimirCC.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImprimirCC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.btnImprimirCC.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnImprimirCC.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnImprimirCC.Image = ((System.Drawing.Image)(resources.GetObject("btnImprimirCC.Image")));
             this.btnImprimirCC.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnImprimirCC.Location = new System.Drawing.Point(721, 375);
+            this.btnImprimirCC.Location = new System.Drawing.Point(697, 393);
             this.btnImprimirCC.Name = "btnImprimirCC";
-            this.btnImprimirCC.Size = new System.Drawing.Size(121, 55);
+            this.btnImprimirCC.Size = new System.Drawing.Size(171, 55);
             this.btnImprimirCC.TabIndex = 5;
             this.btnImprimirCC.Text = "Imprimir [F5]";
             this.btnImprimirCC.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -136,9 +160,12 @@ namespace Comercial.Formularios.Clientes
             // 
             // rtbDetalleCobro
             // 
-            this.rtbDetalleCobro.Location = new System.Drawing.Point(696, 195);
+            this.rtbDetalleCobro.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rtbDetalleCobro.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.rtbDetalleCobro.Location = new System.Drawing.Point(697, 195);
             this.rtbDetalleCobro.Name = "rtbDetalleCobro";
-            this.rtbDetalleCobro.Size = new System.Drawing.Size(171, 174);
+            this.rtbDetalleCobro.Size = new System.Drawing.Size(171, 190);
             this.rtbDetalleCobro.TabIndex = 6;
             this.rtbDetalleCobro.Text = "";
             // 
@@ -147,7 +174,7 @@ namespace Comercial.Formularios.Clientes
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(879, 440);
+            this.ClientSize = new System.Drawing.Size(880, 460);
             this.Controls.Add(this.rtbDetalleCobro);
             this.Controls.Add(this.btnImprimirCC);
             this.Controls.Add(this.btnND);
@@ -156,11 +183,12 @@ namespace Comercial.Formularios.Clientes
             this.Controls.Add(this.btnNC);
             this.Controls.Add(this.btnCobrar);
             this.Controls.Add(this.dgvCC);
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(720, 500);
             this.Name = "frmClientesCC";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Cuenta Corriente";

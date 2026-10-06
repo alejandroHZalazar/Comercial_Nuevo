@@ -57,7 +57,13 @@ namespace Comercial.Formularios.Ventas
                 unFiltro = unFiltro + " and v.fk_cliente = " + cboCliente .SelectedValue .ToString ();
             }
 
+            if (dgvVentasCabecera.Columns["Ecommerce"] is DataGridViewCheckBoxColumn)
+            {
+                dgvVentasCabecera.Columns.Remove("Ecommerce");
+            }
+
             dgvVentasCabecera.DataSource = instVentas.traerTodos(unFiltro);
+            mostrarEcommerceComoCheck();
 
             if (dgvVentasCabecera .Rows .Count > 0)
             {
@@ -66,6 +72,25 @@ namespace Comercial.Formularios.Ventas
             }
 
             redondearEncabezado();
+        }
+
+        // El SP devuelve Ecommerce como 0/1; se reemplaza la columna autogenerada por un check de solo lectura.
+        // Si el SP es anterior y no trae la columna, no hace nada.
+        private void mostrarEcommerceComoCheck()
+        {
+            DataGridViewColumn col = dgvVentasCabecera.Columns["Ecommerce"];
+            if (col == null || col is DataGridViewCheckBoxColumn) return;
+
+            int indice = col.Index;
+            dgvVentasCabecera.Columns.RemoveAt(indice);
+            dgvVentasCabecera.Columns.Insert(indice, new DataGridViewCheckBoxColumn
+            {
+                Name = "Ecommerce",
+                HeaderText = "Ecommerce",
+                DataPropertyName = "Ecommerce",
+                ReadOnly = true,
+                SortMode = DataGridViewColumnSortMode.Automatic
+            });
         }
 
         private void redondearEncabezado()

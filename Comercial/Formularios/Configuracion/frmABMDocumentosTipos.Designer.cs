@@ -30,6 +30,8 @@ namespace Comercial.Formularios.Configuracion
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmABMDocumentosTipos));
             this.dgvTiposDocumentos = new System.Windows.Forms.DataGridView();
             this.label1 = new System.Windows.Forms.Label();
@@ -37,12 +39,12 @@ namespace Comercial.Formularios.Configuracion
             this.btnCancelar = new System.Windows.Forms.Button();
             this.btnGrabar = new System.Windows.Forms.Button();
             this.gbDatos = new System.Windows.Forms.GroupBox();
+            this.txtAbrev = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.btnEliminar = new System.Windows.Forms.Button();
             this.btnEditar = new System.Windows.Forms.Button();
             this.btnAgregar = new System.Windows.Forms.Button();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
-            this.label2 = new System.Windows.Forms.Label();
-            this.txtAbrev = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTiposDocumentos)).BeginInit();
             this.gbDatos.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
@@ -52,12 +54,26 @@ namespace Comercial.Formularios.Configuracion
             // 
             this.dgvTiposDocumentos.AllowUserToAddRows = false;
             this.dgvTiposDocumentos.AllowUserToDeleteRows = false;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            this.dgvTiposDocumentos.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            this.dgvTiposDocumentos.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvTiposDocumentos.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvTiposDocumentos.BackgroundColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.DimGray;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.DimGray;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvTiposDocumentos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dgvTiposDocumentos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvTiposDocumentos.EnableHeadersVisualStyles = false;
             this.dgvTiposDocumentos.Location = new System.Drawing.Point(12, 12);
             this.dgvTiposDocumentos.MultiSelect = false;
             this.dgvTiposDocumentos.Name = "dgvTiposDocumentos";
             this.dgvTiposDocumentos.ReadOnly = true;
+            this.dgvTiposDocumentos.RowHeadersVisible = false;
             this.dgvTiposDocumentos.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvTiposDocumentos.Size = new System.Drawing.Size(355, 254);
             this.dgvTiposDocumentos.TabIndex = 10;
@@ -65,17 +81,19 @@ namespace Comercial.Formularios.Configuracion
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 19);
+            this.label1.Location = new System.Drawing.Point(6, 30);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(55, 15);
+            this.label1.Size = new System.Drawing.Size(54, 15);
             this.label1.TabIndex = 1;
             this.label1.Text = "Nombre:";
             // 
             // txtNombre
             // 
-            this.txtNombre.Location = new System.Drawing.Point(83, 16);
+            this.txtNombre.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtNombre.Location = new System.Drawing.Point(83, 27);
             this.txtNombre.Name = "txtNombre";
-            this.txtNombre.Size = new System.Drawing.Size(166, 21);
+            this.txtNombre.Size = new System.Drawing.Size(180, 23);
             this.txtNombre.TabIndex = 0;
             // 
             // btnCancelar
@@ -108,6 +126,8 @@ namespace Comercial.Formularios.Configuracion
             // 
             // gbDatos
             // 
+            this.gbDatos.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gbDatos.BackColor = System.Drawing.Color.Silver;
             this.gbDatos.Controls.Add(this.txtAbrev);
             this.gbDatos.Controls.Add(this.label2);
@@ -120,9 +140,28 @@ namespace Comercial.Formularios.Configuracion
             this.gbDatos.Size = new System.Drawing.Size(275, 197);
             this.gbDatos.TabIndex = 3;
             this.gbDatos.TabStop = false;
+            this.gbDatos.Text = "Datos del Tipo de Documento";
+            // 
+            // txtAbrev
+            // 
+            this.txtAbrev.Location = new System.Drawing.Point(83, 68);
+            this.txtAbrev.MaxLength = 2;
+            this.txtAbrev.Name = "txtAbrev";
+            this.txtAbrev.Size = new System.Drawing.Size(60, 23);
+            this.txtAbrev.TabIndex = 1;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 71);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(71, 15);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Abreviatura:";
             // 
             // btnEliminar
             // 
+            this.btnEliminar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnEliminar.BackColor = System.Drawing.Color.Silver;
             this.btnEliminar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEliminar.Image = global::Comercial.Properties.Resources.rubbish_bin__1_;
@@ -137,6 +176,7 @@ namespace Comercial.Formularios.Configuracion
             // 
             // btnEditar
             // 
+            this.btnEditar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnEditar.BackColor = System.Drawing.Color.Silver;
             this.btnEditar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEditar.Image = global::Comercial.Properties.Resources.pencil_edit_button__1_;
@@ -151,6 +191,7 @@ namespace Comercial.Formularios.Configuracion
             // 
             // btnAgregar
             // 
+            this.btnAgregar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnAgregar.BackColor = System.Drawing.Color.Silver;
             this.btnAgregar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAgregar.Image = global::Comercial.Properties.Resources.plus;
@@ -167,23 +208,6 @@ namespace Comercial.Formularios.Configuracion
             // 
             this.errorProvider1.ContainerControl = this;
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 60);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(71, 15);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Abreviatura:";
-            // 
-            // txtAbrev
-            // 
-            this.txtAbrev.Location = new System.Drawing.Point(83, 57);
-            this.txtAbrev.MaxLength = 2;
-            this.txtAbrev.Name = "txtAbrev";
-            this.txtAbrev.Size = new System.Drawing.Size(166, 21);
-            this.txtAbrev.TabIndex = 1;
-            // 
             // frmABMDocumentosTipos
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -196,11 +220,11 @@ namespace Comercial.Formularios.Configuracion
             this.Controls.Add(this.btnEditar);
             this.Controls.Add(this.btnAgregar);
             this.DoubleBuffered = true;
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(679, 351);
             this.Name = "frmABMDocumentosTipos";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ABM Tipos de Documentos";

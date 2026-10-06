@@ -30,6 +30,8 @@ namespace Comercial.Formularios.Clientes
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmClientesConSaldo));
+            System.Windows.Forms.DataGridViewCellStyle dgvHeaderStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvAltStyle = new System.Windows.Forms.DataGridViewCellStyle();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cboLocalidad = new System.Windows.Forms.ComboBox();
             this.cbLocalidad = new System.Windows.Forms.CheckBox();
@@ -50,6 +52,8 @@ namespace Comercial.Formularios.Clientes
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.BackColor = System.Drawing.Color.Silver;
             this.groupBox1.Controls.Add(this.cboVendedor);
             this.groupBox1.Controls.Add(this.cbVendedor);
@@ -63,17 +67,19 @@ namespace Comercial.Formularios.Clientes
             this.groupBox1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1135, 94);
+            this.groupBox1.Size = new System.Drawing.Size(976, 94);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filtro";
             // 
             // cboLocalidad
             // 
+            this.cboLocalidad.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cboLocalidad.FormattingEnabled = true;
             this.cboLocalidad.Location = new System.Drawing.Point(517, 20);
             this.cboLocalidad.Name = "cboLocalidad";
-            this.cboLocalidad.Size = new System.Drawing.Size(356, 23);
+            this.cboLocalidad.Size = new System.Drawing.Size(447, 23);
             this.cboLocalidad.TabIndex = 17;
             // 
             // cbLocalidad
@@ -88,12 +94,15 @@ namespace Comercial.Formularios.Clientes
             // 
             // btnBuscar
             // 
+            this.btnBuscar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBuscar.BackColor = System.Drawing.Color.Gray;
             this.btnBuscar.Image = global::Comercial.Properties.Resources.musica_searcher;
-            this.btnBuscar.Location = new System.Drawing.Point(810, 48);
+            this.btnBuscar.Location = new System.Drawing.Point(854, 50);
             this.btnBuscar.Name = "btnBuscar";
-            this.btnBuscar.Size = new System.Drawing.Size(63, 42);
+            this.btnBuscar.Size = new System.Drawing.Size(110, 36);
             this.btnBuscar.TabIndex = 14;
+            this.btnBuscar.Text = "Buscar";
+            this.btnBuscar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnBuscar.UseVisualStyleBackColor = false;
             this.btnBuscar.Click += new System.EventHandler(this.btnBuscar_Click);
             // 
@@ -136,10 +145,12 @@ namespace Comercial.Formularios.Clientes
             // 
             // cboVendedor
             // 
+            this.cboVendedor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cboVendedor.FormattingEnabled = true;
             this.cboVendedor.Location = new System.Drawing.Point(517, 58);
             this.cboVendedor.Name = "cboVendedor";
-            this.cboVendedor.Size = new System.Drawing.Size(275, 23);
+            this.cboVendedor.Size = new System.Drawing.Size(329, 23);
             this.cboVendedor.TabIndex = 19;
             // 
             // cbVendedor
@@ -156,27 +167,45 @@ namespace Comercial.Formularios.Clientes
             // 
             this.dgvSaldos.AllowUserToAddRows = false;
             this.dgvSaldos.AllowUserToDeleteRows = false;
-            this.dgvSaldos.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            this.dgvSaldos.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvSaldos.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgvSaldos.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvSaldos.BackgroundColor = System.Drawing.Color.White;
+            this.dgvSaldos.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            dgvAltStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            dgvHeaderStyle.BackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dgvHeaderStyle.ForeColor = System.Drawing.Color.White;
+            dgvHeaderStyle.SelectionBackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvSaldos.ColumnHeadersDefaultCellStyle = dgvHeaderStyle;
             this.dgvSaldos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvSaldos.Location = new System.Drawing.Point(12, 111);
+            this.dgvSaldos.EnableHeadersVisualStyles = false;
+            this.dgvSaldos.Location = new System.Drawing.Point(12, 112);
             this.dgvSaldos.Name = "dgvSaldos";
             this.dgvSaldos.ReadOnly = true;
-            this.dgvSaldos.Size = new System.Drawing.Size(1135, 393);
+            this.dgvSaldos.RowHeadersVisible = false;
+            this.dgvSaldos.Size = new System.Drawing.Size(976, 400);
             this.dgvSaldos.TabIndex = 2;
-            // 
+            //
             // txtSaldo
-            // 
-            this.txtSaldo.Location = new System.Drawing.Point(967, 510);
+            //
+            this.txtSaldo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSaldo.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtSaldo.Location = new System.Drawing.Point(808, 522);
             this.txtSaldo.Name = "txtSaldo";
-            this.txtSaldo.Size = new System.Drawing.Size(180, 21);
+            this.txtSaldo.Size = new System.Drawing.Size(180, 27);
             this.txtSaldo.TabIndex = 3;
             this.txtSaldo.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
+            //
             // label1
-            // 
+            //
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(863, 512);
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(714, 528);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(89, 16);
             this.label1.TabIndex = 4;
@@ -184,12 +213,16 @@ namespace Comercial.Formularios.Clientes
             // 
             // btnExportar
             // 
+            this.btnExportar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnExportar.BackColor = System.Drawing.Color.Silver;
+            this.btnExportar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnExportar.Image = ((System.Drawing.Image)(resources.GetObject("btnExportar.Image")));
-            this.btnExportar.Location = new System.Drawing.Point(12, 508);
+            this.btnExportar.Location = new System.Drawing.Point(12, 518);
             this.btnExportar.Name = "btnExportar";
-            this.btnExportar.Size = new System.Drawing.Size(49, 33);
+            this.btnExportar.Size = new System.Drawing.Size(110, 34);
             this.btnExportar.TabIndex = 10;
+            this.btnExportar.Text = "Exportar";
+            this.btnExportar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnExportar.UseVisualStyleBackColor = false;
             this.btnExportar.Click += new System.EventHandler(this.btnExportar_Click);
             // 
@@ -198,18 +231,19 @@ namespace Comercial.Formularios.Clientes
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(1159, 547);
+            this.ClientSize = new System.Drawing.Size(1000, 564);
             this.Controls.Add(this.btnExportar);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtSaldo);
             this.Controls.Add(this.dgvSaldos);
             this.Controls.Add(this.groupBox1);
             this.DoubleBuffered = true;
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(880, 560);
             this.Name = "frmClientesConSaldo";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Saldos de Clientes";

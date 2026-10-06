@@ -46,10 +46,11 @@ namespace Comercial.Formularios.Contable
             // btnAceptar
             // 
             this.btnAceptar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.btnAceptar.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAceptar.Location = new System.Drawing.Point(284, 200);
+            this.btnAceptar.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAceptar.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.btnAceptar.Location = new System.Drawing.Point(274, 238);
             this.btnAceptar.Name = "btnAceptar";
-            this.btnAceptar.Size = new System.Drawing.Size(101, 38);
+            this.btnAceptar.Size = new System.Drawing.Size(130, 40);
             this.btnAceptar.TabIndex = 3;
             this.btnAceptar.Text = "Aceptar";
             this.btnAceptar.UseVisualStyleBackColor = false;
@@ -57,17 +58,20 @@ namespace Comercial.Formularios.Contable
             // 
             // rtbObservacion
             // 
-            this.rtbObservacion.Location = new System.Drawing.Point(15, 119);
+            this.rtbObservacion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.rtbObservacion.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.rtbObservacion.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtbObservacion.Location = new System.Drawing.Point(16, 124);
             this.rtbObservacion.Name = "rtbObservacion";
-            this.rtbObservacion.Size = new System.Drawing.Size(370, 66);
+            this.rtbObservacion.Size = new System.Drawing.Size(388, 100);
             this.rtbObservacion.TabIndex = 2;
             this.rtbObservacion.Text = "";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(12, 99);
+            this.label2.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(16, 100);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(117, 16);
             this.label2.TabIndex = 8;
@@ -75,22 +79,24 @@ namespace Comercial.Formularios.Contable
             // 
             // nudDineroGasto
             // 
+            this.nudDineroGasto.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.nudDineroGasto.DecimalPlaces = 2;
-            this.nudDineroGasto.Location = new System.Drawing.Point(150, 21);
+            this.nudDineroGasto.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nudDineroGasto.Location = new System.Drawing.Point(160, 18);
             this.nudDineroGasto.Maximum = new decimal(new int[] {
             1215752191,
             23,
             0,
             0});
             this.nudDineroGasto.Name = "nudDineroGasto";
-            this.nudDineroGasto.Size = new System.Drawing.Size(120, 21);
+            this.nudDineroGasto.Size = new System.Drawing.Size(244, 27);
             this.nudDineroGasto.TabIndex = 0;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(12, 23);
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(16, 23);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(132, 16);
             this.label1.TabIndex = 6;
@@ -103,8 +109,8 @@ namespace Comercial.Formularios.Contable
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(12, 61);
+            this.label3.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(16, 63);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(97, 16);
             this.label3.TabIndex = 11;
@@ -112,11 +118,12 @@ namespace Comercial.Formularios.Contable
             // 
             // cboTipoGastos
             // 
+            this.cboTipoGastos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.cboTipoGastos.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.cboTipoGastos.FormattingEnabled = true;
-            this.cboTipoGastos.Location = new System.Drawing.Point(150, 58);
+            this.cboTipoGastos.Location = new System.Drawing.Point(160, 59);
             this.cboTipoGastos.Name = "cboTipoGastos";
-            this.cboTipoGastos.Size = new System.Drawing.Size(235, 23);
+            this.cboTipoGastos.Size = new System.Drawing.Size(244, 23);
             this.cboTipoGastos.TabIndex = 1;
             // 
             // frmIngresoGastos
@@ -124,7 +131,7 @@ namespace Comercial.Formularios.Contable
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(398, 247);
+            this.ClientSize = new System.Drawing.Size(420, 290);
             this.Controls.Add(this.cboTipoGastos);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.btnAceptar);
@@ -132,11 +139,12 @@ namespace Comercial.Formularios.Contable
             this.Controls.Add(this.label2);
             this.Controls.Add(this.nudDineroGasto);
             this.Controls.Add(this.label1);
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(360, 330);
             this.Name = "frmIngresoGastos";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Ingreso de Gastos";

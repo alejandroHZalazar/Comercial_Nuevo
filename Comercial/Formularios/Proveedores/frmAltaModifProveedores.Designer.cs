@@ -57,9 +57,10 @@
             // 
             // txtNombreComercial
             // 
+            this.txtNombreComercial.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.txtNombreComercial.Location = new System.Drawing.Point(126, 12);
             this.txtNombreComercial.Name = "txtNombreComercial";
-            this.txtNombreComercial.Size = new System.Drawing.Size(227, 23);
+            this.txtNombreComercial.Size = new System.Drawing.Size(312, 23);
             this.txtNombreComercial.TabIndex = 0;
             this.txtNombreComercial.Enter += new System.EventHandler(this.txtNombreComercial_Enter);
             this.txtNombreComercial.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtNombreComercial_KeyPress);
@@ -103,9 +104,10 @@
             // 
             // txtDir
             // 
+            this.txtDir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.txtDir.Location = new System.Drawing.Point(126, 82);
             this.txtDir.Name = "txtDir";
-            this.txtDir.Size = new System.Drawing.Size(227, 23);
+            this.txtDir.Size = new System.Drawing.Size(312, 23);
             this.txtDir.TabIndex = 2;
             this.txtDir.Enter += new System.EventHandler(this.txtDir_Enter);
             this.txtDir.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtDir_KeyPress);
@@ -122,9 +124,10 @@
             // txtEmail
             // 
             this.txtEmail.ForeColor = System.Drawing.Color.Red;
+            this.txtEmail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.txtEmail.Location = new System.Drawing.Point(126, 117);
             this.txtEmail.Name = "txtEmail";
-            this.txtEmail.Size = new System.Drawing.Size(182, 23);
+            this.txtEmail.Size = new System.Drawing.Size(312, 23);
             this.txtEmail.TabIndex = 3;
             this.txtEmail.TextChanged += new System.EventHandler(this.txtEmail_TextChanged);
             this.txtEmail.Enter += new System.EventHandler(this.txtEmail_Enter);
@@ -192,7 +195,8 @@
             this.btnCancelar.BackColor = System.Drawing.Color.Silver;
             this.btnCancelar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCancelar.Image = global::Comercial.Properties.Resources.back_arrow;
-            this.btnCancelar.Location = new System.Drawing.Point(252, 335);
+            this.btnCancelar.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.btnCancelar.Location = new System.Drawing.Point(327, 335);
             this.btnCancelar.Name = "btnCancelar";
             this.btnCancelar.Size = new System.Drawing.Size(111, 35);
             this.btnCancelar.TabIndex = 9;
@@ -206,7 +210,8 @@
             this.btnGrabar.BackColor = System.Drawing.Color.Silver;
             this.btnGrabar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnGrabar.Image = global::Comercial.Properties.Resources.save__1_;
-            this.btnGrabar.Location = new System.Drawing.Point(103, 335);
+            this.btnGrabar.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.btnGrabar.Location = new System.Drawing.Point(204, 335);
             this.btnGrabar.Name = "btnGrabar";
             this.btnGrabar.Size = new System.Drawing.Size(111, 35);
             this.btnGrabar.TabIndex = 8;
@@ -252,7 +257,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(375, 386);
+            this.ClientSize = new System.Drawing.Size(450, 386);
             this.Controls.Add(this.chkPreciosPorProducto);
             this.Controls.Add(this.nudDescuento);
             this.Controls.Add(this.label8);
@@ -276,7 +281,8 @@
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
+            this.MinimumSize = new System.Drawing.Size(400, 430);
             this.MinimizeBox = false;
             this.Name = "frmAltaModifProveedores";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

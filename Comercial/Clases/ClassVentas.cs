@@ -344,6 +344,33 @@ namespace Comercial.Clases
             }
         }
 
+        private static bool asociacionPedidoDisponible = true;
+
+        // Registra la relación pedido → venta. Tolera bases sin sp_PedidosVentas_Asociar: nunca interrumpe la venta.
+        public void asociarPedidoVenta(long unaVenta, int unPedido)
+        {
+            if (unPedido <= 0 || unaVenta <= 0 || !asociacionPedidoDisponible) return;
+
+            try
+            {
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Connection = instDatos.abrirConexion();
+                cmd.CommandText = "sp_PedidosVentas_Asociar";
+                cmd.Parameters.AddWithValue("unPedido", unPedido);
+                cmd.Parameters.AddWithValue("unaVenta", unaVenta);
+                cmd.ExecuteNonQuery();
+            }
+            catch (MySqlException)
+            {
+                asociacionPedidoDisponible = false;
+            }
+            finally
+            {
+                instDatos.cerrarConexion();
+            }
+        }
+
         /// <summary>
         /// Obtiene el 'linea' (PK) de la fila de ventasDetalle para el producto dado en la venta dada.
         /// Útil para relacionar la línea de una promo con sus componentes.

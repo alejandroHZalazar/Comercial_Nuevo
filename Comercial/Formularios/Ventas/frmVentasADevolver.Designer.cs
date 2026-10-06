@@ -29,6 +29,14 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmVentasADevolver));
+            System.Windows.Forms.DataGridViewCellStyle dgvHeaderStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvAltStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            dgvAltStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            dgvHeaderStyle.BackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dgvHeaderStyle.ForeColor = System.Drawing.Color.White;
+            dgvHeaderStyle.SelectionBackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.SelectionForeColor = System.Drawing.Color.White;
             this.lblProv = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.lblLocalidad = new System.Windows.Forms.Label();
@@ -197,6 +205,7 @@
             this.groupBox2.Controls.Add(this.label9);
             this.groupBox2.Controls.Add(this.lblClienteNombre);
             this.groupBox2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.groupBox2.Location = new System.Drawing.Point(728, 80);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(324, 182);
@@ -207,6 +216,7 @@
             // txtTotalActual
             // 
             this.txtTotalActual.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtTotalActual.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
             this.txtTotalActual.Location = new System.Drawing.Point(108, 623);
             this.txtTotalActual.Name = "txtTotalActual";
             this.txtTotalActual.Size = new System.Drawing.Size(100, 21);
@@ -216,6 +226,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
             this.label4.Location = new System.Drawing.Point(12, 626);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(86, 15);
@@ -227,6 +238,7 @@
             this.btnSeleccionar.BackColor = System.Drawing.Color.Silver;
             this.btnSeleccionar.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSeleccionar.Image = global::Comercial.Properties.Resources.play_button;
+            this.btnSeleccionar.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
             this.btnSeleccionar.Location = new System.Drawing.Point(889, 616);
             this.btnSeleccionar.Name = "btnSeleccionar";
             this.btnSeleccionar.Size = new System.Drawing.Size(163, 34);
@@ -242,6 +254,13 @@
             this.dgvProductos.AllowUserToDeleteRows = false;
             this.dgvProductos.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
             this.dgvProductos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvProductos.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvProductos.BackgroundColor = System.Drawing.Color.White;
+            this.dgvProductos.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.dgvProductos.ColumnHeadersDefaultCellStyle = dgvHeaderStyle;
+            this.dgvProductos.EnableHeadersVisualStyles = false;
+            this.dgvProductos.RowHeadersVisible = false;
+            this.dgvProductos.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.dgvProductos.Location = new System.Drawing.Point(12, 364);
             this.dgvProductos.MultiSelect = false;
             this.dgvProductos.Name = "dgvProductos";
@@ -256,6 +275,13 @@
             this.dgvVenta.AllowUserToDeleteRows = false;
             this.dgvVenta.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
             this.dgvVenta.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvVenta.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvVenta.BackgroundColor = System.Drawing.Color.White;
+            this.dgvVenta.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.dgvVenta.ColumnHeadersDefaultCellStyle = dgvHeaderStyle;
+            this.dgvVenta.EnableHeadersVisualStyles = false;
+            this.dgvVenta.RowHeadersVisible = false;
+            this.dgvVenta.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.dgvVenta.Location = new System.Drawing.Point(12, 80);
             this.dgvVenta.MultiSelect = false;
             this.dgvVenta.Name = "dgvVenta";
@@ -268,6 +294,7 @@
             // cboVendedores
             // 
             this.cboVendedores.FormattingEnabled = true;
+            this.cboVendedores.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.cboVendedores.Location = new System.Drawing.Point(633, 23);
             this.cboVendedores.Name = "cboVendedores";
             this.cboVendedores.Size = new System.Drawing.Size(254, 23);
@@ -277,6 +304,7 @@
             // 
             this.btnBuscar.BackColor = System.Drawing.Color.Gray;
             this.btnBuscar.Image = global::Comercial.Properties.Resources.musica_searcher;
+            this.btnBuscar.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.btnBuscar.Location = new System.Drawing.Point(900, 16);
             this.btnBuscar.Name = "btnBuscar";
             this.btnBuscar.Size = new System.Drawing.Size(54, 36);
@@ -287,6 +315,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.label3.Location = new System.Drawing.Point(569, 27);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(60, 15);
@@ -335,6 +364,7 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.dtpHasta);
             this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.groupBox1.Location = new System.Drawing.Point(12, 8);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(1040, 66);
@@ -346,6 +376,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.AutoScroll = true;
+            this.AutoScrollMinSize = new System.Drawing.Size(1064, 659);
             this.ClientSize = new System.Drawing.Size(1064, 659);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.txtTotalActual);
@@ -358,7 +390,8 @@
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
+            this.MinimumSize = new System.Drawing.Size(800, 520);
             this.MinimizeBox = false;
             this.Name = "frmVentasADevolver";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

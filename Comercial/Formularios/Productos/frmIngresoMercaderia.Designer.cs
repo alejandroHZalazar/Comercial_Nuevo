@@ -37,6 +37,8 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvHeaderStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvAltStyle = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmIngresoMercaderia));
             this.lblProveedor = new System.Windows.Forms.Label();
             this.btnSelProveedor = new System.Windows.Forms.Button();
@@ -137,6 +139,7 @@
             // cboIVA
             // 
             this.cboIVA.FormattingEnabled = true;
+            this.cboIVA.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.cboIVA.Location = new System.Drawing.Point(1234, 12);
             this.cboIVA.Name = "cboIVA";
             this.cboIVA.Size = new System.Drawing.Size(88, 23);
@@ -147,6 +150,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.label4.Location = new System.Drawing.Point(1199, 15);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(29, 17);
@@ -166,6 +170,7 @@
             this.gbFiltro.Controls.Add(this.label2);
             this.gbFiltro.Controls.Add(this.btnCargarNtaPedido);
             this.gbFiltro.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbFiltro.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.gbFiltro.Location = new System.Drawing.Point(14, 58);
             this.gbFiltro.Name = "gbFiltro";
             this.gbFiltro.Size = new System.Drawing.Size(1308, 118);
@@ -188,6 +193,7 @@
             this.btnAgregar.BackColor = System.Drawing.Color.Silver;
             this.btnAgregar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAgregar.Image = global::Comercial.Properties.Resources.play_button;
+            this.btnAgregar.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.btnAgregar.Location = new System.Drawing.Point(1243, 73);
             this.btnAgregar.Name = "btnAgregar";
             this.btnAgregar.Size = new System.Drawing.Size(49, 23);
@@ -199,6 +205,7 @@
             // 
             this.nudCantidad.DecimalPlaces = 4;
             this.nudCantidad.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nudCantidad.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.nudCantidad.Location = new System.Drawing.Point(1107, 73);
             this.nudCantidad.Maximum = new decimal(new int[] {
             1000,
@@ -267,6 +274,7 @@
             this.btnCargarNtaPedido.BackColor = System.Drawing.Color.Silver;
             this.btnCargarNtaPedido.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnCargarNtaPedido.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCargarNtaPedido.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.btnCargarNtaPedido.Location = new System.Drawing.Point(1133, 29);
             this.btnCargarNtaPedido.Name = "btnCargarNtaPedido";
             this.btnCargarNtaPedido.Size = new System.Drawing.Size(159, 23);
@@ -289,6 +297,7 @@
             // txtTotal
             // 
             this.txtTotal.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtTotal.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
             this.txtTotal.Location = new System.Drawing.Point(1054, 582);
             this.txtTotal.Name = "txtTotal";
             this.txtTotal.ReadOnly = true;
@@ -299,6 +308,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
             this.label7.Location = new System.Drawing.Point(967, 586);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(81, 15);
@@ -311,6 +321,7 @@
             this.btnGrabar.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnGrabar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnGrabar.Image = global::Comercial.Properties.Resources.save__1_;
+            this.btnGrabar.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
             this.btnGrabar.Location = new System.Drawing.Point(1206, 576);
             this.btnGrabar.Name = "btnGrabar";
             this.btnGrabar.Size = new System.Drawing.Size(116, 34);
@@ -324,6 +335,7 @@
             // 
             this.nudDescuento.DecimalPlaces = 2;
             this.nudDescuento.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nudDescuento.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
             this.nudDescuento.Location = new System.Drawing.Point(84, 582);
             this.nudDescuento.Maximum = new decimal(new int[] {
             1000,
@@ -340,6 +352,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
             this.label5.Location = new System.Drawing.Point(14, 586);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(67, 15);
@@ -349,6 +362,19 @@
             // dgvIngreso
             // 
             this.dgvIngreso.AllowUserToAddRows = false;
+            this.dgvIngreso.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvIngreso.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.dgvIngreso.BackgroundColor = System.Drawing.Color.White;
+            this.dgvIngreso.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            dgvAltStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            dgvHeaderStyle.BackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dgvHeaderStyle.ForeColor = System.Drawing.Color.White;
+            dgvHeaderStyle.SelectionBackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvIngreso.ColumnHeadersDefaultCellStyle = dgvHeaderStyle;
+            this.dgvIngreso.EnableHeadersVisualStyles = false;
+            this.dgvIngreso.RowHeadersVisible = false;
             this.dgvIngreso.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvIngreso.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Cod_Barras,
@@ -480,6 +506,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
             this.label6.Location = new System.Drawing.Point(185, 586);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(57, 15);
@@ -490,6 +517,7 @@
             // 
             this.nudGanancia.DecimalPlaces = 2;
             this.nudGanancia.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nudGanancia.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
             this.nudGanancia.Location = new System.Drawing.Point(244, 582);
             this.nudGanancia.Maximum = new decimal(new int[] {
             1000,
@@ -541,6 +569,7 @@
             // 
             // pbProceso
             // 
+            this.pbProceso.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.pbProceso.Location = new System.Drawing.Point(361, 582);
             this.pbProceso.Name = "pbProceso";
             this.pbProceso.Size = new System.Drawing.Size(589, 23);
@@ -557,6 +586,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.AutoScroll = true;
+            this.AutoScrollMinSize = new System.Drawing.Size(1334, 625);
             this.ClientSize = new System.Drawing.Size(1334, 625);
             this.Controls.Add(this.pbProceso);
             this.Controls.Add(this.txtComprobante);
@@ -583,7 +614,8 @@
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
+            this.MinimumSize = new System.Drawing.Size(800, 500);
             this.MinimizeBox = false;
             this.Name = "frmIngresoMercaderia";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

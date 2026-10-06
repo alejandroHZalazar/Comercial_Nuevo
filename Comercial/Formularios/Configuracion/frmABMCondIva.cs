@@ -33,7 +33,8 @@ namespace Comercial.Formularios.Configuracion
             txtAbrev.Text = string.Empty;
             if (dgvCondiciones.Width == 355)
             {
-                dgvCondiciones.Width += gbDatos.Width + 5;
+                dgvCondiciones.Width = ClientSize.Width - 4 - dgvCondiciones.Left;
+                dgvCondiciones.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             }
             dgvCondiciones.BringToFront();
             verificarBotones();
@@ -73,7 +74,8 @@ namespace Comercial.Formularios.Configuracion
             btnAgregar.Enabled = false;
             btnEditar.Enabled = false;
             btnEliminar.Enabled = false;
-            dgvCondiciones.Width = 355; 
+            dgvCondiciones.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            dgvCondiciones.Width = 355;
 
         }
 

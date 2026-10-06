@@ -30,6 +30,8 @@ namespace Comercial.Formularios.Estadisticas
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmExportarVentas));
+            System.Windows.Forms.DataGridViewCellStyle dgvHeaderStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvAltStyle = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnDescargarResumen = new System.Windows.Forms.Button();
             this.dgvDetalle = new System.Windows.Forms.DataGridView();
             this.btnBuscarDetalle = new System.Windows.Forms.Button();
@@ -46,9 +48,10 @@ namespace Comercial.Formularios.Estadisticas
             this.btnDescargarResumen.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDescargarResumen.Image = ((System.Drawing.Image)(resources.GetObject("btnDescargarResumen.Image")));
             this.btnDescargarResumen.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnDescargarResumen.Location = new System.Drawing.Point(603, 24);
+            this.btnDescargarResumen.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.btnDescargarResumen.Location = new System.Drawing.Point(560, 28);
             this.btnDescargarResumen.Name = "btnDescargarResumen";
-            this.btnDescargarResumen.Size = new System.Drawing.Size(176, 28);
+            this.btnDescargarResumen.Size = new System.Drawing.Size(190, 30);
             this.btnDescargarResumen.TabIndex = 24;
             this.btnDescargarResumen.Text = "     Descargar por Ventas";
             this.btnDescargarResumen.UseVisualStyleBackColor = true;
@@ -58,20 +61,34 @@ namespace Comercial.Formularios.Estadisticas
             // 
             this.dgvDetalle.AllowUserToAddRows = false;
             this.dgvDetalle.AllowUserToDeleteRows = false;
+            this.dgvDetalle.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvDetalle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.dgvDetalle.BackgroundColor = System.Drawing.Color.White;
+            this.dgvDetalle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            dgvAltStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            dgvHeaderStyle.BackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dgvHeaderStyle.ForeColor = System.Drawing.Color.White;
+            dgvHeaderStyle.SelectionBackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvDetalle.ColumnHeadersDefaultCellStyle = dgvHeaderStyle;
+            this.dgvDetalle.EnableHeadersVisualStyles = false;
+            this.dgvDetalle.RowHeadersVisible = false;
             this.dgvDetalle.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvDetalle.Location = new System.Drawing.Point(23, 70);
+            this.dgvDetalle.Location = new System.Drawing.Point(16, 72);
             this.dgvDetalle.Name = "dgvDetalle";
             this.dgvDetalle.ReadOnly = true;
             this.dgvDetalle.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvDetalle.Size = new System.Drawing.Size(951, 526);
+            this.dgvDetalle.Size = new System.Drawing.Size(948, 492);
             this.dgvDetalle.TabIndex = 23;
             // 
             // btnBuscarDetalle
             // 
             this.btnBuscarDetalle.BackColor = System.Drawing.Color.Silver;
-            this.btnBuscarDetalle.Location = new System.Drawing.Point(492, 26);
+            this.btnBuscarDetalle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBuscarDetalle.Location = new System.Drawing.Point(448, 28);
             this.btnBuscarDetalle.Name = "btnBuscarDetalle";
-            this.btnBuscarDetalle.Size = new System.Drawing.Size(105, 24);
+            this.btnBuscarDetalle.Size = new System.Drawing.Size(90, 30);
             this.btnBuscarDetalle.TabIndex = 22;
             this.btnBuscarDetalle.Text = "Buscar";
             this.btnBuscarDetalle.UseVisualStyleBackColor = false;
@@ -80,8 +97,8 @@ namespace Comercial.Formularios.Estadisticas
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(251, 9);
+            this.label4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(232, 10);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(44, 15);
             this.label4.TabIndex = 21;
@@ -89,23 +106,23 @@ namespace Comercial.Formularios.Estadisticas
             // 
             // dtpHastaDetalle
             // 
-            this.dtpHastaDetalle.Location = new System.Drawing.Point(251, 28);
+            this.dtpHastaDetalle.Location = new System.Drawing.Point(232, 30);
             this.dtpHastaDetalle.Name = "dtpHastaDetalle";
-            this.dtpHastaDetalle.Size = new System.Drawing.Size(226, 21);
+            this.dtpHastaDetalle.Size = new System.Drawing.Size(200, 23);
             this.dtpHastaDetalle.TabIndex = 20;
             // 
             // dtpDesdeDetalle
             // 
-            this.dtpDesdeDetalle.Location = new System.Drawing.Point(10, 28);
+            this.dtpDesdeDetalle.Location = new System.Drawing.Point(16, 30);
             this.dtpDesdeDetalle.Name = "dtpDesdeDetalle";
-            this.dtpDesdeDetalle.Size = new System.Drawing.Size(226, 21);
+            this.dtpDesdeDetalle.Size = new System.Drawing.Size(200, 23);
             this.dtpDesdeDetalle.TabIndex = 19;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(10, 9);
+            this.label6.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(16, 10);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(48, 15);
             this.label6.TabIndex = 18;
@@ -116,9 +133,10 @@ namespace Comercial.Formularios.Estadisticas
             this.btnDescargarDetalleVenta.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDescargarDetalleVenta.Image = ((System.Drawing.Image)(resources.GetObject("btnDescargarDetalleVenta.Image")));
             this.btnDescargarDetalleVenta.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnDescargarDetalleVenta.Location = new System.Drawing.Point(798, 24);
+            this.btnDescargarDetalleVenta.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.btnDescargarDetalleVenta.Location = new System.Drawing.Point(774, 28);
             this.btnDescargarDetalleVenta.Name = "btnDescargarDetalleVenta";
-            this.btnDescargarDetalleVenta.Size = new System.Drawing.Size(176, 28);
+            this.btnDescargarDetalleVenta.Size = new System.Drawing.Size(190, 30);
             this.btnDescargarDetalleVenta.TabIndex = 25;
             this.btnDescargarDetalleVenta.Text = "     Descargar Detalle Ventas";
             this.btnDescargarDetalleVenta.UseVisualStyleBackColor = true;
@@ -129,7 +147,7 @@ namespace Comercial.Formularios.Estadisticas
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(996, 608);
+            this.ClientSize = new System.Drawing.Size(980, 580);
             this.Controls.Add(this.btnDescargarDetalleVenta);
             this.Controls.Add(this.btnDescargarResumen);
             this.Controls.Add(this.dgvDetalle);
@@ -139,11 +157,12 @@ namespace Comercial.Formularios.Estadisticas
             this.Controls.Add(this.dtpDesdeDetalle);
             this.Controls.Add(this.label6);
             this.DoubleBuffered = true;
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(996, 560);
             this.Name = "frmExportarVentas";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Exportar Ventas";
@@ -166,3 +185,4 @@ namespace Comercial.Formularios.Estadisticas
         private System.Windows.Forms.Button btnDescargarDetalleVenta;
     }
 }
+

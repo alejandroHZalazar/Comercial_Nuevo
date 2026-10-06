@@ -30,6 +30,8 @@ namespace Comercial.Formularios.Productos
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmImprimirEtiquetasyCB));
+            System.Windows.Forms.DataGridViewCellStyle dgvHeaderStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvAltStyle = new System.Windows.Forms.DataGridViewCellStyle();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnBuscar = new System.Windows.Forms.Button();
             this.txtFiltro = new System.Windows.Forms.TextBox();
@@ -60,9 +62,10 @@ namespace Comercial.Formularios.Productos
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.cboRubros);
             this.groupBox1.Controls.Add(this.cboProveedores);
-            this.groupBox1.Location = new System.Drawing.Point(5, 12);
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(947, 108);
+            this.groupBox1.Size = new System.Drawing.Size(936, 108);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filtro";
@@ -148,16 +151,30 @@ namespace Comercial.Formularios.Productos
             this.dgvProductos.AllowUserToDeleteRows = false;
             this.dgvProductos.AllowUserToOrderColumns = true;
             this.dgvProductos.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            this.dgvProductos.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvProductos.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.dgvProductos.BackgroundColor = System.Drawing.Color.White;
+            this.dgvProductos.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            dgvAltStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            dgvHeaderStyle.BackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dgvHeaderStyle.ForeColor = System.Drawing.Color.White;
+            dgvHeaderStyle.SelectionBackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvProductos.ColumnHeadersDefaultCellStyle = dgvHeaderStyle;
             this.dgvProductos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvProductos.Location = new System.Drawing.Point(5, 126);
+            this.dgvProductos.EnableHeadersVisualStyles = false;
+            this.dgvProductos.RowHeadersVisible = false;
+            this.dgvProductos.Location = new System.Drawing.Point(12, 126);
             this.dgvProductos.Name = "dgvProductos";
-            this.dgvProductos.Size = new System.Drawing.Size(947, 372);
+            this.dgvProductos.Size = new System.Drawing.Size(936, 372);
             this.dgvProductos.TabIndex = 3;
             // 
             // cbTodos
             // 
             this.cbTodos.AutoSize = true;
-            this.cbTodos.Location = new System.Drawing.Point(12, 504);
+            this.cbTodos.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.cbTodos.Location = new System.Drawing.Point(12, 512);
             this.cbTodos.Name = "cbTodos";
             this.cbTodos.Size = new System.Drawing.Size(128, 19);
             this.cbTodos.TabIndex = 4;
@@ -168,7 +185,8 @@ namespace Comercial.Formularios.Productos
             // cbNinguno
             // 
             this.cbNinguno.AutoSize = true;
-            this.cbNinguno.Location = new System.Drawing.Point(160, 504);
+            this.cbNinguno.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.cbNinguno.Location = new System.Drawing.Point(160, 512);
             this.cbNinguno.Name = "cbNinguno";
             this.cbNinguno.Size = new System.Drawing.Size(160, 19);
             this.cbNinguno.TabIndex = 5;
@@ -178,7 +196,8 @@ namespace Comercial.Formularios.Productos
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(341, 504);
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.progressBar1.Location = new System.Drawing.Point(341, 510);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(236, 23);
             this.progressBar1.TabIndex = 6;
@@ -188,9 +207,10 @@ namespace Comercial.Formularios.Productos
             this.btnImprimirEtiqueta.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnImprimirEtiqueta.Image = ((System.Drawing.Image)(resources.GetObject("btnImprimirEtiqueta.Image")));
             this.btnImprimirEtiqueta.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnImprimirEtiqueta.Location = new System.Drawing.Point(601, 504);
+            this.btnImprimirEtiqueta.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.btnImprimirEtiqueta.Location = new System.Drawing.Point(596, 506);
             this.btnImprimirEtiqueta.Name = "btnImprimirEtiqueta";
-            this.btnImprimirEtiqueta.Size = new System.Drawing.Size(153, 28);
+            this.btnImprimirEtiqueta.Size = new System.Drawing.Size(153, 34);
             this.btnImprimirEtiqueta.TabIndex = 7;
             this.btnImprimirEtiqueta.Text = "Imprimir Etiqueta";
             this.btnImprimirEtiqueta.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -202,9 +222,10 @@ namespace Comercial.Formularios.Productos
             this.btnImprimirCodBarras.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnImprimirCodBarras.Image = ((System.Drawing.Image)(resources.GetObject("btnImprimirCodBarras.Image")));
             this.btnImprimirCodBarras.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnImprimirCodBarras.Location = new System.Drawing.Point(777, 504);
+            this.btnImprimirCodBarras.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.btnImprimirCodBarras.Location = new System.Drawing.Point(773, 506);
             this.btnImprimirCodBarras.Name = "btnImprimirCodBarras";
-            this.btnImprimirCodBarras.Size = new System.Drawing.Size(175, 28);
+            this.btnImprimirCodBarras.Size = new System.Drawing.Size(175, 34);
             this.btnImprimirCodBarras.TabIndex = 8;
             this.btnImprimirCodBarras.Text = "Imprimir Cod. Barras";
             this.btnImprimirCodBarras.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -216,7 +237,7 @@ namespace Comercial.Formularios.Productos
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(960, 536);
+            this.ClientSize = new System.Drawing.Size(960, 552);
             this.Controls.Add(this.btnImprimirCodBarras);
             this.Controls.Add(this.btnImprimirEtiqueta);
             this.Controls.Add(this.progressBar1);
@@ -228,7 +249,8 @@ namespace Comercial.Formularios.Productos
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
+            this.MinimumSize = new System.Drawing.Size(840, 420);
             this.MinimizeBox = false;
             this.Name = "frmImprimirEtiquetasyCB";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

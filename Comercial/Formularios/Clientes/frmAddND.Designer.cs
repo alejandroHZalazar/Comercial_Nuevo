@@ -43,13 +43,14 @@ namespace Comercial.Formularios.Clientes
             // 
             // btnGrabar
             // 
+            this.btnGrabar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnGrabar.BackColor = System.Drawing.Color.Silver;
             this.btnGrabar.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnGrabar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnGrabar.Image = global::Comercial.Properties.Resources.save__1_;
-            this.btnGrabar.Location = new System.Drawing.Point(330, 208);
+            this.btnGrabar.Location = new System.Drawing.Point(314, 208);
             this.btnGrabar.Name = "btnGrabar";
-            this.btnGrabar.Size = new System.Drawing.Size(116, 34);
+            this.btnGrabar.Size = new System.Drawing.Size(130, 36);
             this.btnGrabar.TabIndex = 3;
             this.btnGrabar.Text = "  Grabar [F2]";
             this.btnGrabar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -58,10 +59,15 @@ namespace Comercial.Formularios.Clientes
             // 
             // rbtObserv
             // 
-            this.rbtObserv.Location = new System.Drawing.Point(12, 92);
+            this.rbtObserv.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rbtObserv.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.rbtObserv.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rbtObserv.Location = new System.Drawing.Point(16, 100);
             this.rbtObserv.MaxLength = 100;
             this.rbtObserv.Name = "rbtObserv";
-            this.rbtObserv.Size = new System.Drawing.Size(431, 96);
+            this.rbtObserv.Size = new System.Drawing.Size(428, 100);
             this.rbtObserv.TabIndex = 1;
             this.rbtObserv.Text = "";
             // 
@@ -69,7 +75,7 @@ namespace Comercial.Formularios.Clientes
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
-            this.label2.Location = new System.Drawing.Point(12, 67);
+            this.label2.Location = new System.Drawing.Point(16, 78);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(98, 17);
             this.label2.TabIndex = 84;
@@ -79,7 +85,7 @@ namespace Comercial.Formularios.Clientes
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
-            this.label1.Location = new System.Drawing.Point(12, 10);
+            this.label1.Location = new System.Drawing.Point(16, 14);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(118, 17);
             this.label1.TabIndex = 83;
@@ -88,8 +94,8 @@ namespace Comercial.Formularios.Clientes
             // nudImputar
             // 
             this.nudImputar.DecimalPlaces = 2;
-            this.nudImputar.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nudImputar.Location = new System.Drawing.Point(12, 35);
+            this.nudImputar.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nudImputar.Location = new System.Drawing.Point(16, 38);
             this.nudImputar.Maximum = new decimal(new int[] {
             999999999,
             0,
@@ -108,18 +114,19 @@ namespace Comercial.Formularios.Clientes
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(458, 253);
+            this.ClientSize = new System.Drawing.Size(460, 260);
             this.Controls.Add(this.btnGrabar);
             this.Controls.Add(this.rbtObserv);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.nudImputar);
             this.DoubleBuffered = true;
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(380, 240);
             this.Name = "frmAddND";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Agregar Nota de Débito";

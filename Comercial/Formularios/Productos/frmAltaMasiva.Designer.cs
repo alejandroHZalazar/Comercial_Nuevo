@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmAltaMasiva));
+            System.Windows.Forms.DataGridViewCellStyle dgvHeaderStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvAltStyle = new System.Windows.Forms.DataGridViewCellStyle();
             this.txtArchivo = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.txtHoja = new System.Windows.Forms.TextBox();
@@ -43,16 +45,17 @@
             // 
             // txtArchivo
             // 
-            this.txtArchivo.Location = new System.Drawing.Point(12, 25);
+            this.txtArchivo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.txtArchivo.Location = new System.Drawing.Point(16, 28);
             this.txtArchivo.Name = "txtArchivo";
-            this.txtArchivo.Size = new System.Drawing.Size(326, 23);
+            this.txtArchivo.Size = new System.Drawing.Size(355, 23);
             this.txtArchivo.TabIndex = 1;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(12, 7);
+            this.label1.Location = new System.Drawing.Point(16, 10);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(50, 15);
             this.label1.TabIndex = 2;
@@ -60,7 +63,8 @@
             // 
             // txtHoja
             // 
-            this.txtHoja.Location = new System.Drawing.Point(353, 25);
+            this.txtHoja.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.txtHoja.Location = new System.Drawing.Point(379, 28);
             this.txtHoja.Name = "txtHoja";
             this.txtHoja.Size = new System.Drawing.Size(147, 23);
             this.txtHoja.TabIndex = 3;
@@ -69,7 +73,8 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(353, 7);
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.label2.Location = new System.Drawing.Point(379, 10);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(32, 15);
             this.label2.TabIndex = 4;
@@ -81,9 +86,10 @@
             this.btnLevantar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnLevantar.Image = global::Comercial.Properties.Resources.icon1;
             this.btnLevantar.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnLevantar.Location = new System.Drawing.Point(518, 19);
+            this.btnLevantar.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.btnLevantar.Location = new System.Drawing.Point(534, 24);
             this.btnLevantar.Name = "btnLevantar";
-            this.btnLevantar.Size = new System.Drawing.Size(150, 32);
+            this.btnLevantar.Size = new System.Drawing.Size(150, 34);
             this.btnLevantar.TabIndex = 8;
             this.btnLevantar.Text = "   Levantar Excel";
             this.btnLevantar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -92,10 +98,23 @@
             // 
             // dgvProductos
             // 
+            this.dgvProductos.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvProductos.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.dgvProductos.BackgroundColor = System.Drawing.Color.White;
+            this.dgvProductos.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            dgvAltStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            dgvHeaderStyle.BackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dgvHeaderStyle.ForeColor = System.Drawing.Color.White;
+            dgvHeaderStyle.SelectionBackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvProductos.ColumnHeadersDefaultCellStyle = dgvHeaderStyle;
             this.dgvProductos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvProductos.Location = new System.Drawing.Point(12, 63);
+            this.dgvProductos.EnableHeadersVisualStyles = false;
+            this.dgvProductos.RowHeadersVisible = false;
+            this.dgvProductos.Location = new System.Drawing.Point(16, 68);
             this.dgvProductos.Name = "dgvProductos";
-            this.dgvProductos.Size = new System.Drawing.Size(656, 337);
+            this.dgvProductos.Size = new System.Drawing.Size(668, 350);
             this.dgvProductos.TabIndex = 9;
             // 
             // button1
@@ -104,9 +123,10 @@
             this.button1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button1.Image = global::Comercial.Properties.Resources.icon1;
             this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button1.Location = new System.Drawing.Point(518, 406);
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.button1.Location = new System.Drawing.Point(534, 426);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(150, 32);
+            this.button1.Size = new System.Drawing.Size(150, 34);
             this.button1.TabIndex = 10;
             this.button1.Text = "Cargar Productos";
             this.button1.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -115,9 +135,10 @@
             // 
             // pbProceso
             // 
-            this.pbProceso.Location = new System.Drawing.Point(12, 407);
+            this.pbProceso.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.pbProceso.Location = new System.Drawing.Point(16, 432);
             this.pbProceso.Name = "pbProceso";
-            this.pbProceso.Size = new System.Drawing.Size(488, 23);
+            this.pbProceso.Size = new System.Drawing.Size(510, 23);
             this.pbProceso.TabIndex = 11;
             // 
             // backgroundWorkerTarea
@@ -132,7 +153,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(681, 442);
+            this.ClientSize = new System.Drawing.Size(700, 472);
             this.Controls.Add(this.pbProceso);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.dgvProductos);
@@ -145,8 +166,9 @@
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(640, 420);
             this.Name = "frmAltaMasiva";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Alta Masivo Productos";

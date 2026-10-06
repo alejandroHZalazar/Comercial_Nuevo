@@ -95,9 +95,10 @@
             // cboRubro
             // 
             this.cboRubro.FormattingEnabled = true;
+            this.cboRubro.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.cboRubro.Location = new System.Drawing.Point(107, 128);
             this.cboRubro.Name = "cboRubro";
-            this.cboRubro.Size = new System.Drawing.Size(172, 23);
+            this.cboRubro.Size = new System.Drawing.Size(390, 23);
             this.cboRubro.TabIndex = 3;
             // 
             // nudCosto
@@ -143,9 +144,10 @@
             // 
             // txtDescripcion
             // 
+            this.txtDescripcion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.txtDescripcion.Location = new System.Drawing.Point(107, 90);
             this.txtDescripcion.Name = "txtDescripcion";
-            this.txtDescripcion.Size = new System.Drawing.Size(314, 23);
+            this.txtDescripcion.Size = new System.Drawing.Size(390, 23);
             this.txtDescripcion.TabIndex = 2;
             this.txtDescripcion.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtDescripcion_KeyPress);
             // 
@@ -170,9 +172,10 @@
             // cboProveedor
             // 
             this.cboProveedor.FormattingEnabled = true;
+            this.cboProveedor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.cboProveedor.Location = new System.Drawing.Point(107, 166);
             this.cboProveedor.Name = "cboProveedor";
-            this.cboProveedor.Size = new System.Drawing.Size(181, 23);
+            this.cboProveedor.Size = new System.Drawing.Size(390, 23);
             this.cboProveedor.TabIndex = 4;
             this.cboProveedor.SelectedIndexChanged += new System.EventHandler(this.cboProveedor_SelectedIndexChanged);
             // 
@@ -214,7 +217,8 @@
             this.btnCancelar.BackColor = System.Drawing.Color.Silver;
             this.btnCancelar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCancelar.Image = global::Comercial.Properties.Resources.back_arrow;
-            this.btnCancelar.Location = new System.Drawing.Point(321, 438);
+            this.btnCancelar.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.btnCancelar.Location = new System.Drawing.Point(386, 468);
             this.btnCancelar.Name = "btnCancelar";
             this.btnCancelar.Size = new System.Drawing.Size(111, 35);
             this.btnCancelar.TabIndex = 15;
@@ -228,7 +232,8 @@
             this.btnGrabar.BackColor = System.Drawing.Color.Silver;
             this.btnGrabar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnGrabar.Image = global::Comercial.Properties.Resources.save__1_;
-            this.btnGrabar.Location = new System.Drawing.Point(172, 438);
+            this.btnGrabar.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.btnGrabar.Location = new System.Drawing.Point(263, 468);
             this.btnGrabar.Name = "btnGrabar";
             this.btnGrabar.Size = new System.Drawing.Size(111, 35);
             this.btnGrabar.TabIndex = 14;
@@ -402,7 +407,8 @@
             // chkEsPromocion
             // 
             this.chkEsPromocion.AutoSize = true;
-            this.chkEsPromocion.Location = new System.Drawing.Point(12, 436);
+            this.chkEsPromocion.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.chkEsPromocion.Location = new System.Drawing.Point(12, 478);
             this.chkEsPromocion.Name = "chkEsPromocion";
             this.chkEsPromocion.Size = new System.Drawing.Size(99, 19);
             this.chkEsPromocion.TabIndex = 24;
@@ -460,7 +466,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(444, 518);
+            this.ClientSize = new System.Drawing.Size(520, 518);
             this.Controls.Add(this.nudCantMinimaVenta);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.btnConfigurarPromocion);
@@ -498,7 +504,8 @@
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
+            this.MinimumSize = new System.Drawing.Size(460, 560);
             this.MinimizeBox = false;
             this.Name = "frmAltaModifProductos";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

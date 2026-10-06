@@ -30,6 +30,8 @@ namespace Comercial.Formularios.Proveedores
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmResumenPagos));
+            System.Windows.Forms.DataGridViewCellStyle dgvHeaderStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvAltStyle = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnDescargarDetalle = new System.Windows.Forms.Button();
             this.dgvPagos = new System.Windows.Forms.DataGridView();
             this.btnBuscarDetalle = new System.Windows.Forms.Button();
@@ -45,7 +47,8 @@ namespace Comercial.Formularios.Proveedores
             // 
             this.btnDescargarDetalle.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnDescargarDetalle.Image = ((System.Drawing.Image)(resources.GetObject("btnDescargarDetalle.Image")));
-            this.btnDescargarDetalle.Location = new System.Drawing.Point(864, 63);
+            this.btnDescargarDetalle.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.btnDescargarDetalle.Location = new System.Drawing.Point(872, 63);
             this.btnDescargarDetalle.Name = "btnDescargarDetalle";
             this.btnDescargarDetalle.Size = new System.Drawing.Size(49, 28);
             this.btnDescargarDetalle.TabIndex = 31;
@@ -56,20 +59,33 @@ namespace Comercial.Formularios.Proveedores
             // 
             this.dgvPagos.AllowUserToAddRows = false;
             this.dgvPagos.AllowUserToDeleteRows = false;
+            this.dgvPagos.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvPagos.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.dgvPagos.BackgroundColor = System.Drawing.Color.White;
+            this.dgvPagos.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            dgvAltStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            dgvHeaderStyle.BackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dgvHeaderStyle.ForeColor = System.Drawing.Color.White;
+            dgvHeaderStyle.SelectionBackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvPagos.ColumnHeadersDefaultCellStyle = dgvHeaderStyle;
             this.dgvPagos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvPagos.EnableHeadersVisualStyles = false;
+            this.dgvPagos.RowHeadersVisible = false;
             this.dgvPagos.Location = new System.Drawing.Point(12, 63);
             this.dgvPagos.Name = "dgvPagos";
             this.dgvPagos.ReadOnly = true;
             this.dgvPagos.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvPagos.Size = new System.Drawing.Size(837, 526);
+            this.dgvPagos.Size = new System.Drawing.Size(845, 526);
             this.dgvPagos.TabIndex = 30;
             // 
             // btnBuscarDetalle
             // 
             this.btnBuscarDetalle.BackColor = System.Drawing.Color.Silver;
-            this.btnBuscarDetalle.Location = new System.Drawing.Point(494, 19);
+            this.btnBuscarDetalle.Location = new System.Drawing.Point(494, 17);
             this.btnBuscarDetalle.Name = "btnBuscarDetalle";
-            this.btnBuscarDetalle.Size = new System.Drawing.Size(105, 24);
+            this.btnBuscarDetalle.Size = new System.Drawing.Size(105, 28);
             this.btnBuscarDetalle.TabIndex = 29;
             this.btnBuscarDetalle.Text = "Buscar";
             this.btnBuscarDetalle.UseVisualStyleBackColor = false;
@@ -111,7 +127,8 @@ namespace Comercial.Formularios.Proveedores
             // 
             // txtTotal
             // 
-            this.txtTotal.Location = new System.Drawing.Point(657, 595);
+            this.txtTotal.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.txtTotal.Location = new System.Drawing.Point(665, 595);
             this.txtTotal.Name = "txtTotal";
             this.txtTotal.Size = new System.Drawing.Size(192, 21);
             this.txtTotal.TabIndex = 32;
@@ -134,7 +151,8 @@ namespace Comercial.Formularios.Proveedores
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
+            this.MinimumSize = new System.Drawing.Size(700, 450);
             this.MinimizeBox = false;
             this.Name = "frmResumenPagos";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

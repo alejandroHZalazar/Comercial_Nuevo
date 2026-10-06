@@ -60,7 +60,8 @@ namespace Comercial.Formularios.Configuracion
 
             if (dgvTiposDocumentos.Width == 355)
             {
-                dgvTiposDocumentos.Width += gbDatos.Width + 5;
+                dgvTiposDocumentos.Width = ClientSize.Width - 16 - dgvTiposDocumentos.Left;
+                dgvTiposDocumentos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             }
             dgvTiposDocumentos.BringToFront();
             verificarBotones();
@@ -98,6 +99,7 @@ namespace Comercial.Formularios.Configuracion
             btnAgregar.Enabled = false;
             btnEditar.Enabled = false;
             btnEliminar.Enabled = false;
+            dgvTiposDocumentos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             dgvTiposDocumentos.Width = 355;
 
         }

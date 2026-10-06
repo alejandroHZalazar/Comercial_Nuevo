@@ -30,6 +30,12 @@ namespace Comercial.Formularios.Facturacion
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmReporteFacturacion));
+            System.Windows.Forms.DataGridViewCellStyle hdrDiario = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle altDiario = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle hdrGeneral = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle altGeneral = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle hdrDetalle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle altDetalle = new System.Windows.Forms.DataGridViewCellStyle();
             this.tbReportes = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -74,7 +80,7 @@ namespace Comercial.Formularios.Facturacion
             this.tbReportes.Location = new System.Drawing.Point(0, 0);
             this.tbReportes.Name = "tbReportes";
             this.tbReportes.SelectedIndex = 0;
-            this.tbReportes.Size = new System.Drawing.Size(994, 519);
+            this.tbReportes.Size = new System.Drawing.Size(1000, 560);
             this.tbReportes.TabIndex = 0;
             // 
             // tabPage1
@@ -85,18 +91,19 @@ namespace Comercial.Formularios.Facturacion
             this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(986, 491);
+            this.tabPage1.Size = new System.Drawing.Size(992, 532);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Resúmenes";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // groupBox3
             // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.groupBox3.BackColor = System.Drawing.Color.Silver;
             this.groupBox3.Controls.Add(this.dgvResumenDiario);
             this.groupBox3.Location = new System.Drawing.Point(8, 193);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(959, 290);
+            this.groupBox3.Size = new System.Drawing.Size(970, 331);
             this.groupBox3.TabIndex = 15;
             this.groupBox3.TabStop = false;
             // 
@@ -104,21 +111,35 @@ namespace Comercial.Formularios.Facturacion
             // 
             this.dgvResumenDiario.AllowUserToAddRows = false;
             this.dgvResumenDiario.AllowUserToDeleteRows = false;
+            this.dgvResumenDiario.AlternatingRowsDefaultCellStyle = altDiario;
+            this.dgvResumenDiario.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.dgvResumenDiario.BackgroundColor = System.Drawing.Color.White;
+            this.dgvResumenDiario.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            altDiario.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            hdrDiario.BackColor = System.Drawing.Color.DimGray;
+            hdrDiario.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            hdrDiario.ForeColor = System.Drawing.Color.White;
+            hdrDiario.SelectionBackColor = System.Drawing.Color.DimGray;
+            hdrDiario.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvResumenDiario.ColumnHeadersDefaultCellStyle = hdrDiario;
+            this.dgvResumenDiario.EnableHeadersVisualStyles = false;
+            this.dgvResumenDiario.RowHeadersVisible = false;
             this.dgvResumenDiario.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dgvResumenDiario.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvResumenDiario.Location = new System.Drawing.Point(16, 20);
             this.dgvResumenDiario.Name = "dgvResumenDiario";
             this.dgvResumenDiario.ReadOnly = true;
-            this.dgvResumenDiario.Size = new System.Drawing.Size(937, 264);
+            this.dgvResumenDiario.Size = new System.Drawing.Size(938, 305);
             this.dgvResumenDiario.TabIndex = 0;
             // 
             // groupBox2
             // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.groupBox2.BackColor = System.Drawing.Color.Silver;
             this.groupBox2.Controls.Add(this.dgvResumenGeneral);
             this.groupBox2.Location = new System.Drawing.Point(8, 82);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(959, 105);
+            this.groupBox2.Size = new System.Drawing.Size(970, 105);
             this.groupBox2.TabIndex = 14;
             this.groupBox2.TabStop = false;
             // 
@@ -126,16 +147,30 @@ namespace Comercial.Formularios.Facturacion
             // 
             this.dgvResumenGeneral.AllowUserToAddRows = false;
             this.dgvResumenGeneral.AllowUserToDeleteRows = false;
+            this.dgvResumenGeneral.AlternatingRowsDefaultCellStyle = altGeneral;
+            this.dgvResumenGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.dgvResumenGeneral.BackgroundColor = System.Drawing.Color.White;
+            this.dgvResumenGeneral.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            altGeneral.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            hdrGeneral.BackColor = System.Drawing.Color.DimGray;
+            hdrGeneral.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            hdrGeneral.ForeColor = System.Drawing.Color.White;
+            hdrGeneral.SelectionBackColor = System.Drawing.Color.DimGray;
+            hdrGeneral.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvResumenGeneral.ColumnHeadersDefaultCellStyle = hdrGeneral;
+            this.dgvResumenGeneral.EnableHeadersVisualStyles = false;
+            this.dgvResumenGeneral.RowHeadersVisible = false;
             this.dgvResumenGeneral.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dgvResumenGeneral.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvResumenGeneral.Location = new System.Drawing.Point(16, 20);
             this.dgvResumenGeneral.Name = "dgvResumenGeneral";
             this.dgvResumenGeneral.ReadOnly = true;
-            this.dgvResumenGeneral.Size = new System.Drawing.Size(937, 70);
+            this.dgvResumenGeneral.Size = new System.Drawing.Size(938, 70);
             this.dgvResumenGeneral.TabIndex = 0;
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.groupBox1.BackColor = System.Drawing.Color.Silver;
             this.groupBox1.Controls.Add(this.btnExportar);
             this.groupBox1.Controls.Add(this.btnBuscar);
@@ -145,7 +180,7 @@ namespace Comercial.Formularios.Facturacion
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Location = new System.Drawing.Point(8, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(959, 70);
+            this.groupBox1.Size = new System.Drawing.Size(970, 70);
             this.groupBox1.TabIndex = 13;
             this.groupBox1.TabStop = false;
             // 
@@ -153,7 +188,8 @@ namespace Comercial.Formularios.Facturacion
             // 
             this.btnExportar.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnExportar.Image = ((System.Drawing.Image)(resources.GetObject("btnExportar.Image")));
-            this.btnExportar.Location = new System.Drawing.Point(892, 19);
+            this.btnExportar.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.btnExportar.Location = new System.Drawing.Point(912, 19);
             this.btnExportar.Name = "btnExportar";
             this.btnExportar.Size = new System.Drawing.Size(49, 28);
             this.btnExportar.TabIndex = 10;
@@ -212,18 +248,19 @@ namespace Comercial.Formularios.Facturacion
             this.tabPage2.Location = new System.Drawing.Point(4, 24);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(986, 491);
+            this.tabPage2.Size = new System.Drawing.Size(992, 532);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Detalles";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // groupBox5
             // 
+            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.groupBox5.BackColor = System.Drawing.Color.Silver;
             this.groupBox5.Controls.Add(this.dgvDetalle);
             this.groupBox5.Location = new System.Drawing.Point(8, 82);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(959, 401);
+            this.groupBox5.Size = new System.Drawing.Size(970, 442);
             this.groupBox5.TabIndex = 16;
             this.groupBox5.TabStop = false;
             // 
@@ -231,17 +268,31 @@ namespace Comercial.Formularios.Facturacion
             // 
             this.dgvDetalle.AllowUserToAddRows = false;
             this.dgvDetalle.AllowUserToDeleteRows = false;
+            this.dgvDetalle.AlternatingRowsDefaultCellStyle = altDetalle;
+            this.dgvDetalle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.dgvDetalle.BackgroundColor = System.Drawing.Color.White;
+            this.dgvDetalle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            altDetalle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            hdrDetalle.BackColor = System.Drawing.Color.DimGray;
+            hdrDetalle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            hdrDetalle.ForeColor = System.Drawing.Color.White;
+            hdrDetalle.SelectionBackColor = System.Drawing.Color.DimGray;
+            hdrDetalle.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvDetalle.ColumnHeadersDefaultCellStyle = hdrDetalle;
+            this.dgvDetalle.EnableHeadersVisualStyles = false;
+            this.dgvDetalle.RowHeadersVisible = false;
             this.dgvDetalle.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dgvDetalle.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvDetalle.Location = new System.Drawing.Point(16, 20);
             this.dgvDetalle.Name = "dgvDetalle";
             this.dgvDetalle.ReadOnly = true;
-            this.dgvDetalle.Size = new System.Drawing.Size(937, 375);
+            this.dgvDetalle.Size = new System.Drawing.Size(938, 416);
             this.dgvDetalle.TabIndex = 0;
             this.dgvDetalle.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvDetalle_CellContentClick);
             // 
             // groupBox4
             // 
+            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.groupBox4.BackColor = System.Drawing.Color.Silver;
             this.groupBox4.Controls.Add(this.btnExportarDetalle);
             this.groupBox4.Controls.Add(this.btnBuscarDetalle);
@@ -251,7 +302,7 @@ namespace Comercial.Formularios.Facturacion
             this.groupBox4.Controls.Add(this.label4);
             this.groupBox4.Location = new System.Drawing.Point(8, 6);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(959, 70);
+            this.groupBox4.Size = new System.Drawing.Size(970, 70);
             this.groupBox4.TabIndex = 14;
             this.groupBox4.TabStop = false;
             // 
@@ -259,7 +310,8 @@ namespace Comercial.Formularios.Facturacion
             // 
             this.btnExportarDetalle.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnExportarDetalle.Image = ((System.Drawing.Image)(resources.GetObject("btnExportarDetalle.Image")));
-            this.btnExportarDetalle.Location = new System.Drawing.Point(892, 19);
+            this.btnExportarDetalle.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.btnExportarDetalle.Location = new System.Drawing.Point(912, 19);
             this.btnExportarDetalle.Name = "btnExportarDetalle";
             this.btnExportarDetalle.Size = new System.Drawing.Size(49, 28);
             this.btnExportarDetalle.TabIndex = 10;
@@ -315,14 +367,15 @@ namespace Comercial.Formularios.Facturacion
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(994, 519);
+            this.ClientSize = new System.Drawing.Size(1000, 560);
             this.Controls.Add(this.tbReportes);
             this.DoubleBuffered = true;
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(900, 520);
             this.Name = "frmReporteFacturacion";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Reportes Facturacion";

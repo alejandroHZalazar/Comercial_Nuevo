@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmRankingVentas));
+            System.Windows.Forms.DataGridViewCellStyle dgvHeaderStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvAltStyle = new System.Windows.Forms.DataGridViewCellStyle();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.dtpDesde = new System.Windows.Forms.DateTimePicker();
             this.label1 = new System.Windows.Forms.Label();
@@ -46,6 +48,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.groupBox1.BackColor = System.Drawing.Color.Silver;
             this.groupBox1.Controls.Add(this.btnExportar);
             this.groupBox1.Controls.Add(this.cboProveedor);
@@ -57,7 +60,7 @@
             this.groupBox1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1473, 61);
+            this.groupBox1.Size = new System.Drawing.Size(1076, 61);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filtro";
@@ -66,7 +69,7 @@
             // 
             this.dtpDesde.Location = new System.Drawing.Point(56, 22);
             this.dtpDesde.Name = "dtpDesde";
-            this.dtpDesde.Size = new System.Drawing.Size(235, 23);
+            this.dtpDesde.Size = new System.Drawing.Size(200, 23);
             this.dtpDesde.TabIndex = 6;
             // 
             // label1
@@ -80,15 +83,15 @@
             // 
             // dtpHasta
             // 
-            this.dtpHasta.Location = new System.Drawing.Point(339, 22);
+            this.dtpHasta.Location = new System.Drawing.Point(306, 22);
             this.dtpHasta.Name = "dtpHasta";
-            this.dtpHasta.Size = new System.Drawing.Size(235, 23);
+            this.dtpHasta.Size = new System.Drawing.Size(200, 23);
             this.dtpHasta.TabIndex = 9;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(296, 26);
+            this.label2.Location = new System.Drawing.Point(264, 26);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(38, 15);
             this.label2.TabIndex = 8;
@@ -100,7 +103,7 @@
             this.btnRankingProductos.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnRankingProductos.Location = new System.Drawing.Point(12, 90);
             this.btnRankingProductos.Name = "btnRankingProductos";
-            this.btnRankingProductos.Size = new System.Drawing.Size(187, 26);
+            this.btnRankingProductos.Size = new System.Drawing.Size(187, 32);
             this.btnRankingProductos.TabIndex = 2;
             this.btnRankingProductos.Text = "RANKING POR PRODUCTOS";
             this.btnRankingProductos.UseVisualStyleBackColor = false;
@@ -110,21 +113,34 @@
             // 
             this.dgvRanking.AllowUserToAddRows = false;
             this.dgvRanking.AllowUserToDeleteRows = false;
+            this.dgvRanking.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvRanking.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.dgvRanking.BackgroundColor = System.Drawing.Color.White;
+            this.dgvRanking.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            dgvAltStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            dgvHeaderStyle.BackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dgvHeaderStyle.ForeColor = System.Drawing.Color.White;
+            dgvHeaderStyle.SelectionBackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvRanking.ColumnHeadersDefaultCellStyle = dgvHeaderStyle;
+            this.dgvRanking.EnableHeadersVisualStyles = false;
+            this.dgvRanking.RowHeadersVisible = false;
             this.dgvRanking.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
             this.dgvRanking.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvRanking.Location = new System.Drawing.Point(228, 90);
+            this.dgvRanking.Location = new System.Drawing.Point(211, 90);
             this.dgvRanking.Name = "dgvRanking";
             this.dgvRanking.ReadOnly = true;
-            this.dgvRanking.Size = new System.Drawing.Size(1257, 513);
+            this.dgvRanking.Size = new System.Drawing.Size(877, 498);
             this.dgvRanking.TabIndex = 3;
             // 
             // btnRankigCliente
             // 
             this.btnRankigCliente.BackColor = System.Drawing.Color.Gray;
             this.btnRankigCliente.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRankigCliente.Location = new System.Drawing.Point(12, 122);
+            this.btnRankigCliente.Location = new System.Drawing.Point(12, 130);
             this.btnRankigCliente.Name = "btnRankigCliente";
-            this.btnRankigCliente.Size = new System.Drawing.Size(187, 26);
+            this.btnRankigCliente.Size = new System.Drawing.Size(187, 32);
             this.btnRankigCliente.TabIndex = 4;
             this.btnRankigCliente.Text = "RANKING POR CLIENTES";
             this.btnRankigCliente.UseVisualStyleBackColor = false;
@@ -133,15 +149,16 @@
             // cboProveedor
             // 
             this.cboProveedor.FormattingEnabled = true;
-            this.cboProveedor.Location = new System.Drawing.Point(727, 22);
+            this.cboProveedor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.cboProveedor.Location = new System.Drawing.Point(664, 22);
             this.cboProveedor.Name = "cboProveedor";
-            this.cboProveedor.Size = new System.Drawing.Size(306, 23);
+            this.cboProveedor.Size = new System.Drawing.Size(343, 23);
             this.cboProveedor.TabIndex = 19;
             // 
             // cbProveedor
             // 
             this.cbProveedor.AutoSize = true;
-            this.cbProveedor.Location = new System.Drawing.Point(579, 24);
+            this.cbProveedor.Location = new System.Drawing.Point(516, 24);
             this.cbProveedor.Name = "cbProveedor";
             this.cbProveedor.Size = new System.Drawing.Size(143, 19);
             this.cbProveedor.TabIndex = 18;
@@ -153,7 +170,8 @@
             this.btnExportar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.btnExportar.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnExportar.Image = ((System.Drawing.Image)(resources.GetObject("btnExportar.Image")));
-            this.btnExportar.Location = new System.Drawing.Point(1053, 19);
+            this.btnExportar.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.btnExportar.Location = new System.Drawing.Point(1015, 19);
             this.btnExportar.Name = "btnExportar";
             this.btnExportar.Size = new System.Drawing.Size(49, 28);
             this.btnExportar.TabIndex = 10;
@@ -165,7 +183,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(1497, 615);
+            this.ClientSize = new System.Drawing.Size(1100, 600);
             this.Controls.Add(this.btnRankigCliente);
             this.Controls.Add(this.dgvRanking);
             this.Controls.Add(this.btnRankingProductos);
@@ -174,8 +192,9 @@
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(960, 520);
             this.Name = "frmRankingVentas";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Ranking Ventas";

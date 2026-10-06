@@ -1485,6 +1485,8 @@ namespace Comercial.Formularios.Ventas
 
                 if (salida != -1)
                 {
+                    if (pedidoCargado > 0) instVentas.asociarPedidoVenta(salida, pedidoCargado);
+
                     if (cboTipo.SelectedIndex == 1)
                     {
                         //procesoFacturacion();

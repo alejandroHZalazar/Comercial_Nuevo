@@ -29,6 +29,10 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmVentasEstadisticas));
+            System.Windows.Forms.DataGridViewCellStyle hdrVentas = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle altVentas = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle hdrDetalle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle altDetalle = new System.Windows.Forms.DataGridViewCellStyle();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cboProveedor = new System.Windows.Forms.ComboBox();
             this.cbProveedor = new System.Windows.Forms.CheckBox();
@@ -65,6 +69,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.groupBox1.BackColor = System.Drawing.Color.Silver;
             this.groupBox1.Controls.Add(this.cboProveedor);
             this.groupBox1.Controls.Add(this.cbProveedor);
@@ -79,7 +84,7 @@
             this.groupBox1.Controls.Add(this.dtpHasta);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox1.Location = new System.Drawing.Point(12, 2);
+            this.groupBox1.Location = new System.Drawing.Point(12, 6);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(1046, 117);
             this.groupBox1.TabIndex = 0;
@@ -108,6 +113,7 @@
             // 
             this.btnPrint.BackColor = System.Drawing.Color.Gray;
             this.btnPrint.Image = global::Comercial.Properties.Resources.printer_1;
+            this.btnPrint.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.btnPrint.Location = new System.Drawing.Point(986, 50);
             this.btnPrint.Name = "btnPrint";
             this.btnPrint.Size = new System.Drawing.Size(54, 36);
@@ -119,6 +125,7 @@
             // 
             this.btnBuscar.BackColor = System.Drawing.Color.Gray;
             this.btnBuscar.Image = global::Comercial.Properties.Resources.musica_searcher;
+            this.btnBuscar.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.btnBuscar.Location = new System.Drawing.Point(929, 50);
             this.btnBuscar.Name = "btnBuscar";
             this.btnBuscar.Size = new System.Drawing.Size(54, 36);
@@ -129,9 +136,10 @@
             // cboUsuario
             // 
             this.cboUsuario.FormattingEnabled = true;
+            this.cboUsuario.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.cboUsuario.Location = new System.Drawing.Point(627, 58);
             this.cboUsuario.Name = "cboUsuario";
-            this.cboUsuario.Size = new System.Drawing.Size(248, 23);
+            this.cboUsuario.Size = new System.Drawing.Size(290, 23);
             this.cboUsuario.TabIndex = 13;
             // 
             // cbUsuario
@@ -199,13 +207,26 @@
             // 
             this.dgvVentas.AllowUserToAddRows = false;
             this.dgvVentas.AllowUserToDeleteRows = false;
+            this.dgvVentas.AlternatingRowsDefaultCellStyle = altVentas;
+            this.dgvVentas.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.dgvVentas.BackgroundColor = System.Drawing.Color.White;
+            this.dgvVentas.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            altVentas.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            hdrVentas.BackColor = System.Drawing.Color.DimGray;
+            hdrVentas.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            hdrVentas.ForeColor = System.Drawing.Color.White;
+            hdrVentas.SelectionBackColor = System.Drawing.Color.DimGray;
+            hdrVentas.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvVentas.ColumnHeadersDefaultCellStyle = hdrVentas;
+            this.dgvVentas.EnableHeadersVisualStyles = false;
+            this.dgvVentas.RowHeadersVisible = false;
             this.dgvVentas.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dgvVentas.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvVentas.Location = new System.Drawing.Point(12, 125);
+            this.dgvVentas.Location = new System.Drawing.Point(12, 129);
             this.dgvVentas.Name = "dgvVentas";
             this.dgvVentas.ReadOnly = true;
             this.dgvVentas.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvVentas.Size = new System.Drawing.Size(1046, 340);
+            this.dgvVentas.Size = new System.Drawing.Size(1046, 300);
             this.dgvVentas.TabIndex = 1;
             this.dgvVentas.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVentas_CellEnter);
             // 
@@ -213,6 +234,19 @@
             // 
             this.dgvDetalle.AllowUserToAddRows = false;
             this.dgvDetalle.AllowUserToDeleteRows = false;
+            this.dgvDetalle.AlternatingRowsDefaultCellStyle = altDetalle;
+            this.dgvDetalle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.dgvDetalle.BackgroundColor = System.Drawing.Color.White;
+            this.dgvDetalle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            altDetalle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            hdrDetalle.BackColor = System.Drawing.Color.Gray;
+            hdrDetalle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            hdrDetalle.ForeColor = System.Drawing.Color.White;
+            hdrDetalle.SelectionBackColor = System.Drawing.Color.Gray;
+            hdrDetalle.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvDetalle.ColumnHeadersDefaultCellStyle = hdrDetalle;
+            this.dgvDetalle.EnableHeadersVisualStyles = false;
+            this.dgvDetalle.RowHeadersVisible = false;
             this.dgvDetalle.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
             this.dgvDetalle.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvDetalle.Location = new System.Drawing.Point(9, 22);
@@ -225,7 +259,8 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(12, 471);
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.label3.Location = new System.Drawing.Point(12, 435);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(58, 15);
             this.label3.TabIndex = 15;
@@ -233,8 +268,9 @@
             // 
             // nudCantidad
             // 
+            this.nudCantidad.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
             this.nudCantidad.Enabled = false;
-            this.nudCantidad.Location = new System.Drawing.Point(76, 467);
+            this.nudCantidad.Location = new System.Drawing.Point(76, 431);
             this.nudCantidad.Maximum = new decimal(new int[] {
             1410065407,
             2,
@@ -248,7 +284,8 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(549, 473);
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.label4.Location = new System.Drawing.Point(549, 437);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(66, 15);
             this.label4.TabIndex = 17;
@@ -256,9 +293,10 @@
             // 
             // nudVenta
             // 
+            this.nudVenta.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
             this.nudVenta.DecimalPlaces = 2;
             this.nudVenta.Enabled = false;
-            this.nudVenta.Location = new System.Drawing.Point(621, 469);
+            this.nudVenta.Location = new System.Drawing.Point(621, 433);
             this.nudVenta.Maximum = new decimal(new int[] {
             276447231,
             23283,
@@ -277,7 +315,8 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(715, 473);
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.label5.Location = new System.Drawing.Point(715, 437);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(65, 15);
             this.label5.TabIndex = 19;
@@ -285,9 +324,10 @@
             // 
             // nudCosto
             // 
+            this.nudCosto.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
             this.nudCosto.DecimalPlaces = 2;
             this.nudCosto.Enabled = false;
-            this.nudCosto.Location = new System.Drawing.Point(786, 469);
+            this.nudCosto.Location = new System.Drawing.Point(786, 433);
             this.nudCosto.Maximum = new decimal(new int[] {
             276447231,
             23283,
@@ -304,9 +344,10 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.groupBox2.BackColor = System.Drawing.Color.Silver;
             this.groupBox2.Controls.Add(this.dgvDetalle);
-            this.groupBox2.Location = new System.Drawing.Point(12, 502);
+            this.groupBox2.Location = new System.Drawing.Point(12, 461);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(1046, 187);
             this.groupBox2.TabIndex = 21;
@@ -317,7 +358,8 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(880, 473);
+            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.label6.Location = new System.Drawing.Point(880, 437);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(84, 15);
             this.label6.TabIndex = 22;
@@ -325,9 +367,10 @@
             // 
             // nudComision
             // 
+            this.nudComision.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
             this.nudComision.DecimalPlaces = 2;
             this.nudComision.Enabled = false;
-            this.nudComision.Location = new System.Drawing.Point(970, 469);
+            this.nudComision.Location = new System.Drawing.Point(970, 433);
             this.nudComision.Maximum = new decimal(new int[] {
             276447231,
             23283,
@@ -347,7 +390,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(1070, 696);
+            this.ClientSize = new System.Drawing.Size(1070, 660);
             this.Controls.Add(this.nudComision);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.groupBox2);
@@ -363,8 +406,9 @@
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(1000, 640);
             this.Name = "frmVentasEstadisticas";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Resumen de Ventas";

@@ -29,6 +29,14 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmReporteIngreso));
+            System.Windows.Forms.DataGridViewCellStyle dgvHeaderStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvAltStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            dgvAltStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            dgvHeaderStyle.BackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dgvHeaderStyle.ForeColor = System.Drawing.Color.White;
+            dgvHeaderStyle.SelectionBackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.SelectionForeColor = System.Drawing.Color.White;
             this.dtpHasta = new System.Windows.Forms.DateTimePicker();
             this.dtpDesde = new System.Windows.Forms.DateTimePicker();
             this.label1 = new System.Windows.Forms.Label();
@@ -84,6 +92,7 @@
             this.groupBox1.Controls.Add(this.dtpHasta);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.dtpDesde);
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(1038, 74);
@@ -95,6 +104,7 @@
             // 
             this.btnBuscarComp.BackColor = System.Drawing.Color.Gray;
             this.btnBuscarComp.Image = global::Comercial.Properties.Resources.musica_searcher;
+            this.btnBuscarComp.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.btnBuscarComp.Location = new System.Drawing.Point(893, 17);
             this.btnBuscarComp.Name = "btnBuscarComp";
             this.btnBuscarComp.Size = new System.Drawing.Size(53, 42);
@@ -104,6 +114,7 @@
             // 
             // txtComprobante
             // 
+            this.txtComprobante.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.txtComprobante.Location = new System.Drawing.Point(759, 27);
             this.txtComprobante.Name = "txtComprobante";
             this.txtComprobante.Size = new System.Drawing.Size(120, 23);
@@ -113,6 +124,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
             this.label3.Location = new System.Drawing.Point(667, 31);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(86, 15);
@@ -142,6 +154,13 @@
             // 
             // dgvCabecera
             // 
+            this.dgvCabecera.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvCabecera.BackgroundColor = System.Drawing.Color.White;
+            this.dgvCabecera.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.dgvCabecera.ColumnHeadersDefaultCellStyle = dgvHeaderStyle;
+            this.dgvCabecera.EnableHeadersVisualStyles = false;
+            this.dgvCabecera.RowHeadersVisible = false;
+            this.dgvCabecera.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left));
             this.dgvCabecera.AllowUserToAddRows = false;
             this.dgvCabecera.AllowUserToDeleteRows = false;
             this.dgvCabecera.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
@@ -157,6 +176,13 @@
             // 
             // dgvDetalle
             // 
+            this.dgvDetalle.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvDetalle.BackgroundColor = System.Drawing.Color.White;
+            this.dgvDetalle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.dgvDetalle.ColumnHeadersDefaultCellStyle = dgvHeaderStyle;
+            this.dgvDetalle.EnableHeadersVisualStyles = false;
+            this.dgvDetalle.RowHeadersVisible = false;
+            this.dgvDetalle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.dgvDetalle.AllowUserToAddRows = false;
             this.dgvDetalle.AllowUserToDeleteRows = false;
             this.dgvDetalle.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
@@ -172,6 +198,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
             this.label4.Location = new System.Drawing.Point(890, 584);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(34, 15);
@@ -180,6 +207,7 @@
             // 
             // txtTotal
             // 
+            this.txtTotal.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
             this.txtTotal.Location = new System.Drawing.Point(930, 580);
             this.txtTotal.Name = "txtTotal";
             this.txtTotal.Size = new System.Drawing.Size(120, 23);
@@ -210,6 +238,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.AutoScroll = true;
+            this.AutoScrollMinSize = new System.Drawing.Size(1062, 610);
             this.ClientSize = new System.Drawing.Size(1062, 610);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
@@ -222,7 +252,8 @@
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
+            this.MinimumSize = new System.Drawing.Size(700, 400);
             this.MinimizeBox = false;
             this.Name = "frmReporteIngreso";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

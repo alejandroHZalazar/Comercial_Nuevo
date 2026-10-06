@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmCambioDePreciosMasivo));
+            System.Windows.Forms.DataGridViewCellStyle dgvHeaderStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dgvAltStyle = new System.Windows.Forms.DataGridViewCellStyle();
             this.button1 = new System.Windows.Forms.Button();
             this.dgvProductos = new System.Windows.Forms.DataGridView();
             this.btnLevantar = new System.Windows.Forms.Button();
@@ -48,9 +50,10 @@
             this.button1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button1.Image = global::Comercial.Properties.Resources.icon1;
             this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button1.Location = new System.Drawing.Point(411, 405);
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.button1.Location = new System.Drawing.Point(594, 426);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(150, 32);
+            this.button1.Size = new System.Drawing.Size(150, 34);
             this.button1.TabIndex = 17;
             this.button1.Text = "Cambiar Precios";
             this.button1.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -59,10 +62,23 @@
             // 
             // dgvProductos
             // 
+            this.dgvProductos.AlternatingRowsDefaultCellStyle = dgvAltStyle;
+            this.dgvProductos.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.dgvProductos.BackgroundColor = System.Drawing.Color.White;
+            this.dgvProductos.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            dgvAltStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            dgvHeaderStyle.BackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dgvHeaderStyle.ForeColor = System.Drawing.Color.White;
+            dgvHeaderStyle.SelectionBackColor = System.Drawing.Color.DimGray;
+            dgvHeaderStyle.SelectionForeColor = System.Drawing.Color.White;
+            this.dgvProductos.ColumnHeadersDefaultCellStyle = dgvHeaderStyle;
             this.dgvProductos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvProductos.Location = new System.Drawing.Point(8, 63);
+            this.dgvProductos.EnableHeadersVisualStyles = false;
+            this.dgvProductos.RowHeadersVisible = false;
+            this.dgvProductos.Location = new System.Drawing.Point(16, 68);
             this.dgvProductos.Name = "dgvProductos";
-            this.dgvProductos.Size = new System.Drawing.Size(383, 337);
+            this.dgvProductos.Size = new System.Drawing.Size(474, 350);
             this.dgvProductos.TabIndex = 16;
             // 
             // btnLevantar
@@ -71,9 +87,10 @@
             this.btnLevantar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnLevantar.Image = global::Comercial.Properties.Resources.icon1;
             this.btnLevantar.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnLevantar.Location = new System.Drawing.Point(402, 19);
+            this.btnLevantar.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.btnLevantar.Location = new System.Drawing.Point(502, 24);
             this.btnLevantar.Name = "btnLevantar";
-            this.btnLevantar.Size = new System.Drawing.Size(150, 32);
+            this.btnLevantar.Size = new System.Drawing.Size(242, 34);
             this.btnLevantar.TabIndex = 15;
             this.btnLevantar.Text = "   Levantar Excel";
             this.btnLevantar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -84,7 +101,8 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(249, 7);
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.label2.Location = new System.Drawing.Point(358, 10);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(32, 15);
             this.label2.TabIndex = 14;
@@ -92,16 +110,17 @@
             // 
             // txtHoja
             // 
-            this.txtHoja.Location = new System.Drawing.Point(249, 25);
+            this.txtHoja.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.txtHoja.Location = new System.Drawing.Point(358, 28);
             this.txtHoja.Name = "txtHoja";
-            this.txtHoja.Size = new System.Drawing.Size(147, 23);
+            this.txtHoja.Size = new System.Drawing.Size(132, 23);
             this.txtHoja.TabIndex = 13;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(8, 7);
+            this.label1.Location = new System.Drawing.Point(16, 10);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(50, 15);
             this.label1.TabIndex = 12;
@@ -109,16 +128,18 @@
             // 
             // txtArchivo
             // 
-            this.txtArchivo.Location = new System.Drawing.Point(8, 25);
+            this.txtArchivo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.txtArchivo.Location = new System.Drawing.Point(16, 28);
             this.txtArchivo.Name = "txtArchivo";
-            this.txtArchivo.Size = new System.Drawing.Size(235, 23);
+            this.txtArchivo.Size = new System.Drawing.Size(334, 23);
             this.txtArchivo.TabIndex = 11;
             // 
             // pbProceso
             // 
-            this.pbProceso.Location = new System.Drawing.Point(8, 406);
+            this.pbProceso.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.pbProceso.Location = new System.Drawing.Point(16, 432);
             this.pbProceso.Name = "pbProceso";
-            this.pbProceso.Size = new System.Drawing.Size(383, 23);
+            this.pbProceso.Size = new System.Drawing.Size(560, 23);
             this.pbProceso.TabIndex = 18;
             // 
             // backgroundWorkerTarea
@@ -129,9 +150,11 @@
             // 
             // rtbProceso
             // 
-            this.rtbProceso.Location = new System.Drawing.Point(402, 63);
+            this.rtbProceso.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Right));
+            this.rtbProceso.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.rtbProceso.Location = new System.Drawing.Point(502, 68);
             this.rtbProceso.Name = "rtbProceso";
-            this.rtbProceso.Size = new System.Drawing.Size(159, 337);
+            this.rtbProceso.Size = new System.Drawing.Size(242, 350);
             this.rtbProceso.TabIndex = 19;
             this.rtbProceso.Text = "";
             // 
@@ -140,7 +163,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(573, 440);
+            this.ClientSize = new System.Drawing.Size(760, 472);
             this.Controls.Add(this.rtbProceso);
             this.Controls.Add(this.pbProceso);
             this.Controls.Add(this.button1);
@@ -154,7 +177,8 @@
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximizeBox = false;
+            this.MaximizeBox = true;
+            this.MinimumSize = new System.Drawing.Size(640, 420);
             this.MinimizeBox = false;
             this.Name = "frmCambioDePreciosMasivo";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
