@@ -53,6 +53,82 @@ namespace Comercial.Clases
             instDatos.cerrarConexion();
             return dt;
         }
+        /// <summary>
+        /// Rubros con su jerarquía (vw_RubrosJerarquia), ordenados por ruta: el padre siempre antecede a sus hijos.
+        /// Columnas: id, descripcion, fk_rubroPadre, rubroPadre, nivel (0 = principal), ruta ("A > B > C"), esRaiz, esHoja.
+        /// Si la base todavía no tiene la jerarquía, todos los rubros se devuelven como principales.
+        /// </summary>
+        public DataTable traeRubrosJerarquia()
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                MySqlDataAdapter rows = new MySqlDataAdapter("select id, descripcion, fk_rubroPadre, rubroPadre, nivel, ruta, esRaiz, esHoja from vw_RubrosJerarquia order by ruta", instDatos.abrirConexion());
+                rows.Fill(dt);
+            }
+            catch (MySqlException)
+            {
+                instDatos.cerrarConexion();
+                dt = new DataTable();
+                MySqlDataAdapter rows = new MySqlDataAdapter("select id, descripcion, cast(null as signed) as fk_rubroPadre, cast(null as char) as rubroPadre, 0 as nivel, descripcion as ruta, 1 as esRaiz, 1 as esHoja from Rubros order by descripcion", instDatos.abrirConexion());
+                rows.Fill(dt);
+            }
+            finally
+            {
+                instDatos.cerrarConexion();
+            }
+            return dt;
+        }
+
+        /// <summary>
+        /// Igual que traeRubrosJerarquia() pero con una primera fila "TODOS" (id 0), para combos de filtro.
+        /// </summary>
+        public DataTable traeRubrosJerarquiaConTodos()
+        {
+            DataTable dt = traeRubrosJerarquia();
+            DataRow todos = dt.NewRow();
+            todos["id"] = 0;
+            todos["descripcion"] = "TODOS";
+            todos["ruta"] = "TODOS";
+            dt.Rows.InsertAt(todos, 0);
+            return dt;
+        }
+
+        private static bool? _hayJerarquiaRubros;
+
+        /// <summary>
+        /// Condición SQL para filtrar por un rubro incluyendo todos sus descendientes (el rubro y sus subrubros a cualquier nivel).
+        /// columnaRubro es la columna a comparar, con su alias (p. ej. "p.fk_rubro" o "r.id").
+        /// En una base sin la jerarquía de rubros (sin RubrosArbol) compara solo el rubro exacto, como antes.
+        /// </summary>
+        public static string filtroRubro(string columnaRubro, int idRubro)
+        {
+            if (!_hayJerarquiaRubros.HasValue)
+                _hayJerarquiaRubros = existeJerarquiaRubros();
+
+            return _hayJerarquiaRubros.Value
+                ? columnaRubro + " IN (SELECT fk_descendiente FROM RubrosArbol WHERE fk_ancestro = " + idRubro + ")"
+                : columnaRubro + " = " + idRubro;
+        }
+
+        private static bool existeJerarquiaRubros()
+        {
+            classDatos datos = new classDatos();
+            try
+            {
+                MySqlCommand cmd = new MySqlCommand("select count(*) from RubrosArbol", datos.abrirConexion());
+                return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+            }
+            catch (MySqlException)
+            {
+                return false;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
         public DataTable traeTipoUsuarios()
         {
             MySqlDataAdapter rows = new MySqlDataAdapter("select * from tipoUsuarios order by id", instDatos.abrirConexion());
@@ -280,6 +356,46 @@ namespace Comercial.Clases
             catch (Exception ex)
             {
                 throw ex;
+            }
+            finally
+            {
+                instDatos.cerrarConexion();
+            }
+        }
+
+        /// <summary>
+        /// ABM de rubros con jerarquía (sp_RubrosABM). unTipo: 1 alta, 2 modificación, 3 baja. unPadre null = rubro principal.
+        /// Devuelve >= 0 si fue correcto (id del rubro). Negativos: -1 error, -2 ciclo, -3 tiene subrubros,
+        /// -4 tiene productos, -5 nombre repetido bajo el mismo padre, -6 padre inexistente, -7 descripción vacía.
+        /// En una base sin la jerarquía y sin padre, usa el ABM anterior.
+        /// </summary>
+        public int ABMRubrosJerarquia(int unId, int unTipo, string unaDescripcion, int? unPadre)
+        {
+            try
+            {
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Connection = instDatos.abrirConexion();
+                cmd.CommandText = "sp_RubrosABM";
+
+                cmd.Parameters.AddWithValue("unId", unId);
+                cmd.Parameters.AddWithValue("unTipo", unTipo);
+                cmd.Parameters.AddWithValue("unaDescripcion", unaDescripcion);
+                cmd.Parameters.AddWithValue("unPadre", unPadre.HasValue ? (object)unPadre.Value : DBNull.Value);
+
+                MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int32);
+                salida.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(salida);
+
+                cmd.ExecuteNonQuery();
+                return Convert.ToInt32(salida.Value);
+            }
+            catch (MySqlException ex) when (ex.Number == 1305 && !unPadre.HasValue)
+            {
+                // 1305 = el SP no existe (base sin la jerarquía de rubros): ABM anterior
+                instDatos.cerrarConexion();
+                ABMRubros(unId, unTipo, unaDescripcion);
+                return unId;
             }
             finally
             {

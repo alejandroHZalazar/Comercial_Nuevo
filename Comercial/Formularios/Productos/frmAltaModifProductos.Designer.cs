@@ -94,6 +94,9 @@
             // 
             // cboRubro
             // 
+            this.cboRubro.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.cboRubro.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.cboRubro.DropDownWidth = 480;
             this.cboRubro.FormattingEnabled = true;
             this.cboRubro.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             this.cboRubro.Location = new System.Drawing.Point(107, 128);

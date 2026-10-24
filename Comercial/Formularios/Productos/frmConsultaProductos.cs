@@ -204,6 +204,18 @@ namespace Comercial.Formularios.Productos
             buscarDatosProductos();
         }
 
+        // Jerarquía de rubros (se carga una sola vez por apertura del formulario)
+        DataTable rubrosJerarquia;
+
+        private string rutaRubro(int idRubro, string descripcionRespaldo)
+        {
+            if (rubrosJerarquia == null)
+                rubrosJerarquia = new Clases.ClassConfiguracion().traeRubrosJerarquia();
+
+            DataRow[] filas = rubrosJerarquia.Select("id = " + idRubro);
+            return filas.Length > 0 ? filas[0]["ruta"].ToString() : descripcionRespaldo;
+        }
+
         private void buscarDatosProductos()
         {
             DataTable Prod = instProd.traerProductosParaEditar(int.Parse(dgvProductos.CurrentRow.Cells["ID"].Value.ToString()));
@@ -215,7 +227,11 @@ namespace Comercial.Formularios.Productos
                 lblCodBarras.Text = Prod.Rows[0]["codBarras"].ToString();
                 lblDescripcion.Text = Prod.Rows[0]["descripcion"].ToString();
                 lblIVA.Text =  (Math.Round (decimal.Parse (Prod.Rows[0]["iva"].ToString()),cantDec)).ToString ();
-                lblRubro.Text = Prod.Rows[0]["rubro"].ToString();
+                // Cadena completa de rubros y subrubros ("Rubro > Subrubro > ..."); si no se puede resolver, solo la descripción
+                int idRubro;
+                lblRubro.Text = Prod.Columns.Contains("fk_rubro") && int.TryParse(Prod.Rows[0]["fk_rubro"].ToString(), out idRubro)
+                    ? rutaRubro(idRubro, Prod.Rows[0]["rubro"].ToString())
+                    : Prod.Rows[0]["rubro"].ToString();
                 lblProveedor.Text = Prod.Rows[0]["Proveedor"].ToString();
                 lblLista.Text = (Math.Round(decimal.Parse(Prod.Rows[0]["precio"].ToString()), cantDec)).ToString();
                 lblCosto.Text = (Math.Round(decimal.Parse(Prod.Rows[0]["costo"].ToString()), cantDec)).ToString();

@@ -165,9 +165,10 @@ namespace Comercial.Formularios.Productos
             cboProveedores.DataSource = instProv.traeProveedoresCabecera();
             cboProveedores.ValueMember = "Cod";
             cboProveedores.DisplayMember = "Proveedor";
-            cboRubros.DataSource = instConfig.traeRubros();
+            cboRubros.DataSource = instConfig.traeRubrosJerarquia();
             cboRubros.ValueMember = "id";
-            cboRubros.DisplayMember = "descripcion";
+            cboRubros.DisplayMember = "ruta";
+            cboRubros.DropDownWidth = 450;
 
             DataTable tiposMov = new DataTable();
             tiposMov.Columns.Add("id");
@@ -243,9 +244,13 @@ namespace Comercial.Formularios.Productos
                 unFiltro = " where p.fk_proveedor = " + cboProveedores.SelectedValue.ToString();
 
             if (cbRubros.Checked)
+            {
+                // Incluye el rubro seleccionado y todos sus subrubros
+                string filtroRubro = Clases.ClassConfiguracion.filtroRubro("p.fk_Rubro", int.Parse(cboRubros.SelectedValue.ToString()));
                 unFiltro = (unFiltro == string.Empty
-                    ? " where p.fk_Rubro = " + cboRubros.SelectedValue.ToString()
-                    : unFiltro + " and p.fk_Rubro = " + cboRubros.SelectedValue.ToString());
+                    ? " where " + filtroRubro
+                    : unFiltro + " and " + filtroRubro);
+            }
 
             dgvProductos.DataSource = instProd.traeParaCambiarPrecio(unFiltro);
 

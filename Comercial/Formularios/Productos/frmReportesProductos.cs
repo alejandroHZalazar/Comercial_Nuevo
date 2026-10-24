@@ -24,7 +24,8 @@ namespace Comercial.Formularios.Productos
             string filtro = string.Empty;
             if (cbRubro.Checked)
             {
-                filtro = " where p.fk_rubro = " + cboRubro.SelectedValue.ToString();
+                // Incluye el rubro seleccionado y todos sus subrubros
+                filtro = " where " + Clases.ClassConfiguracion.filtroRubro("p.fk_rubro", int.Parse(cboRubro.SelectedValue.ToString()));
             }
             if (cbProveedor.Checked)
             {
@@ -46,9 +47,10 @@ namespace Comercial.Formularios.Productos
         private void frmReportesProductos_Load(object sender, EventArgs e)
         {
             Clases.ClassProveedores instProv = new Clases.ClassProveedores();
-            cboRubro.DataSource = instConfig.traeRubros();
+            cboRubro.DataSource = instConfig.traeRubrosJerarquia();
             cboRubro.ValueMember = "id";
-            cboRubro.DisplayMember = "descripcion";
+            cboRubro.DisplayMember = "ruta";
+            cboRubro.DropDownWidth = 450;
             cboRubro.SelectedIndex = 0;
 
             cboProveedor.DataSource = instProv.traeProveedores();

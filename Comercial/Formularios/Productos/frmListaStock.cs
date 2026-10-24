@@ -38,7 +38,8 @@ namespace Comercial.Formularios.Productos
                 {
                     
                     
-                        filtro += " and r.id = " + cboRubros.SelectedValue.ToString();
+                        // Incluye el rubro seleccionado y todos sus subrubros
+                        filtro += " and " + Clases.ClassConfiguracion.filtroRubro("r.id", int.Parse(cboRubros.SelectedValue.ToString()));
                                  
                 }
 
@@ -99,9 +100,10 @@ namespace Comercial.Formularios.Productos
             cboProveedores.DataSource = instProv.traeProveedoresCabecera ();
             cboProveedores.ValueMember = "Cod";
             cboProveedores.DisplayMember = "Proveedor";
-            cboRubros.DataSource = instConfig.traeRubros();
+            cboRubros.DataSource = instConfig.traeRubrosJerarquia();
             cboRubros.ValueMember = "id";
-            cboRubros.DisplayMember = "descripcion";
+            cboRubros.DisplayMember = "ruta";
+            cboRubros.DropDownWidth = 450;
 
             cboProveedores.SelectedIndex = 0;
             cboRubros.SelectedIndex = 0;

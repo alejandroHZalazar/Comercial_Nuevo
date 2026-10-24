@@ -374,8 +374,9 @@ namespace Comercial.Clases
                     filtro += $" AND p.fk_proveedor = {proveedorId}";
 
                 // 🔹 Filtro rubro
+                // Incluye el rubro seleccionado y todos sus subrubros
                 if (rubroId != 0)
-                    filtro += $" AND p.fk_Rubro = {rubroId}";
+                    filtro += " AND " + ClassConfiguracion.filtroRubro("p.fk_Rubro", rubroId);
 
                 // 🔹 Filtro por texto
                 if (!string.IsNullOrWhiteSpace(valorFiltro))

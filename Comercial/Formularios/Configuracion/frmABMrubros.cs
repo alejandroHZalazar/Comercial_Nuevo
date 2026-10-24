@@ -15,6 +15,8 @@ namespace Comercial.Formularios.Configuracion
         Clases.ClassConfiguracion instConfig = new Clases.ClassConfiguracion();
         int accion = 0;
         int idRubro;
+        // Jerarquía cargada (ordenada por ruta: el padre antecede a sus hijos)
+        DataTable dtRubros = new DataTable();
 
         public frmABMrubros()
         {
@@ -23,99 +25,218 @@ namespace Comercial.Formularios.Configuracion
 
         private void frmABMrubros_Load(object sender, EventArgs e)
         {
-            dgvRubros.DataSource = instConfig.traeRubros ();
-            txtDescripcion.Text = string.Empty;
-
-            if (dgvRubros.Width == 355)
-            {
-                dgvRubros.Width += gbDatos.Width + 5;
-            }
-            dgvRubros.BringToFront();
-            verificarBotones();
-            dgvRubros.Enabled = true;
-            dgvRubros.Focus();
+            estadoInicial(null);
         }
 
-        private void estadoInicial()
+        private void estadoInicial(int? idSeleccionar)
         {
-            dgvRubros.DataSource = instConfig.traeRubros ();
             txtDescripcion.Text = string.Empty;
-            
-            if (dgvRubros.Width == 355)
-            {
-                dgvRubros.Width += gbDatos.Width + 5;
-            }
-            dgvRubros.BringToFront();
+            gbDatos.Enabled = false;
+            tvRubros.Enabled = true;
+            cargarArbol(idSeleccionar);
             verificarBotones();
-            dgvRubros.Enabled = true;
-            dgvRubros.Focus();
+            tvRubros.Focus();
         }
 
+        // Arma el árbol a partir de fk_rubroPadre; los rubros principales (fk_rubroPadre NULL) son la raíz.
+        private void cargarArbol(int? idSeleccionar)
+        {
+            dtRubros = instConfig.traeRubrosJerarquia();
+
+            var nodos = new Dictionary<int, TreeNode>();
+            foreach (DataRow fila in dtRubros.Rows)
+            {
+                int id = Convert.ToInt32(fila["id"]);
+                nodos[id] = new TreeNode(fila["descripcion"].ToString()) { Tag = id, ToolTipText = fila["ruta"].ToString() };
+            }
+
+            tvRubros.BeginUpdate();
+            tvRubros.Nodes.Clear();
+            foreach (DataRow fila in dtRubros.Rows)
+            {
+                TreeNode nodo = nodos[Convert.ToInt32(fila["id"])];
+                TreeNode padre;
+                if (fila["fk_rubroPadre"] != DBNull.Value && nodos.TryGetValue(Convert.ToInt32(fila["fk_rubroPadre"]), out padre))
+                    padre.Nodes.Add(nodo);
+                else
+                    tvRubros.Nodes.Add(nodo);
+            }
+            tvRubros.ExpandAll();
+            tvRubros.EndUpdate();
+
+            TreeNode seleccionado;
+            if (idSeleccionar.HasValue && nodos.TryGetValue(idSeleccionar.Value, out seleccionado))
+                tvRubros.SelectedNode = seleccionado;
+            else if (tvRubros.Nodes.Count > 0)
+                tvRubros.SelectedNode = tvRubros.Nodes[0];
+
+            if (tvRubros.SelectedNode != null)
+                tvRubros.SelectedNode.EnsureVisible();
+            mostrarUbicacion();
+        }
+
+        private int? rubroSeleccionado()
+        {
+            return tvRubros.SelectedNode == null ? (int?)null : (int)tvRubros.SelectedNode.Tag;
+        }
+
+        private DataRow filaRubro(int id)
+        {
+            DataRow[] filas = dtRubros.Select("id = " + id);
+            return filas.Length > 0 ? filas[0] : null;
+        }
+
+        // Muestra la ubicación jerárquica y el rubro padre del rubro seleccionado
+        private void mostrarUbicacion()
+        {
+            int? id = rubroSeleccionado();
+            DataRow fila = id.HasValue ? filaRubro(id.Value) : null;
+            if (fila == null)
+            {
+                lblRuta.Text = "Ubicación:";
+                return;
+            }
+
+            string padre = fila["fk_rubroPadre"] == DBNull.Value ? "(rubro principal)" : fila["rubroPadre"].ToString();
+            lblRuta.Text = "Ubicación:" + Environment.NewLine + fila["ruta"].ToString()
+                         + Environment.NewLine + Environment.NewLine + "Rubro padre: " + padre
+                         + Environment.NewLine + "Nivel: " + (Convert.ToInt32(fila["nivel"]) + 1);
+        }
+
+        private void tvRubros_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            mostrarUbicacion();
+            verificarBotones();
+        }
 
         private void verificarBotones()
         {
             btnAgregar.Enabled = true;
-            if (dgvRubros.RowCount > 0)
+            bool haySeleccion = tvRubros.SelectedNode != null;
+            btnEditar.Enabled = haySeleccion;
+            btnEliminar.Enabled = haySeleccion;
+        }
+
+        // Id del rubro y de todos sus descendientes (no pueden ser su propio padre)
+        private HashSet<int> idsRama(int raiz)
+        {
+            var resultado = new HashSet<int> { raiz };
+            bool agrego = true;
+            while (agrego)
             {
-                btnEditar.Enabled = true;
-                btnEliminar.Enabled = true;
+                agrego = false;
+                foreach (DataRow fila in dtRubros.Rows)
+                {
+                    if (fila["fk_rubroPadre"] != DBNull.Value
+                        && resultado.Contains(Convert.ToInt32(fila["fk_rubroPadre"]))
+                        && resultado.Add(Convert.ToInt32(fila["id"])))
+                    {
+                        agrego = true;
+                    }
+                }
             }
-            else
+            return resultado;
+        }
+
+        // Combo de rubro padre: "(Rubro principal)" + todos los rubros con su ruta completa
+        private void cargarComboPadre(int? excluirRama)
+        {
+            var dt = new DataTable();
+            dt.Columns.Add("id", typeof(int));
+            dt.Columns.Add("ruta", typeof(string));
+            dt.Rows.Add(0, "(Rubro principal)");
+
+            HashSet<int> excluidos = excluirRama.HasValue ? idsRama(excluirRama.Value) : new HashSet<int>();
+            foreach (DataRow fila in dtRubros.Rows)
             {
-                btnEditar.Enabled = false;
-                btnEliminar.Enabled = false;
+                int id = Convert.ToInt32(fila["id"]);
+                if (!excluidos.Contains(id))
+                    dt.Rows.Add(id, fila["ruta"].ToString());
             }
 
+            cboPadre.DataSource = dt;
+            cboPadre.DisplayMember = "ruta";
+            cboPadre.ValueMember = "id";
         }
 
         private void btnAgregar_Click(object sender, EventArgs e)
         {
             estadoAM();
             accion = 1;
+            idRubro = 0;
             txtDescripcion.Text = string.Empty;
+            cargarComboPadre(null);
+            // Por defecto el nuevo rubro se crea dentro del seleccionado; se puede cambiar a "(Rubro principal)"
+            int? sel = rubroSeleccionado();
+            cboPadre.SelectedValue = sel.HasValue ? sel.Value : 0;
             txtDescripcion.Focus();
         }
 
         private void estadoAM()
         {
-            dgvRubros.Enabled = false;
+            tvRubros.Enabled = false;
+            gbDatos.Enabled = true;
             btnAgregar.Enabled = false;
             btnEditar.Enabled = false;
             btnEliminar.Enabled = false;
-            dgvRubros.Width = 355;
-
         }
 
         private void btnEditar_Click(object sender, EventArgs e)
         {
+            int? sel = rubroSeleccionado();
+            if (!sel.HasValue) return;
+
             estadoAM();
             accion = 2;
-            txtDescripcion.Text = dgvRubros.CurrentRow.Cells["descripcion"].Value.ToString();
-
-            idRubro = int.Parse(dgvRubros.CurrentRow.Cells["id"].Value.ToString());
+            idRubro = sel.Value;
+            DataRow fila = filaRubro(idRubro);
+            txtDescripcion.Text = fila["descripcion"].ToString();
+            cargarComboPadre(idRubro);
+            cboPadre.SelectedValue = fila["fk_rubroPadre"] == DBNull.Value ? 0 : Convert.ToInt32(fila["fk_rubroPadre"]);
             txtDescripcion.Focus();
         }
 
         private void btnEliminar_Click(object sender, EventArgs e)
         {
-            instConfig.ABMRubros (int.Parse (dgvRubros .CurrentRow .Cells["id"].Value .ToString ()),3,txtDescripcion .Text.Trim ());
-            estadoInicial();
+            int? sel = rubroSeleccionado();
+            if (!sel.HasValue) return;
+
+            int resultado = instConfig.ABMRubrosJerarquia(sel.Value, 3, tvRubros.SelectedNode.Text, null);
+            if (resultadoCorrecto(resultado))
+                estadoInicial(null);
         }
 
         private void btnGrabar_Click(object sender, EventArgs e)
         {
             if (formularioValido())
             {
-                if (accion == 1)
+                int padre = cboPadre.SelectedValue == null ? 0 : Convert.ToInt32(cboPadre.SelectedValue);
+                int resultado = instConfig.ABMRubrosJerarquia(idRubro, accion, txtDescripcion.Text.Trim(), padre == 0 ? (int?)null : padre);
+                if (resultadoCorrecto(resultado))
                 {
-                    instConfig.ABMRubros(idRubro, 1, txtDescripcion.Text.Trim());
+                    estadoInicial(resultado > 0 ? (int?)resultado : null);
                 }
-                if (accion == 2)
-                {
-                    instConfig.ABMRubros(idRubro, 2, txtDescripcion.Text.Trim());
-                }
-                estadoInicial();
             }
+        }
+
+        // >= 0 es correcto (id del rubro). Los negativos son los códigos de sp_RubrosABM
+        private bool resultadoCorrecto(int resultado)
+        {
+            if (resultado >= 0) return true;
+
+            string mensaje;
+            switch (resultado)
+            {
+                case -2: mensaje = "Un rubro no puede ubicarse dentro de sí mismo ni de sus propios subrubros."; break;
+                case -3: mensaje = "No se puede eliminar el rubro porque tiene subrubros. Elimine o reubique primero los subrubros."; break;
+                case -4: mensaje = "No se puede eliminar el rubro porque tiene productos asociados."; break;
+                case -5: mensaje = "Ya existe un rubro con esa descripción dentro del mismo rubro padre."; break;
+                case -6: mensaje = "El rubro padre seleccionado no existe."; break;
+                case -7: mensaje = "Debe indicar una descripción."; break;
+                default: mensaje = "Ha ocurrido un error durante el procesamiento."; break;
+            }
+            MessageBox.Show(this, mensaje, "RUBROS", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return false;
         }
 
         private bool formularioValido()
@@ -132,7 +253,8 @@ namespace Comercial.Formularios.Configuracion
 
         private void btnCancelar_Click(object sender, EventArgs e)
         {
-            estadoInicial();
+            errorProvider1.Clear();
+            estadoInicial(rubroSeleccionado());
         }
 
         private void txtDescripcion_KeyPress(object sender, KeyPressEventArgs e)

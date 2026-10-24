@@ -231,7 +231,7 @@ namespace Comercial.Formularios.Ventas
         private void cargarProductos()
         {
             resgProducto.Clear();
-            DataTable productos = instProd.traeProductosPpal(" where IFNULL(baja, 0) = 0 order by descripcion");
+            DataTable productos = instProd.traeProductosPpal(" order by descripcion");
 
             if (productos.Rows.Count > 0)
             {
@@ -647,7 +647,7 @@ namespace Comercial.Formularios.Ventas
             {
                 if (cboFiltro.SelectedIndex == 0)
                 {
-                    producto = instProd.traeProductosPpal(" where IFNULL(baja, 0) = 0 and codProveedor = '" + txtFiltro.Text.Trim() + "'");
+                    producto = instProd.traeProductosPpal(" where codProveedor = '" + txtFiltro.Text.Trim() + "'");
                 }
                 else if (cboFiltro.SelectedIndex == 1)
                 {
@@ -675,7 +675,7 @@ namespace Comercial.Formularios.Ventas
                             textoBusqueda = codigoBarrasParte;
                         }
 
-                        producto = instProd.traeProductosPpal(" where IFNULL(baja, 0) = 0 and codBarras = " + textoBusqueda);
+                        producto = instProd.traeProductosPpal(" where codBarras = " + textoBusqueda);
                     }
                     else
                     {
@@ -690,7 +690,7 @@ namespace Comercial.Formularios.Ventas
 
                             if (productoBalanzaId == null) return;
 
-                            producto = instProd.traeProductosPpal(" where IFNULL(baja, 0) = 0 and codBarras = " + productoBalanzaId.Trim());
+                            producto = instProd.traeProductosPpal(" where codBarras = " + productoBalanzaId.Trim());
                             if (producto.Rows.Count > 0)
                             {
                                 productoDeBalanzaEncontrado = true;
@@ -718,14 +718,14 @@ namespace Comercial.Formularios.Ventas
                         }
                         else
                         {
-                            producto = instProd.traeProductosPpal(" where IFNULL(baja, 0) = 0 and codBarras = " + txtFiltro.Text.Trim());
+                            producto = instProd.traeProductosPpal(" where codBarras = " + txtFiltro.Text.Trim());
                         }
 
                     }
                 }
                 else
 
-                    producto = instProd.traeProductosPpal(" where IFNULL(baja, 0) = 0 and id = " + txtFiltro.Text.Trim());
+                    producto = instProd.traeProductosPpal(" where id = " + txtFiltro.Text.Trim());
 
             }
 
@@ -790,7 +790,7 @@ namespace Comercial.Formularios.Ventas
 
         private void prepararProducto()
         {
-            DataTable producto = instProd.traeProductosPpal(" where IFNULL(baja, 0) = 0 and descripcion = '" + lbDesc.SelectedItem.ToString() + "'");
+            DataTable producto = instProd.traeProductosPpal(" where descripcion = '" + lbDesc.SelectedItem.ToString() + "'");
 
             if (producto.Rows.Count > 0)
             {
@@ -1599,6 +1599,16 @@ namespace Comercial.Formularios.Ventas
         private void dgvProductos_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
         {
             procesoTotales();
+        }
+
+        private void dgvProductos_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Suprimir: quita la fila actual del detalle (en memoria). Si la celda está en edición, la tecla va al editor.
+            if (e.KeyCode == Keys.Delete && !dgvProductos.IsCurrentCellInEditMode && dgvProductos.CurrentRow != null)
+            {
+                dgvProductos.Rows.Remove(dgvProductos.CurrentRow);
+                e.Handled = true;
+            }
         }
 
         private void btnLimpiar_Click(object sender, EventArgs e)

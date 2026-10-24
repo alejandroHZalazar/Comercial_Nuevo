@@ -193,8 +193,9 @@ namespace Comercial.Formularios.Productos
             Clases .ClassConfiguracion instConfig = new Clases.ClassConfiguracion ();
             Clases.ClassProveedores instProveed = new Clases.ClassProveedores ();
 
-            cboRubro.DataSource = instConfig.traeRubros();
-            cboRubro.DisplayMember = "descripcion";
+            // Rubros en cualquier nivel de la jerarquía, mostrados con su ruta completa ("Rubro > Subrubro > ...")
+            cboRubro.DataSource = instConfig.traeRubrosJerarquia();
+            cboRubro.DisplayMember = "ruta";
             cboRubro.ValueMember = "id";
             cboRubro.SelectedIndex = -1;
 

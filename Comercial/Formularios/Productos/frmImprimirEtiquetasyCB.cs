@@ -46,9 +46,10 @@ namespace Comercial.Formularios.Productos
             cboProveedores.SelectedValue = 0;
 
             Clases.ClassConfiguracion instConfig = new Clases.ClassConfiguracion();
-            cboRubros.DataSource = instConfig.traeRubrosconTdos();
+            cboRubros.DataSource = instConfig.traeRubrosJerarquiaConTodos();
             cboRubros.ValueMember = "id";
-            cboRubros.DisplayMember = "descripcion";
+            cboRubros.DisplayMember = "ruta";
+            cboRubros.DropDownWidth = 450;
             cboRubros.SelectedValue = 0;
         }
 
