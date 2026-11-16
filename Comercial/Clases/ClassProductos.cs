@@ -9,8 +9,303 @@ namespace Comercial.Clases
     {
         classDatos instDatos = new classDatos();
 
-        public DataTable traeProductosPpal(string unFiltro)
+        // ── Variantes de producto (modelo LitoralMarket / Comercial Web) ─────────────
+        // Ficha = fila de productosPrincipales. Solo se aplica con parametros(ecommerce, HabilitarVariantesProducto)='1'
+        // y la tabla existente; con el parámetro apagado no se consulta ninguna tabla de variantes.
+        private static bool _variantesCalculado;
+        private static bool _variantesHabilitado;
+        private static string _variantesTabla;
+        private static DateTime _variantesVence = DateTime.MinValue;
+        private static readonly object _variantesLock = new object();
+
+        /// <summary>true solo con el parámetro en '1' y la tabla productosPrincipales existente (cacheado 60 s).</summary>
+        public static bool variantesHabilitadas()
         {
+            lock (_variantesLock)
+            {
+                if (_variantesCalculado && _variantesVence > DateTime.UtcNow) return _variantesHabilitado;
+
+                bool habilitado = false;
+                string tabla = null;
+                classDatos datos = new classDatos();
+                try
+                {
+                    MySqlCommand cmd = new MySqlCommand("select valor from parametros where modulo = 'ecommerce' and parametro = 'HabilitarVariantesProducto'", datos.abrirConexion());
+                    object valor = cmd.ExecuteScalar();
+                    if (valor != null && valor != DBNull.Value && valor.ToString().Trim() == "1")
+                    {
+                        // Nombre exacto tomado de la base (en Linux MySQL distingue mayúsculas en nombres de tabla)
+                        MySqlCommand cmdT = new MySqlCommand("select TABLE_NAME from information_schema.TABLES where TABLE_SCHEMA = DATABASE() and LOWER(TABLE_NAME) = 'productosprincipales'", datos.abrirConexion());
+                        object t = cmdT.ExecuteScalar();
+                        if (t != null && t != DBNull.Value)
+                        {
+                            tabla = t.ToString();
+                            habilitado = true;
+                        }
+                    }
+                }
+                catch
+                {
+                    habilitado = false;
+                    tabla = null;
+                }
+                finally
+                {
+                    datos.cerrarConexion();
+                }
+
+                _variantesHabilitado = habilitado;
+                _variantesTabla = tabla;
+                _variantesCalculado = true;
+                _variantesVence = DateTime.UtcNow.AddSeconds(60);
+                return habilitado;
+            }
+        }
+
+        /// <summary>Condición SQL (empieza con " and ") que excluye las fichas; cadena vacía si las variantes no están habilitadas.</summary>
+        public static string condicionSinFichas(string alias)
+        {
+            if (!variantesHabilitadas()) return string.Empty;
+            return " and not exists(select 1 from `" + _variantesTabla.Replace("`", "``") + "` f where f.fk_producto = " + alias + ".id)";
+        }
+
+        /// <summary>Ids (de la lista dada) que son fichas principales. Vacío si las variantes no están habilitadas.</summary>
+        public static HashSet<int> fichasPrincipales(IEnumerable<int> ids)
+        {
+            HashSet<int> resultado = new HashSet<int>();
+            List<int> lista = new List<int>();
+            foreach (int i in ids) if (i > 0 && !lista.Contains(i)) lista.Add(i);
+            if (lista.Count == 0 || !variantesHabilitadas()) return resultado;
+
+            classDatos datos = new classDatos();
+            try
+            {
+                MySqlCommand cmd = new MySqlCommand("select fk_producto from `" + _variantesTabla.Replace("`", "``") + "` where fk_producto in (" + string.Join(",", lista) + ")", datos.abrirConexion());
+                using (MySqlDataReader rd = cmd.ExecuteReader())
+                    while (rd.Read()) resultado.Add(Convert.ToInt32(rd[0]));
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+            return resultado;
+        }
+
+        /// <summary>
+        /// Lanza InvalidOperationException si alguno de los productos es una ficha principal
+        /// (no se pueden vender ni pedir fichas, solo sus variantes). No hace nada con variantes apagadas.
+        /// </summary>
+        public static void validarNoSonFichas(IEnumerable<int> ids)
+        {
+            HashSet<int> fichas = fichasPrincipales(ids);
+            if (fichas.Count == 0) return;
+
+            List<string> nombres = new List<string>();
+            classDatos datos = new classDatos();
+            try
+            {
+                MySqlCommand cmd = new MySqlCommand("select descripcion from Productos where id in (" + string.Join(",", fichas) + ")", datos.abrirConexion());
+                using (MySqlDataReader rd = cmd.ExecuteReader())
+                    while (rd.Read()) nombres.Add("'" + rd[0].ToString() + "'");
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+            throw new InvalidOperationException("No se pueden vender ni pedir fichas principales: " + string.Join(", ", nombres) +
+                                                ". Seleccione una de sus variantes (medida/color).");
+        }
+
+        /// <summary>
+        /// Quita de un DataTable las filas cuya columna de id corresponde a una ficha principal.
+        /// Para SP que no reciben filtro (listas por proveedor). No hace nada con variantes apagadas.
+        /// </summary>
+        public static DataTable quitarFichas(DataTable tabla, string columnaId)
+        {
+            if (tabla == null || tabla.Rows.Count == 0 || !tabla.Columns.Contains(columnaId) || !variantesHabilitadas()) return tabla;
+
+            List<int> ids = new List<int>();
+            foreach (DataRow fila in tabla.Rows)
+            {
+                int id;
+                if (int.TryParse(fila[columnaId].ToString(), out id)) ids.Add(id);
+            }
+            HashSet<int> fichas = fichasPrincipales(ids);
+            if (fichas.Count == 0) return tabla;
+
+            for (int i = tabla.Rows.Count - 1; i >= 0; i--)
+            {
+                int id;
+                if (int.TryParse(tabla.Rows[i][columnaId].ToString(), out id) && fichas.Contains(id))
+                    tabla.Rows.RemoveAt(i);
+            }
+            tabla.AcceptChanges();
+            return tabla;
+        }
+
+        /// <summary>
+        /// Listado del ABM de productos con variantes habilitadas: una fila por producto principal.
+        /// Las variantes encontradas se reemplazan por su ficha (se agrega la ficha si no estaba) y cada ficha
+        /// se marca con su cantidad de variantes habilitadas (activa = 1). Sin variantes habilitadas devuelve
+        /// la tabla sin cambios y no consulta ninguna tabla de variantes.
+        /// </summary>
+        public DataTable resolverListadoVariantes(DataTable productos, out Dictionary<int, int> variantesPorFicha)
+        {
+            variantesPorFicha = new Dictionary<int, int>();
+            if (productos == null || productos.Rows.Count == 0 || !variantesHabilitadas()) return productos;
+
+            classDatos datos = new classDatos();
+            try
+            {
+                string tPrincipales = "`" + _variantesTabla.Replace("`", "``") + "`";
+                MySqlConnection cn = datos.abrirConexion();
+
+                // Nombre exacto de productosVariantes tomado de la base
+                string tVar;
+                using (MySqlCommand c = new MySqlCommand("select TABLE_NAME from information_schema.TABLES where TABLE_SCHEMA = DATABASE() and LOWER(TABLE_NAME) = 'productosvariantes'", cn))
+                {
+                    object o = c.ExecuteScalar();
+                    if (o == null || o == DBNull.Value) return productos;
+                    tVar = "`" + o.ToString().Replace("`", "``") + "`";
+                }
+
+                List<int> ids = new List<int>();
+                foreach (DataRow r in productos.Rows) ids.Add(Convert.ToInt32(r["id"]));
+
+                // 1) ¿cuáles de los encontrados son variantes? (y de qué ficha)
+                HashSet<int> idsVariantes = new HashSet<int>();
+                HashSet<int> fichasDeVariantes = new HashSet<int>();
+                using (MySqlCommand c = new MySqlCommand("select fk_producto, fk_principal from " + tVar + " where fk_producto in (" + string.Join(",", ids) + ")", cn))
+                using (MySqlDataReader rd = c.ExecuteReader())
+                    while (rd.Read())
+                    {
+                        idsVariantes.Add(Convert.ToInt32(rd[0]));
+                        fichasDeVariantes.Add(Convert.ToInt32(rd[1]));
+                    }
+
+                // 2) Las variantes se ven por su ficha: se quitan y se agrega la ficha si no estaba
+                DataTable resultado = productos.Clone();
+                HashSet<int> yaEstan = new HashSet<int>();
+                foreach (DataRow r in productos.Rows)
+                {
+                    int id = Convert.ToInt32(r["id"]);
+                    if (idsVariantes.Contains(id)) continue;
+                    resultado.ImportRow(r);
+                    yaEstan.Add(id);
+                }
+
+                List<int> faltan = new List<int>();
+                foreach (int f in fichasDeVariantes) if (!yaEstan.Contains(f)) faltan.Add(f);
+                if (faltan.Count > 0)
+                {
+                    DataTable fichasExtra = traeProductosPpal(" where p.baja = 0 and p.id in (" + string.Join(",", faltan) + ")", true);
+                    foreach (DataRow r in fichasExtra.Rows)
+                    {
+                        resultado.ImportRow(r);
+                        yaEstan.Add(Convert.ToInt32(r["id"]));
+                    }
+                }
+
+                // 3) Fichas del listado con su cantidad de variantes habilitadas
+                List<int> idsLista = new List<int>(yaEstan);
+                if (idsLista.Count > 0)
+                {
+                    List<int> fichas = new List<int>();
+                    using (MySqlCommand c = new MySqlCommand("select fk_producto from " + tPrincipales + " where fk_producto in (" + string.Join(",", idsLista) + ")", cn))
+                    using (MySqlDataReader rd = c.ExecuteReader())
+                        while (rd.Read()) fichas.Add(Convert.ToInt32(rd[0]));
+
+                    if (fichas.Count > 0)
+                    {
+                        Dictionary<int, int> habilitadas = new Dictionary<int, int>();
+                        using (MySqlCommand c = new MySqlCommand("select fk_principal, count(*) from " + tVar + " where fk_principal in (" + string.Join(",", fichas) + ") and activa = 1 group by fk_principal", cn))
+                        using (MySqlDataReader rd = c.ExecuteReader())
+                            while (rd.Read()) habilitadas[Convert.ToInt32(rd[0])] = Convert.ToInt32(rd[1]);
+
+                        foreach (int f in fichas)
+                        {
+                            int n;
+                            variantesPorFicha[f] = habilitadas.TryGetValue(f, out n) ? n : 0;
+                        }
+                    }
+                }
+
+                if (faltan.Count > 0 && resultado.Columns.Contains("descripcion"))
+                {
+                    resultado.DefaultView.Sort = "descripcion";
+                    resultado = resultado.DefaultView.ToTable();
+                }
+                return resultado;
+            }
+            catch
+            {
+                // Ante cualquier problema con las tablas de variantes se conserva el listado original
+                variantesPorFicha = new Dictionary<int, int>();
+                return productos;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        /// <summary>
+        /// Agrega la exclusión de fichas a un filtro de sp_ProductosConsultaPpal (alias p).
+        /// Respeta un where existente (lo encierra entre paréntesis) y un order by / limit final.
+        /// </summary>
+        private static string filtroPpalSinFichas(string filtro)
+        {
+            string condicion = condicionSinFichas("p");
+            if (condicion == string.Empty) return filtro;
+
+            string cuerpo = filtro ?? string.Empty;
+            string cola = string.Empty;
+
+            // Cola final (order by / limit) que debe quedar después del where
+            // (se toma la última aparición: la cola real va al final del filtro)
+            System.Text.RegularExpressions.Match mc = System.Text.RegularExpressions.Regex.Match(
+                cuerpo, @"\s(order\s+by|limit)\s", System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.RightToLeft);
+            if (mc.Success)
+            {
+                cola = cuerpo.Substring(mc.Index);
+                cuerpo = cuerpo.Substring(0, mc.Index);
+            }
+
+            System.Text.RegularExpressions.Match w = System.Text.RegularExpressions.Regex.Match(
+                cuerpo, @"\bwhere\b", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            if (w.Success)
+            {
+                string antes = cuerpo.Substring(0, w.Index);
+                string condiciones = cuerpo.Substring(w.Index + w.Length);
+                cuerpo = antes + " where (" + condiciones + ")" + condicion;
+            }
+            else
+            {
+                cuerpo = cuerpo + " where 1 = 1" + condicion;
+            }
+
+            return cuerpo + cola;
+        }
+
+        /// <summary>
+        /// Agrega la exclusión de fichas (alias p) al final de un filtro recibido por un SP.
+        /// conWhere = true: el SP concatena el filtro tal cual (el filtro trae su propio where, o está vacío).
+        /// conWhere = false: el SP ya trae un where propio y el filtro son condiciones.
+        /// Sin variantes habilitadas devuelve el filtro sin cambios.
+        /// </summary>
+        private static string agregarSinFichas(string filtro, bool conWhere)
+        {
+            string condicion = condicionSinFichas("p");
+            if (condicion == string.Empty) return filtro;
+            if (conWhere && string.IsNullOrWhiteSpace(filtro)) return " where 1 = 1" + condicion;
+            return filtro + condicion;
+        }
+
+        /// <param name="incluirFichas">true solo para el ABM de productos, donde la ficha principal sí debe verse.</param>
+        public DataTable traeProductosPpal(string unFiltro, bool incluirFichas = false)
+        {
+            if (!incluirFichas) unFiltro = filtroPpalSinFichas(unFiltro);
+
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_ProductosConsultaPpal", instDatos.abrirConexion());
             a1.SelectCommand.CommandType = CommandType.StoredProcedure;
             a1.SelectCommand.Parameters.AddWithValue("unFiltro", unFiltro);
@@ -24,7 +319,7 @@ namespace Comercial.Clases
         {
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_ProductosTraerParaCambioPrecio", instDatos.abrirConexion());
             a1.SelectCommand.CommandType = CommandType.StoredProcedure;
-            a1.SelectCommand.Parameters.AddWithValue("unFiltro", unFiltro);
+            a1.SelectCommand.Parameters.AddWithValue("unFiltro", agregarSinFichas(unFiltro, true));
 
             DataTable t2 = new DataTable();
             a1.Fill(t2);
@@ -35,7 +330,7 @@ namespace Comercial.Clases
         {
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_ProductosTraerMovimientos", instDatos.abrirConexion());
             a1.SelectCommand.CommandType = CommandType.StoredProcedure;
-            a1.SelectCommand.Parameters.AddWithValue("unFiltro", unFiltro);
+            a1.SelectCommand.Parameters.AddWithValue("unFiltro", agregarSinFichas(unFiltro, false));
 
             DataTable t2 = new DataTable();
             a1.Fill(t2);
@@ -46,7 +341,7 @@ namespace Comercial.Clases
         {
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_ProductosTraerStock", instDatos.abrirConexion());
             a1.SelectCommand.CommandType = CommandType.StoredProcedure;
-            a1.SelectCommand.Parameters.AddWithValue("unFiltro", unFiltro);
+            a1.SelectCommand.Parameters.AddWithValue("unFiltro", agregarSinFichas(unFiltro, false));
 
             DataTable t2 = new DataTable();
             a1.Fill(t2);
@@ -57,7 +352,7 @@ namespace Comercial.Clases
         {
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_ProductosListaPrecios", instDatos.abrirConexion());
             a1.SelectCommand.CommandType = CommandType.StoredProcedure;
-            a1.SelectCommand.Parameters.AddWithValue("unFiltro", unFiltro);
+            a1.SelectCommand.Parameters.AddWithValue("unFiltro", agregarSinFichas(unFiltro, true));
 
             DataTable t2 = new DataTable();
             a1.Fill(t2);
@@ -86,6 +381,24 @@ namespace Comercial.Clases
             return valor;
         }
 
+
+        /// <summary>
+        /// Lee como booleano un campo de Productos (fraccionado, dolarizado, esPromocion...) tal como lo devuelve la base:
+        /// bool, 0/1 (numérico o texto), "True"/"False" o NULL. NULL = false, el mismo criterio que ya aplican
+        /// sp_ProductosTraerParaEditar (IFNULL(p.fraccionado, 0)) y sp_pedidosTraerPendientesDetalle. Nunca modifica datos.
+        /// </summary>
+        public static bool esVerdadero(object valor)
+        {
+            if (valor == null || valor == DBNull.Value) return false;
+            if (valor is bool) return (bool)valor;
+
+            string t = valor.ToString().Trim();
+            if (t.Length == 0 || t == "0") return false;
+            if (t == "1") return true;
+
+            bool b;
+            return bool.TryParse(t, out b) && b;
+        }
 
         public static int cantDecimales()
         {
@@ -154,7 +467,8 @@ namespace Comercial.Clases
         {
             MySqlDataAdapter a1 = new MySqlDataAdapter("sp_ProductosTraerpParaAjustar", instDatos.abrirConexion());
             a1.SelectCommand.CommandType = CommandType.StoredProcedure;
-            a1.SelectCommand.Parameters.AddWithValue("unFiltro", unFiltro);
+            // Con el filtro vacío se conserva el comportamiento actual (no se agrega nada)
+            a1.SelectCommand.Parameters.AddWithValue("unFiltro", string.IsNullOrWhiteSpace(unFiltro) ? unFiltro : agregarSinFichas(unFiltro, false));
 
             DataTable t2 = new DataTable();
             a1.Fill(t2);
@@ -399,6 +713,9 @@ namespace Comercial.Clases
                     }
                 }
 
+                // Variantes: nunca la ficha principal (vacío si las variantes no están habilitadas)
+                filtro += condicionSinFichas("p");
+
                 filtro += " ORDER BY p.descripcion";
 
                 da.SelectCommand.Parameters.AddWithValue("unFiltro", filtro);
@@ -446,6 +763,8 @@ namespace Comercial.Clases
         public decimal Precio { get; set; }
         public string NombreComercial { get; set; }
         public string Rubro { get; set; }
+        // Cantidad de etiquetas a imprimir de este producto (entero 1..500)
+        public int Cantidad { get; set; } = 1;
 
         
     }

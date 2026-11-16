@@ -74,10 +74,94 @@ namespace Comercial.Formularios.Productos
             }
         }
 
+        // Variantes de producto: solo existe si las variantes están habilitadas en la base
+        private CheckBox chkTieneVariantes;
+
+        private void configurarVariantes()
+        {
+            if (!Clases.ClassVariantes.habilitado()) return;
+
+            chkTieneVariantes = new CheckBox
+            {
+                Text = "Este producto tiene variantes (medidas / colores)",
+                AutoSize = true,
+                Location = new Point(12, 436),
+                Anchor = AnchorStyles.Bottom | AnchorStyles.Left
+            };
+            Controls.Add(chkTieneVariantes);
+
+            // Abre el editor de variantes directamente (con los datos actuales del formulario)
+            Button btnVariantes = new Button
+            {
+                Text = "Ver / editar variantes...",
+                Size = new Size(170, 26),
+                Location = new Point(330, 430),
+                Anchor = AnchorStyles.Bottom | AnchorStyles.Left,
+                Visible = false
+            };
+            Clases.IconosVariantes.Aplicar(btnVariantes, Properties.Resources.tag);
+            btnVariantes.Click += (s, e) => { if (formularioValido()) grabarConVariantes(); };
+            Controls.Add(btnVariantes);
+
+            chkTieneVariantes.CheckedChanged += (s, e) =>
+            {
+                btnVariantes.Visible = chkTieneVariantes.Checked;
+                // El stock es de cada variante: la ficha nunca tiene stock propio
+                if (unAccion == 1) nudStock.Enabled = !chkTieneVariantes.Checked;
+            };
+
+            if (unAccion == 2)
+            {
+                // Una ficha se edita con sus variantes; un producto simple no puede convertirse en ficha
+                bool esFicha = Clases.ClassVariantes.esFicha(unProducto);
+                chkTieneVariantes.Checked = esFicha;
+                chkTieneVariantes.Enabled = false;
+            }
+        }
+
+        private void grabarConVariantes()
+        {
+            int idProveedor = int.Parse(cboProveedor.SelectedValue.ToString());
+            bool porProducto = new Clases.ClassProveedores().usaPreciosPorProducto(idProveedor);
+
+            Clases.ClassVariantes.FichaDatos datos = new Clases.ClassVariantes.FichaDatos
+            {
+                ProductoId = unAccion == 2 ? unProducto : 0,
+                CodProveedor = txtCodProveedor.Text.Trim(),
+                CodBarras = txtCodBarras.Text.Trim(),
+                RubroId = int.Parse(cboRubro.SelectedValue.ToString()),
+                Descripcion = txtDescripcion.Text.Trim(),
+                ProveedorId = idProveedor,
+                Costo = nudCosto.Value,
+                Precio = nudLista.Value,
+                CantidadMinima = nudMinima.Value,
+                PrecioProveedor = nudProveedor.Value,
+                Fraccionado = cbFraccionado.Checked,
+                Dolarizado = cbDolarizado.Checked,
+                EsPromocion = chkEsPromocion.Checked,
+                Ganancia = porProducto ? (decimal?)nudGanancia.Value : null,
+                Descuento = porProducto ? (decimal?)nudDescuento.Value : null,
+                CantidadMinimaVenta = nudCantMinimaVenta.Value
+            };
+
+            using (frmVariantesProducto frm = new frmVariantesProducto(datos))
+            {
+                if (frm.ShowDialog(this) == DialogResult.OK)
+                    this.Close();
+            }
+        }
+
         private void btnGrabar_Click(object sender, EventArgs e)
         {
             if (formularioValido())
             {
+                // Producto con variantes: el editor de variantes guarda la ficha y todas sus variantes juntas
+                if (chkTieneVariantes != null && chkTieneVariantes.Checked)
+                {
+                    grabarConVariantes();
+                    return;
+                }
+
                 int resul;
 
                 // Coeficientes por producto: solo se envían cuando el proveedor usa esa modalidad.
@@ -111,13 +195,16 @@ namespace Comercial.Formularios.Productos
         {
             errorProvider1.Clear();
 
-            if (txtCodProveedor.Text == string.Empty)
+            // Una ficha con variantes no lleva código propio: los códigos son de cada variante
+            bool esFicha = chkTieneVariantes != null && chkTieneVariantes.Checked;
+
+            if (!esFicha && txtCodProveedor.Text == string.Empty)
             {
                 errorProvider1.SetError(txtCodProveedor, "Debe escribir el código de Proveedor");
                 return false;
             }
 
-            if (txtCodBarras.Text == string.Empty)
+            if (!esFicha && txtCodBarras.Text == string.Empty)
             {
                 errorProvider1.SetError(txtCodBarras, "Debe escribir el código de Barras");
                 return false;
@@ -162,7 +249,8 @@ namespace Comercial.Formularios.Productos
                 cargarProducto();
                 nudStock.Enabled = false;
             }
-            
+
+            configurarVariantes();
         }
 
         private void cargarProducto()

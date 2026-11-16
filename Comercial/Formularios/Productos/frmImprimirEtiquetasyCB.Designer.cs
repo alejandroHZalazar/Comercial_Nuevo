@@ -47,6 +47,9 @@ namespace Comercial.Formularios.Productos
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.btnImprimirEtiqueta = new System.Windows.Forms.Button();
             this.btnImprimirCodBarras = new System.Windows.Forms.Button();
+            this.lblCantGlobal = new System.Windows.Forms.Label();
+            this.txtCantGlobal = new System.Windows.Forms.TextBox();
+            this.lblTotalEtiquetas = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvProductos)).BeginInit();
             this.SuspendLayout();
@@ -54,6 +57,9 @@ namespace Comercial.Formularios.Productos
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.Color.Silver;
+            this.groupBox1.Controls.Add(this.lblTotalEtiquetas);
+            this.groupBox1.Controls.Add(this.txtCantGlobal);
+            this.groupBox1.Controls.Add(this.lblCantGlobal);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.btnBuscar);
@@ -69,6 +75,34 @@ namespace Comercial.Formularios.Productos
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filtro";
+            // 
+            // lblCantGlobal
+            // 
+            this.lblCantGlobal.AutoSize = true;
+            this.lblCantGlobal.Location = new System.Drawing.Point(530, 66);
+            this.lblCantGlobal.Name = "lblCantGlobal";
+            this.lblCantGlobal.Size = new System.Drawing.Size(130, 15);
+            this.lblCantGlobal.TabIndex = 12;
+            this.lblCantGlobal.Text = "Cantidad para todos:";
+            // 
+            // txtCantGlobal
+            // 
+            this.txtCantGlobal.Location = new System.Drawing.Point(675, 62);
+            this.txtCantGlobal.MaxLength = 4;
+            this.txtCantGlobal.Name = "txtCantGlobal";
+            this.txtCantGlobal.Size = new System.Drawing.Size(60, 21);
+            this.txtCantGlobal.TabIndex = 13;
+            this.txtCantGlobal.TextChanged += new System.EventHandler(this.txtCantGlobal_TextChanged);
+            // 
+            // lblTotalEtiquetas
+            // 
+            this.lblTotalEtiquetas.AutoSize = true;
+            this.lblTotalEtiquetas.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTotalEtiquetas.Location = new System.Drawing.Point(530, 88);
+            this.lblTotalEtiquetas.Name = "lblTotalEtiquetas";
+            this.lblTotalEtiquetas.Size = new System.Drawing.Size(110, 15);
+            this.lblTotalEtiquetas.TabIndex = 14;
+            this.lblTotalEtiquetas.Text = "Total: 0 etiquetas";
             // 
             // btnBuscar
             // 
@@ -281,5 +315,8 @@ namespace Comercial.Formularios.Productos
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Button btnImprimirEtiqueta;
         private System.Windows.Forms.Button btnImprimirCodBarras;
+        private System.Windows.Forms.Label lblCantGlobal;
+        private System.Windows.Forms.TextBox txtCantGlobal;
+        private System.Windows.Forms.Label lblTotalEtiquetas;
     }
 }

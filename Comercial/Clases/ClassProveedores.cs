@@ -58,7 +58,8 @@ namespace Comercial.Clases
 
             DataTable t2 = new DataTable();
             a1.Fill(t2);
-            return t2;
+            // Variantes: nunca la ficha principal (sin efecto si las variantes no están habilitadas)
+            return ClassProductos.quitarFichas(t2, "Prod");
         }
 
         public DataTable traerOrdenCompra(long idOrden)
@@ -184,7 +185,8 @@ namespace Comercial.Clases
 
         public DataTable traerProductosProveedor (int unProveedor)
         {
-            MySqlDataAdapter rows = new MySqlDataAdapter("select descripcion from Productos where baja = 0 and fk_proveedor = " + unProveedor , instDatos.abrirConexion());
+            // Variantes: nunca la ficha principal (condicionSinFichas es vacío si las variantes no están habilitadas)
+            MySqlDataAdapter rows = new MySqlDataAdapter("select p.descripcion from Productos p where p.baja = 0 and p.fk_proveedor = " + unProveedor + ClassProductos.condicionSinFichas("p"), instDatos.abrirConexion());
             DataTable dt = new DataTable();
             rows.Fill(dt);
             instDatos.cerrarConexion();
@@ -199,7 +201,8 @@ namespace Comercial.Clases
 
             DataTable t2 = new DataTable();
             a1.Fill(t2);
-            return t2;
+            // Variantes: nunca la ficha principal (sin efecto si las variantes no están habilitadas)
+            return ClassProductos.quitarFichas(t2, "id");
         }
 
         public long ABMProveedores(int unId, string unNombreComercial, string unCuil, string unaDireccion, string unEmail, string unTel, string unCel, decimal unaGanacia, int unAccion, decimal unDescuento, bool? unPreciosPorProducto = null)

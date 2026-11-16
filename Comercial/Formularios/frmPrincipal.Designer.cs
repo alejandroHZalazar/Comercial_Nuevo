@@ -55,6 +55,7 @@
             this.productosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aBMProductosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.promocionesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.promocionesDescuentosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ingresoDeMercaderiaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.altaMasivaDeProductosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.listaDePreciosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -290,6 +291,7 @@
             this.productosToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.aBMProductosToolStripMenuItem,
             this.promocionesToolStripMenuItem,
+            this.promocionesDescuentosToolStripMenuItem,
             this.ingresoDeMercaderiaToolStripMenuItem,
             this.altaMasivaDeProductosToolStripMenuItem,
             this.listaDePreciosToolStripMenuItem,
@@ -319,6 +321,13 @@
             this.promocionesToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
             this.promocionesToolStripMenuItem.Text = "Promociones / Combos";
             this.promocionesToolStripMenuItem.Click += new System.EventHandler(this.promocionesToolStripMenuItem_Click);
+            //
+            // promocionesDescuentosToolStripMenuItem
+            //
+            this.promocionesDescuentosToolStripMenuItem.Name = "promocionesDescuentosToolStripMenuItem";
+            this.promocionesDescuentosToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
+            this.promocionesDescuentosToolStripMenuItem.Text = "Promociones por Cantidad / Descuento";
+            this.promocionesDescuentosToolStripMenuItem.Click += new System.EventHandler(this.promocionesDescuentosToolStripMenuItem_Click);
             //
             // ingresoDeMercaderiaToolStripMenuItem
             // 
@@ -596,6 +605,7 @@
         private System.Windows.Forms.ToolStripMenuItem productosToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aBMProductosToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem promocionesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem promocionesDescuentosToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem proveedoresToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aBMProveedoresToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clientesToolStripMenuItem;

@@ -106,21 +106,40 @@ namespace Comercial.Formularios.Productos
             buscarProducto();
         }
 
+        // Variantes: una fila por ficha con la insignia "Posee variantes (N)" en la descripción de la grilla.
+        // Sin variantes habilitadas devuelve la tabla sin cambios.
+        private DataTable conInsigniaVariantes(DataTable productos)
+        {
+            Dictionary<int, int> variantesPorFicha;
+            DataTable listado = instProd.resolverListadoVariantes(productos, out variantesPorFicha);
+            if (variantesPorFicha.Count > 0 && listado.Columns.Contains("descripcion"))
+            {
+                foreach (DataRow fila in listado.Rows)
+                {
+                    int n;
+                    if (variantesPorFicha.TryGetValue(Convert.ToInt32(fila["id"]), out n))
+                        fila["descripcion"] = fila["descripcion"].ToString() + "   [Posee variantes (" + n + ")]";
+                }
+                listado.AcceptChanges();
+            }
+            return listado;
+        }
+
         private void buscarProducto()
         {
             if (txtFiltro.Text != string.Empty)
             {
                 if (cboFiltro.SelectedIndex == 0)
                 {
-                   dgvProductos .DataSource = instProd.traeProductosPpal(" where baja = 0 and codProveedor = '" + txtFiltro.Text.Trim() + "'");
+                   dgvProductos .DataSource = conInsigniaVariantes(instProd.traeProductosPpal(" where baja = 0 and codProveedor = '" + txtFiltro.Text.Trim() + "'", true));
                 }
                 else if (cboFiltro.SelectedIndex == 1)
                 {
-                    dgvProductos.DataSource = instProd.traeProductosPpal(" where baja = 0 and codBarras = " + txtFiltro.Text.Trim());
+                    dgvProductos.DataSource = conInsigniaVariantes(instProd.traeProductosPpal(" where baja = 0 and codBarras = " + txtFiltro.Text.Trim(), true));
                 }
                 else
                 {
-                    dgvProductos.DataSource = instProd.traeProductosPpal(" where baja = 0 and descripcion like '%" + txtFiltro.Text.Trim() + "%'");
+                    dgvProductos.DataSource = conInsigniaVariantes(instProd.traeProductosPpal(" where baja = 0 and descripcion like '%" + txtFiltro.Text.Trim() + "%'", true));
 
                 }
 

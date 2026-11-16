@@ -246,6 +246,10 @@
     <Compile Include="Clases\ClassProductosBalanza.cs" />
     <Compile Include="Clases\ClassPromoEngine.cs" />
     <Compile Include="Clases\ClassPromociones.cs" />
+    <Compile Include="Clases\ClassVariantes.cs" />
+    <Compile Include="Clases\ClassMotorPromociones.cs" />
+    <Compile Include="Clases\ClassPromocionesDescuentos.cs" />
+    <Compile Include="Clases\ClassPromosGrilla.cs" />
     <Compile Include="Clases\ClassProveedores.cs" />
     <Compile Include="Clases\ClassReportesFiscal.cs" />
     <Compile Include="Clases\ClassReportesITextSharp.cs" />
@@ -533,6 +537,18 @@
     <Compile Include="Formularios\Productos\frmAltaMasiva.Designer.cs">
       <DependentUpon>frmAltaMasiva.cs</DependentUpon>
     </Compile>
+    <Compile Include="Formularios\Productos\frmABMPromocionesDescuentos.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Productos\frmAltaModifPromocionDescuento.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Productos\frmABMVariantesAtributos.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Productos\frmVariantesProducto.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Formularios\Productos\frmPickProducto.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -697,6 +713,9 @@
     </Compile>
     <Compile Include="Formularios\Ventas\frmPedidosReport.Designer.cs">
       <DependentUpon>frmPedidosReport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Formularios\Ventas\frmAvisoPromo.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Formularios\Ventas\frmAvisoPromociones.cs">
       <SubType>Form</SubType>

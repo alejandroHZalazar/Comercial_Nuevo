@@ -77,9 +77,21 @@ namespace Comercial.Formularios.Ventas
             : decimal.Parse(Clases.ClassParametros.buscarParametro("productos", "cotizacionDolar"));
 
         // ── Constructor ──────────────────────────────────────────────────────
+        // Promociones por cantidad / porcentaje (promociones/descuentos): inactivo si el parámetro está apagado
+        Clases.ClassPromosGrilla promos;
+
         public frmVentasMinorista()
         {
             InitializeComponent();
+
+            promos = new Clases.ClassPromosGrilla(new Clases.ClassPromosGrilla.Configuracion
+            {
+                Propietario = this,
+                Grilla = dgvProductos,
+                Baseline = () => nudRecargo.Value > 0 ? nudRecargo.Value : nudDescuento.Value * -1,
+                Recalcular = procesoTotales
+            });
+            FormClosed += (s, e) => Formularios.Ventas.frmAvisoPromo.CerrarTodos();
         }
 
         // ── Load ─────────────────────────────────────────────────────────────
@@ -148,6 +160,7 @@ namespace Comercial.Formularios.Ventas
         // ── Estado inicial ────────────────────────────────────────────────────
         private void estadoInicial()
         {
+            promos.Reset();
             _subtotalForzado  = 0;
             esfraccionado     = false;
             dgvProductos.Rows.Clear();
@@ -267,7 +280,7 @@ namespace Comercial.Formularios.Ventas
             if (producto != null && producto.Rows.Count > 0)
             {
                 unProducto    = int.Parse(producto.Rows[0]["ID"].ToString());
-                esfraccionado = bool.Parse(producto.Rows[0]["fraccionado"].ToString());
+                esfraccionado = Clases.ClassProductos.esVerdadero(producto.Rows[0]["fraccionado"]);   // fraccionado puede ser NULL en la base
 
                 if (!productoDeBalanzaEncontrado)
                 {
@@ -305,6 +318,8 @@ namespace Comercial.Formularios.Ventas
 
             foreach (DataGridViewRow fila in dgvProductos.Rows)
             {
+                if (promos.EsBonificada(fila)) continue;   // las unidades bonificadas de una promoción no se editan
+
                 if (int.Parse(fila.Cells["id"].Value.ToString()) == unProducto)
                 {
                     if (!esfraccionado)
@@ -433,6 +448,9 @@ namespace Comercial.Formularios.Ventas
             }
 
             txtTotGeneral.Text = totalFinal.ToString("F2");
+
+            // Promociones por cantidad: se re-evalúan 150 ms después del último cambio de la grilla
+            promos.Solicitar();
         }
 
         // ── Descuento / Recargo global ────────────────────────────────────────
@@ -440,7 +458,10 @@ namespace Comercial.Formularios.Ventas
         {
             nudRecargo.Value = 0;
             foreach (DataGridViewRow fila in dgvProductos.Rows)
+            {
+                if (promos.TienePromo(fila)) continue;   // el descuento general no pisa una promoción aplicada
                 fila.Cells["DescRec"].Value = nudDescuento.Value * -1;
+            }
             procesoTotales();
         }
 
@@ -448,11 +469,37 @@ namespace Comercial.Formularios.Ventas
         {
             nudDescuento.Value = 0;
             foreach (DataGridViewRow fila in dgvProductos.Rows)
+            {
+                if (promos.TienePromo(fila)) continue;   // el recargo general no pisa una promoción aplicada
                 fila.Cells["DescRec"].Value = nudRecargo.Value;
+            }
             procesoTotales();
         }
 
         // ── Vender ────────────────────────────────────────────────────────────
+        // Variantes: rechaza la operación si la grilla contiene una ficha principal (sin efecto con variantes apagadas)
+        private bool fichasValidas()
+        {
+            List<int> ids = new List<int>();
+            foreach (DataGridViewRow fila in dgvProductos.Rows)
+            {
+                int id;
+                if (fila.Cells["id"].Value != null && int.TryParse(fila.Cells["id"].Value.ToString(), out id))
+                    ids.Add(id);
+            }
+
+            try
+            {
+                Clases.ClassProductos.validarNoSonFichas(ids);
+                return true;
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(this, ex.Message, "VENTAS", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+        }
+
         private async void vender()
         {
             long salida = -1;
@@ -465,6 +512,10 @@ namespace Comercial.Formularios.Ventas
                 MessageBox.Show(this, "No existen productos en la grilla", "VENTAS", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+
+            // Variantes: no se pueden vender ni pedir fichas principales, solo sus variantes (sin efecto con variantes apagadas)
+            if (!fichasValidas())
+                return;
 
             foreach (DataGridViewRow fila in dgvProductos.Rows)
                 unCosto += Math.Round(
@@ -542,6 +593,8 @@ namespace Comercial.Formularios.Ventas
                 detalle += decimal.Parse(fila.Cells["subtotalSIVA"].Value.ToString()) + "$";
                 detalle  = detalle.Replace(',', '.');
             }
+            // Promociones por cantidad: promoción de cada fila, en el mismo orden del detalle (para la auditoría)
+            var promoAuditoria = promos.AuditoriaPorFila();
 
             salida = instVentas.grabarVenta(
                 decimal.Parse(txtTotGeneral.Text),
@@ -559,6 +612,20 @@ namespace Comercial.Formularios.Ventas
                 imputacion, detalleFormasPago,
                 tieneCaja, CajaId
             );
+
+            // Registro de las promociones por cantidad aplicadas (ventas_promo_detalle)
+            if (salida != -1 && promos.Activo)
+            {
+                try
+                {
+                    new Clases.ClassPromocionesDescuentos().grabarAuditoriaVenta(salida, promoAuditoria);
+                }
+                catch (Exception exAud)
+                {
+                    MessageBox.Show(this, "La venta se grabó, pero no se pudo registrar el detalle de promociones: " + exAud.Message,
+                                    "VENTAS", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
 
             // Guardar componentes de promociones detectadas automáticamente (igual que frmVentas)
             if (salida != -1 && _promosAplicadas.Count > 0)
@@ -740,6 +807,9 @@ namespace Comercial.Formularios.Ventas
                 lbDesc.Items.Add(row["Descripcion"].ToString() + "|" + row["ID"].ToString());
 
             lbDesc.Visible = lbDesc.Items.Count > 0;
+            // Los controles agregados antes en el Designer quedan por delante: se trae al frente al mostrarse
+            if (lbDesc.Visible)
+                lbDesc.BringToFront();
         }
 
         private void prepararDesdeListBox()
@@ -779,11 +849,23 @@ namespace Comercial.Formularios.Ventas
         // ── Event handlers ────────────────────────────────────────────────────
         private void btnGrabar_Click(object sender, EventArgs e)
         {
-            // Detección automática de promociones (igual que frmVentas)
+            // Promociones por cantidad / porcentaje: se re-evalúan ahora; si cambiaron, se avisa antes de grabar
+            if (promos.Activo && promos.EvaluarAhora())
+            {
+                MessageBox.Show(this, Clases.ClassPromocionesDescuentos.MensajePromosCambiaron, "VENTAS", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // Detección automática de promociones (combos, igual que frmVentas)
             if (Clases.ClassParametros.buscarParametro("promociones", "activo") == "1")
             {
+                // Los combos trabajan sobre una fila por producto: se deshacen las promociones por cantidad y se re-aplican después
+                if (promos.Activo) promos.Desagrupar();
+
                 if (!verificarYAplicarPromociones())
                     return; // el operador eligió "Volver a la venta"
+
+                if (promos.Activo) promos.EvaluarAhora();
             }
             vender();
         }

@@ -35,6 +35,8 @@ namespace Comercial.Formularios.Ventas
         Clases.ClassProveedores instProv = new Clases.ClassProveedores();
         Clases.ClassVentas instVentas = new Clases.ClassVentas();
         Clases.classUsuarios instUser = new Clases.classUsuarios();
+        // Promociones por cantidad / porcentaje (promociones/descuentos): inactivo si el parámetro está apagado
+        Clases.ClassPromosGrilla promos;
         int cantDec = Clases.ClassProductos.cantDecimales();
         int cantStock = Clases.ClassProductos.cantDecimalesStock();
         int llevaCC = Clases.ClassParametros.buscarParametro("clientes", "llevaCC") == "" ? 0 : int.Parse(Clases.ClassParametros.buscarParametro("clientes", "llevaCC"));
@@ -86,6 +88,16 @@ namespace Comercial.Formularios.Ventas
             backgroundWorkerTarea.WorkerReportsProgress = true;
             backgroundWorkerTarea.DoWork          += backgroundWorkerTarea_DoWork;
             backgroundWorkerTarea.ProgressChanged += backgroundWorkerTarea_ProgressChanged;
+
+            promos = new Clases.ClassPromosGrilla(new Clases.ClassPromosGrilla.Configuracion
+            {
+                Propietario = this,
+                Grilla = dgvProductos,
+                ColPedido = "pedido",   // las filas que vienen de un pedido conservan el precio acordado
+                Baseline = () => bonificacionPorLinea == 0 ? (nudRecargo.Value > 0 ? nudRecargo.Value : nudDescuento.Value * -1) : 0m,
+                Recalcular = procesoTotales
+            });
+            FormClosed += (s, e) => Formularios.Ventas.frmAvisoPromo.CerrarTodos();
         }
 
         private void frmVentas_Load(object sender, EventArgs e)
@@ -153,6 +165,7 @@ namespace Comercial.Formularios.Ventas
         }
         private void estadoInicial()
         {
+            promos.Reset();
             _promosAplicadas.Clear();
             _subtotalForzado = 0;
             lblDescripcion.Text = string.Empty;
@@ -630,6 +643,9 @@ namespace Comercial.Formularios.Ventas
 
                     txtTotGeneral.Text = totalCalculado.ToString("F2");
                 }
+
+                // Promociones por cantidad: se re-evalúan 150 ms después del último cambio de la grilla
+                promos.Solicitar();
             }
         }
 
@@ -733,7 +749,7 @@ namespace Comercial.Formularios.Ventas
             {
                 unProducto = int.Parse(producto.Rows[0]["ID"].ToString());
                 lblDescripcion.Text = producto.Rows[0]["Descripcion"].ToString();
-                esfraccionado = bool.Parse(producto.Rows[0]["fraccionado"].ToString());
+                esfraccionado = Clases.ClassProductos.esVerdadero(producto.Rows[0]["fraccionado"]);   // fraccionado puede ser NULL en la base
                 if (!productoDeBalanzaEncontrado)
                 {
                     if (tieneLectoraCB == 0)
@@ -800,7 +816,7 @@ namespace Comercial.Formularios.Ventas
                 lbDesc.Visible = false;
                 txtDesc.Text = string.Empty;
                 unTipoBusq = 2;
-                esfraccionado = bool.Parse(producto.Rows[0]["fraccionado"].ToString());
+                esfraccionado = Clases.ClassProductos.esVerdadero(producto.Rows[0]["fraccionado"]);   // fraccionado puede ser NULL en la base
             }
         }
 
@@ -824,6 +840,7 @@ namespace Comercial.Formularios.Ventas
             bool band = false;
             foreach (DataGridViewRow fila in dgvProductos.Rows)
             {
+                if (promos.EsBonificada(fila)) continue;   // las unidades bonificadas de una promoción no se editan
 
                 if (int.Parse(fila.Cells["id"].Value.ToString()) == unProducto)
                 {
@@ -985,6 +1002,7 @@ namespace Comercial.Formularios.Ventas
 
                 foreach(DataGridViewRow fila in dgvProductos.Rows)
                 {
+                    if (promos.TienePromo(fila)) continue;   // el descuento general no pisa una promoción aplicada
                     if ((bool)fila.Cells["Sel"].Value == true || bonificacionPorLinea == 0)
                     {
                         fila.Cells["DescRec"].Value = nudDescuento.Value * -1;
@@ -1001,6 +1019,7 @@ namespace Comercial.Formularios.Ventas
 
                 foreach (DataGridViewRow fila in dgvProductos.Rows)
                 {
+                    if (promos.TienePromo(fila)) continue;   // el recargo general no pisa una promoción aplicada
                     if ((bool)fila.Cells["Sel"].Value == true || bonificacionPorLinea == 0)
                     {
                         fila.Cells["DescRec"].Value = nudRecargo.Value;
@@ -1053,18 +1072,58 @@ namespace Comercial.Formularios.Ventas
         }
 
 
+        // Variantes: rechaza la operación si la grilla contiene una ficha principal (sin efecto con variantes apagadas)
+        private bool fichasValidas()
+        {
+            List<int> ids = new List<int>();
+            foreach (DataGridViewRow fila in dgvProductos.Rows)
+            {
+                int id;
+                if (fila.Cells["id"].Value != null && int.TryParse(fila.Cells["id"].Value.ToString(), out id))
+                    ids.Add(id);
+            }
+
+            try
+            {
+                Clases.ClassProductos.validarNoSonFichas(ids);
+                return true;
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(this, ex.Message, "VENTAS", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+        }
+
         private void btnGrabar_Click(object sender, EventArgs e)
         {
+            // Variantes: no se pueden vender ni pedir fichas principales, solo sus variantes (sin efecto con variantes apagadas)
+            if (!fichasValidas())
+                return;
+
             if (formularioValido())
             {
-                // Detección automática de promociones
+                // Promociones por cantidad / porcentaje: se re-evalúan ahora; si cambiaron, se avisa antes de grabar
+                if (promos.Activo && promos.EvaluarAhora())
+                {
+                    MessageBox.Show(this, Clases.ClassPromocionesDescuentos.MensajePromosCambiaron, "VENTAS", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    ordenFacturar = false;
+                    return;
+                }
+
+                // Detección automática de promociones (combos)
                 if (Clases.ClassParametros.buscarParametro("promociones", "activo") == "1")
                 {
+                    // Los combos trabajan sobre una fila por producto: se deshacen las promociones por cantidad y se re-aplican después
+                    if (promos.Activo) promos.Desagrupar();
+
                     if (!verificarYAplicarPromociones())
                     {
                         ordenFacturar = false;
                         return; // el operador eligió "Volver a la venta"
                     }
+
+                    if (promos.Activo) promos.EvaluarAhora();
                 }
 
                 vender();
@@ -1457,6 +1516,8 @@ namespace Comercial.Formularios.Ventas
                     progreso++;
 
                 }
+                // Promociones por cantidad: promoción de cada fila, en el mismo orden del detalle (para la auditoría)
+                var promoAuditoria = promos.AuditoriaPorFila();
 
                 // Descuento general (% sobre Total S/IVA): se persiste en ventas.descuento vía unDescuento.
                 // Solo en modo bonificación por línea y > 0; en otro caso null (comportamiento actual).
@@ -1464,6 +1525,20 @@ namespace Comercial.Formularios.Ventas
                     ? (decimal?)nudDescuentoGeneral.Value
                     : null;
                 salida = instVentas.grabarVenta(decimal.Parse(txtTotGeneral.Text), unCosto, unCliente, int.Parse(Environment.GetEnvironmentVariable("idUser")), decimal.Parse(cboIVA.Text),descuentoGeneral, null, int.Parse(cboVendedores.SelectedValue.ToString()), nudComision.Value / 100, decimal.Parse(cboIngBrutos.Text), detalle, llevaCC, imputaEnVenta, tieneMediosPagos, imputacion, detalleFormasPago, tieneCaja, CajaId);
+
+                // Registro de las promociones por cantidad aplicadas (ventas_promo_detalle)
+                if (salida != -1 && promos.Activo)
+                {
+                    try
+                    {
+                        new Clases.ClassPromocionesDescuentos().grabarAuditoriaVenta(salida, promoAuditoria);
+                    }
+                    catch (Exception exAud)
+                    {
+                        MessageBox.Show(this, "La venta se grabó, pero no se pudo registrar el detalle de promociones: " + exAud.Message,
+                                        "VENTAS", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
 
                 // Guardar componentes de promociones detectadas automáticamente
                 if (salida != -1 && _promosAplicadas.Count > 0)

@@ -556,7 +556,7 @@ namespace Comercial.Formularios.Ventas
             {
                 unProducto = int.Parse(producto.Rows[0]["ID"].ToString());
                 lblDescripcion.Text = producto.Rows[0]["Descripcion"].ToString();
-                esfraccionado = bool.Parse(producto.Rows[0]["fraccionado"].ToString());
+                esfraccionado = Clases.ClassProductos.esVerdadero(producto.Rows[0]["fraccionado"]);   // fraccionado puede ser NULL en la base
                 if (!productoDeBalanzaEncontrado)
                 {
                     if (tieneLectoraCB == 0)
@@ -609,7 +609,7 @@ namespace Comercial.Formularios.Ventas
                 lbDesc.Visible = false;
                 txtDesc.Text = string.Empty;
                 unTipoBusq = 2;
-                esfraccionado = bool.Parse(producto.Rows[0]["fraccionado"].ToString());
+                esfraccionado = Clases.ClassProductos.esVerdadero(producto.Rows[0]["fraccionado"]);   // fraccionado puede ser NULL en la base
             }
         }
 
