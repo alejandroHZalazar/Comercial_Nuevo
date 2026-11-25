@@ -74,6 +74,29 @@ namespace Comercial.Formularios.Productos
             }
         }
 
+        // Códigos automáticos (parámetro productos/generaCodigoBarras): solo en el alta
+        private bool generaCodigos;
+
+        private void configurarCodigosAutomaticos()
+        {
+            generaCodigos = unAccion == 1 && Clases.ClassCodigosBarras.habilitado();
+            if (!generaCodigos) return;
+
+            Controls.Add(new Label
+            {
+                Text = Clases.ClassCodigosBarras.AvisoPantalla,
+                AutoSize = false,
+                Location = new Point(252, 16),
+                Size = new Size(250, 62),
+                ForeColor = Color.DimGray
+            });
+        }
+
+        private bool sinCodigosCargados()
+        {
+            return string.IsNullOrWhiteSpace(txtCodProveedor.Text) && string.IsNullOrWhiteSpace(txtCodBarras.Text);
+        }
+
         // Variantes de producto: solo existe si las variantes están habilitadas en la base
         private CheckBox chkTieneVariantes;
 
@@ -171,6 +194,22 @@ namespace Comercial.Formularios.Productos
                 decimal? unGanancia  = porProducto ? (decimal?)nudGanancia.Value  : null;
                 decimal? unDescuento = porProducto ? (decimal?)nudDescuento.Value : null;
 
+                if (generaCodigos && sinCodigosCargados())
+                {
+                    string codigo, mensaje;
+                    resul = instProd.altaConCodigoAutomatico(int.Parse(cboRubro.SelectedValue.ToString()), txtDescripcion.Text.Trim(), idProveedor, nudCosto.Value, nudLista.Value, nudStock.Value, nudMinima.Value, nudProveedor.Value, cbFraccionado.Checked, cbDolarizado.Checked, chkEsPromocion.Checked, unGanancia, unDescuento, nudCantMinimaVenta.Value, out codigo, out mensaje);
+
+                    if (resul <= 0)
+                    {
+                        MessageBox.Show(this, "No se pudo grabar el producto.\r\n\r\n" + mensaje, "ABM Productos", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    MessageBox.Show(this, "Producto grabado. Se asignó el código " + codigo + " como código de barras y de proveedor.", "ABM Productos", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.Close();
+                    return;
+                }
+
                 if (unAccion == 1)
                 {
                     resul = instProd.ABMProductos(txtCodProveedor.Text.Trim(), txtCodBarras.Text.Trim(), int.Parse(cboRubro.SelectedValue.ToString()), txtDescripcion.Text.Trim(), idProveedor, nudCosto.Value, nudLista.Value, nudStock.Value, nudMinima.Value, 1, 0,nudProveedor .Value,cbFraccionado.Checked, cbDolarizado.Checked, chkEsPromocion.Checked, unGanancia, unDescuento, nudCantMinimaVenta.Value);
@@ -198,13 +237,16 @@ namespace Comercial.Formularios.Productos
             // Una ficha con variantes no lleva código propio: los códigos son de cada variante
             bool esFicha = chkTieneVariantes != null && chkTieneVariantes.Checked;
 
-            if (!esFicha && txtCodProveedor.Text == string.Empty)
+            // Con la generación automática, en el alta se admiten los dos códigos vacíos (uno solo, no)
+            bool seGeneran = generaCodigos && sinCodigosCargados();
+
+            if (!esFicha && !seGeneran && txtCodProveedor.Text == string.Empty)
             {
                 errorProvider1.SetError(txtCodProveedor, "Debe escribir el código de Proveedor");
                 return false;
             }
 
-            if (!esFicha && txtCodBarras.Text == string.Empty)
+            if (!esFicha && !seGeneran && txtCodBarras.Text == string.Empty)
             {
                 errorProvider1.SetError(txtCodBarras, "Debe escribir el código de Barras");
                 return false;
@@ -251,6 +293,7 @@ namespace Comercial.Formularios.Productos
             }
 
             configurarVariantes();
+            configurarCodigosAutomaticos();
         }
 
         private void cargarProducto()

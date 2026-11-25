@@ -31,6 +31,8 @@ namespace Comercial.Clases
             public DateTime Desde { get; set; }
             public DateTime Hasta { get; set; }
             public bool Activa { get; set; } = true;
+            /// <summary>Solo NxM: acumula las variantes de una misma ficha (requiere la columna agrupaVariantes).</summary>
+            public bool AgrupaVariantes { get; set; }
             public List<int> ProductoIds { get; set; } = new List<int>();
         }
 
@@ -97,6 +99,7 @@ namespace Comercial.Clases
         private static bool _calculado;
         private static bool _habilitado;
         private static bool _tablas;
+        private static bool _columnaAgrupa;     // existe promociones_reglas.agrupaVariantes (scripts/promociones_reglas_agrupa_variantes.sql)
         private static DateTime _vence = DateTime.MinValue;
         private static readonly object _lock = new object();
 
@@ -108,6 +111,7 @@ namespace Comercial.Clases
 
                 bool tablas = false;
                 bool habilitado = false;
+                bool columnaAgrupa = false;
                 classDatos datos = new classDatos();
                 try
                 {
@@ -116,6 +120,14 @@ namespace Comercial.Clases
                         "select count(*) from information_schema.TABLES where TABLE_SCHEMA = DATABASE() and LOWER(TABLE_NAME) in " +
                         "('promociones_reglas','promociones_reglas_productos','ventas_promo_detalle','pedidos_promo_detalle')", cn))
                         tablas = Convert.ToInt32(c.ExecuteScalar()) == 4;
+
+                    if (tablas)
+                    {
+                        using (MySqlCommand c = new MySqlCommand(
+                            "select count(*) from information_schema.COLUMNS where TABLE_SCHEMA = DATABASE() " +
+                            "and LOWER(TABLE_NAME) = 'promociones_reglas' and COLUMN_NAME = 'agrupaVariantes'", cn))
+                            columnaAgrupa = Convert.ToInt32(c.ExecuteScalar()) > 0;
+                    }
 
                     if (tablas)
                     {
@@ -130,6 +142,7 @@ namespace Comercial.Clases
                 {
                     tablas = false;
                     habilitado = false;
+                    columnaAgrupa = false;
                 }
                 finally
                 {
@@ -138,6 +151,7 @@ namespace Comercial.Clases
 
                 _tablas = tablas;
                 _habilitado = habilitado;
+                _columnaAgrupa = columnaAgrupa;
                 _calculado = true;
                 _vence = DateTime.UtcNow.AddSeconds(60);
             }
@@ -148,6 +162,16 @@ namespace Comercial.Clases
         {
             calcularEstado();
             return _habilitado;
+        }
+
+        /// <summary>
+        /// Existe la columna promociones_reglas.agrupaVariantes (se crea con scripts/promociones_reglas_agrupa_variantes.sql).
+        /// Sin ella no se lee ni se guarda la opción y todo funciona como antes.
+        /// </summary>
+        public static bool agrupaVariantesDisponible()
+        {
+            calcularEstado();
+            return _tablas && _columnaAgrupa;
         }
 
         /// <summary>Las 4 tablas existen (sirve para el ABM aunque el parámetro esté apagado).</summary>
@@ -191,6 +215,29 @@ namespace Comercial.Clases
             return string.Join(",", ids.Select(i => i.ToString(CultureInfo.InvariantCulture)));
         }
 
+        // ── Opción "acumular variantes de una misma ficha" ────────────────────
+        // Sin la columna (script sin ejecutar) no se la nombra en ninguna consulta: todo queda como antes.
+        private static string columnaAgrupaSql()
+        {
+            return agrupaVariantesDisponible() ? ", agrupaVariantes" : string.Empty;
+        }
+
+        private static bool leerAgrupa(DataRow r)
+        {
+            return r.Table.Columns.Contains("agrupaVariantes") && r["agrupaVariantes"] != DBNull.Value &&
+                   Convert.ToInt32(r["agrupaVariantes"]) == 1;
+        }
+
+        // Id de la ficha de cada variante (productosVariantes.fk_producto -> fk_principal). 0 = no es variante.
+        private Dictionary<int, int> fichasDeVariantes(List<int> productoIds)
+        {
+            Dictionary<int, int> d = new Dictionary<int, int>();
+            if (productoIds.Count == 0) return d;
+            DataTable t = consulta("select fk_producto, fk_principal from productosVariantes where fk_producto in (" + lista(productoIds) + ")");
+            foreach (DataRow r in t.Rows) d[Convert.ToInt32(r["fk_producto"])] = Convert.ToInt32(r["fk_principal"]);
+            return d;
+        }
+
         // ── Reglas vigentes para un conjunto de productos ─────────────────────
         private List<ReglaPromo> reglasVigentes(List<int> productoIds, DateTime ahora)
         {
@@ -205,7 +252,8 @@ namespace Comercial.Clases
 
             List<int> reglaIds = asoc.AsEnumerable().Select(r => Convert.ToInt32(r["fk_regla"])).Distinct().ToList();
             DataTable reglas = consulta(
-                "select id, nombre, tipo, porcentaje, lleva, paga, vigenteDesde, vigenteHasta, activa from promociones_reglas where id in (" + lista(reglaIds) + ")");
+                "select id, nombre, tipo, porcentaje, lleva, paga, vigenteDesde, vigenteHasta, activa" + columnaAgrupaSql() +
+                " from promociones_reglas where id in (" + lista(reglaIds) + ")");
 
             List<ReglaPromo> res = new List<ReglaPromo>();
             foreach (DataRow r in reglas.Rows)
@@ -213,6 +261,7 @@ namespace Comercial.Clases
                 int id = Convert.ToInt32(r["id"]);
                 res.Add(new ReglaPromo
                 {
+                    AgrupaVariantes = leerAgrupa(r),
                     Id = id,
                     Nombre = r["nombre"].ToString(),
                     Tipo = r["tipo"].ToString(),
@@ -250,6 +299,18 @@ namespace Comercial.Clases
             if (validas.Count == 0) return;
 
             reglas = reglasVigentes(validas.Select(l => l.ProductoId).Distinct().ToList(), ahora);
+
+            // Solo si alguna regla vigente acumula variantes (y las variantes están habilitadas) se consulta a qué ficha
+            // pertenece cada producto; en cualquier otro caso no se toca ninguna tabla de variantes.
+            if (reglas.Any(r => r.AcumulaPorFicha) && ClassProductos.variantesHabilitadas())
+            {
+                Dictionary<int, int> fichas = fichasDeVariantes(validas.Select(l => l.ProductoId).Distinct().ToList());
+                foreach (LineaPromoEntrada l in validas)
+                {
+                    int ficha;
+                    l.FichaId = fichas.TryGetValue(l.ProductoId, out ficha) ? ficha : 0;
+                }
+            }
         }
 
         // ── Evaluación desde la grilla ────────────────────────────────────────
@@ -268,15 +329,18 @@ namespace Comercial.Clases
             List<LineaPromoProxima> proximas = MotorPromociones.Proximas(validas, reglas, ahora);
             if (proximas.Count > 0)
             {
-                Dictionary<int, string> nomProx = nombres(proximas.Select(p => p.ProductoId).Distinct().ToList());
+                // Avisos por ficha: el nombre es el de la ficha y la unidad que falta puede ser de cualquiera de sus variantes
+                Func<LineaPromoProxima, int> idNombre = p => p.EsGrupo ? p.FichaId : p.ProductoId;
+                Dictionary<int, string> nomProx = nombres(proximas.Select(idNombre).Distinct().ToList());
                 resp.Proximas = proximas.Select(p => new AvisoProxima
                 {
                     Clave = p.Clave,
-                    FkProducto = p.ProductoId,
+                    FkProducto = idNombre(p),
                     FkRegla = p.ReglaId,
                     CantidadActual = p.CantidadActual,
-                    Descripcion = nomProx.ContainsKey(p.ProductoId) ? nomProx[p.ProductoId] : "",
-                    Texto = "¡Aprovechá la promoción " + p.Nombre + "! Agregando 1 unidad más, llevás " + p.Lleva + " y pagás " + p.Paga + ".",
+                    Descripcion = nomProx.ContainsKey(idNombre(p)) ? nomProx[idNombre(p)] : "",
+                    Texto = "¡Aprovechá la promoción " + p.Nombre + "! Agregando 1 unidad más" +
+                            (p.EsGrupo ? " (de cualquiera de las variantes)" : "") + ", llevás " + p.Lleva + " y pagás " + p.Paga + ".",
                     TextoCorto = "¡+1 y llevá " + p.Lleva + " pagando " + p.Paga + "!"
                 }).ToList();
             }
@@ -292,7 +356,7 @@ namespace Comercial.Clases
                 decimal ahorro = g.Sum(x => x.Ahorro);
                 decimal bonif = g.Sum(x => x.CantBonificada);
                 string texto = r0.Tipo == TipoPromo.NxM
-                    ? "promoción " + r0.Lleva + "x" + r0.Paga + " (" + bonif.ToString("0.####", Ar) + " unidad" + (bonif == 1m ? "" : "es") +
+                    ? "promoción " + r0.Lleva + "x" + r0.Paga + (g.Any(x => x.PorFicha) ? " acumulando variantes" : "") + " (" + bonif.ToString("0.####", Ar) + " unidad" + (bonif == 1m ? "" : "es") +
                       " bonificada" + (bonif == 1m ? "" : "s") + ", ahorro " + ahorro.ToString("C2", Ar) + " sin IVA)"
                     : r0.Porcentaje.Value.ToString("0.##", Ar) + "% de descuento (ahorro " + ahorro.ToString("C2", Ar) + " sin IVA)";
 
@@ -403,9 +467,9 @@ namespace Comercial.Clases
         }
 
         // ── ABM ───────────────────────────────────────────────────────────────
-        private static string resumen(string tipo, object pct, object lleva, object paga)
+        private static string resumen(string tipo, object pct, object lleva, object paga, bool agrupaVariantes = false)
         {
-            if (tipo == TipoPromo.NxM) return lleva + "x" + paga;
+            if (tipo == TipoPromo.NxM) return lleva + "x" + paga + (agrupaVariantes ? " (acumula variantes)" : string.Empty);
             decimal p = pct == DBNull.Value || pct == null ? 0m : Convert.ToDecimal(pct);
             return p.ToString("0.##", Ar) + " % de descuento";
         }
@@ -427,6 +491,7 @@ namespace Comercial.Clases
 
             DataTable t = consulta(
                 "select r.id, r.nombre, r.tipo, r.porcentaje, r.lleva, r.paga, r.vigenteDesde, r.vigenteHasta, r.activa, " +
+                (agrupaVariantesDisponible() ? "r.agrupaVariantes, " : string.Empty) +
                 "(select count(*) from promociones_reglas_productos p where p.fk_regla = r.id) as cant " +
                 "from promociones_reglas r order by r.vigenteHasta desc, r.nombre");
 
@@ -437,7 +502,7 @@ namespace Comercial.Clases
                 DateTime d = Convert.ToDateTime(r["vigenteDesde"]);
                 DateTime h = Convert.ToDateTime(r["vigenteHasta"]);
                 salida.Rows.Add(Convert.ToInt32(r["id"]), r["nombre"].ToString(), r["tipo"].ToString(),
-                                resumen(r["tipo"].ToString(), r["porcentaje"], r["lleva"], r["paga"]),
+                                resumen(r["tipo"].ToString(), r["porcentaje"], r["lleva"], r["paga"], leerAgrupa(r)),
                                 d, h, activa, activa && d <= ahora && h >= ahora, Convert.ToInt32(r["cant"]));
             }
             return salida;
@@ -446,7 +511,8 @@ namespace Comercial.Clases
         public ReglaDetalle obtener(int id)
         {
             if (!tablasListas()) return null;
-            DataTable t = consulta("select id, nombre, tipo, porcentaje, lleva, paga, vigenteDesde, vigenteHasta, activa from promociones_reglas where id = @id",
+            DataTable t = consulta("select id, nombre, tipo, porcentaje, lleva, paga, vigenteDesde, vigenteHasta, activa" + columnaAgrupaSql() +
+                                   " from promociones_reglas where id = @id",
                                    new MySqlParameter("@id", id));
             if (t.Rows.Count == 0) return null;
             DataRow r = t.Rows[0];
@@ -463,6 +529,7 @@ namespace Comercial.Clases
                 Desde = Convert.ToDateTime(r["vigenteDesde"]),
                 Hasta = Convert.ToDateTime(r["vigenteHasta"]),
                 Activa = Convert.ToInt32(r["activa"]) == 1,
+                AgrupaVariantes = leerAgrupa(r),
                 ProductoIds = p.AsEnumerable().Select(x => Convert.ToInt32(x["fk_producto"])).ToList()
             };
         }
@@ -502,6 +569,18 @@ namespace Comercial.Clases
             }
             else throw new InvalidOperationException("Tipo de promoción inválido.");
 
+            // Acumular variantes de una misma ficha: solo NxM, y solo si existe la columna y las variantes están habilitadas
+            bool agrupa = false;
+            if (tipo == TipoPromo.NxM && dto.AgrupaVariantes)
+            {
+                if (!agrupaVariantesDisponible())
+                    throw new InvalidOperationException("Para acumular variantes falta ejecutar scripts/promociones_reglas_agrupa_variantes.sql.");
+                if (!ClassVariantes.habilitado())
+                    throw new InvalidOperationException("Para acumular variantes deben estar habilitadas las variantes de producto.");
+                agrupa = true;
+            }
+            bool guardaAgrupa = agrupaVariantesDisponible();   // sin la columna no se la nombra en el SQL
+
             if (dto.Hasta < dto.Desde)
                 throw new InvalidOperationException("La fecha de finalización no puede ser anterior a la de inicio.");
 
@@ -530,17 +609,22 @@ namespace Comercial.Clases
 
                     MySqlCommand upd = new MySqlCommand(
                         "update promociones_reglas set nombre=@nombre, tipo=@tipo, porcentaje=@pct, lleva=@lleva, paga=@paga, " +
+                        (guardaAgrupa ? "agrupaVariantes=@agrupa, " : string.Empty) +
                         "vigenteDesde=@desde, vigenteHasta=@hasta, activa=@activa, usuario=@usuario where id=@id", cn, tx);
                     cargarParametros(upd, nombre, tipo, pct, lleva, paga, desde, hasta, dto.Activa, usuario);
+                    upd.Parameters.AddWithValue("@agrupa", agrupa ? 1 : 0);
                     upd.Parameters.AddWithValue("@id", id);
                     upd.ExecuteNonQuery();
                 }
                 else
                 {
                     MySqlCommand ins = new MySqlCommand(
-                        "insert into promociones_reglas (nombre, tipo, porcentaje, lleva, paga, vigenteDesde, vigenteHasta, activa, fechaAlta, usuario) " +
-                        "values (@nombre, @tipo, @pct, @lleva, @paga, @desde, @hasta, @activa, @alta, @usuario)", cn, tx);
+                        "insert into promociones_reglas (nombre, tipo, porcentaje, lleva, paga, " + (guardaAgrupa ? "agrupaVariantes, " : string.Empty) +
+                        "vigenteDesde, vigenteHasta, activa, fechaAlta, usuario) " +
+                        "values (@nombre, @tipo, @pct, @lleva, @paga, " + (guardaAgrupa ? "@agrupa, " : string.Empty) +
+                        "@desde, @hasta, @activa, @alta, @usuario)", cn, tx);
                     cargarParametros(ins, nombre, tipo, pct, lleva, paga, desde, hasta, dto.Activa, usuario);
+                    ins.Parameters.AddWithValue("@agrupa", agrupa ? 1 : 0);
                     ins.Parameters.AddWithValue("@alta", ahoraArgentina());
                     ins.ExecuteNonQuery();
                     id = (int)ins.LastInsertedId;

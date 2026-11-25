@@ -17,6 +17,20 @@ namespace Comercial.Clases
     /// <summary>Iconos de los botones de los formularios de variantes (recursos del proyecto, escalados a 20x20).</summary>
     static class IconosVariantes
     {
+        [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
+        private static extern bool DestroyIcon(System.IntPtr handle);
+
+        /// <summary>Convierte una imagen de los recursos en el ícono de la barra de título de un formulario (32x32).</summary>
+        public static System.Drawing.Icon ParaFormulario(System.Drawing.Image imagen)
+        {
+            using (System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(imagen, 32, 32))
+            {
+                System.IntPtr h = bmp.GetHicon();
+                try { return (System.Drawing.Icon)System.Drawing.Icon.FromHandle(h).Clone(); }
+                finally { DestroyIcon(h); }   // el Clone ya tiene su propia copia: se libera el handle original
+            }
+        }
+
         public static void Aplicar(System.Windows.Forms.Button boton, System.Drawing.Icon icono)
         {
             Aplicar(boton, (System.Drawing.Image)icono.ToBitmap());
@@ -105,6 +119,10 @@ namespace Comercial.Clases
             public bool Ok { get; set; }
             public int ProductoId { get; set; }
             public List<string> Errores { get; set; } = new List<string>();
+            /// <summary>Códigos generados para las variantes nuevas ("descripción: código").</summary>
+            public List<string> CodigosAsignados { get; set; } = new List<string>();
+            /// <summary>Aviso posterior a un guardado correcto (p. ej. no se generaron los códigos).</summary>
+            public string Advertencia { get; set; }
         }
 
         // ── Estado ────────────────────────────────────────────────────────────
@@ -530,6 +548,12 @@ namespace Comercial.Clases
                 if (p.Costo < 0) errores.Add("El costo común no puede ser negativo.");
             }
 
+            // Códigos automáticos: variantes nuevas sin ninguno de los dos códigos (los genera el procedimiento)
+            List<VarianteFila> sinCodigos = filas.Where(f => !f.ProductoId.HasValue && f.CodBarras == null && f.CodProveedor == null).ToList();
+            bool generaCodigos = sinCodigos.Count > 0 && ClassCodigosBarras.habilitado();
+            if (generaCodigos && !ClassCodigosBarras.procedimientosInstalados())
+                errores.Add(ClassCodigosBarras.FaltaScript);
+
             if (errores.Count > 0) { res.Errores = errores.Distinct().ToList(); return res; }
 
             // Valor común anterior (para decidir qué variantes "siguen" al cambiar el común)
@@ -639,7 +663,29 @@ namespace Comercial.Clases
             {
                 instDatos.cerrarConexion();
             }
+
+            if (res.Ok && generaCodigos) leerCodigosAsignados(res, sinCodigos);
             return res;
+        }
+
+        // Lee los códigos que asignó el procedimiento. La ficha ya está guardada: un fallo acá solo genera un aviso.
+        private void leerCodigosAsignados(ResultadoGuardado res, List<VarianteFila> sinCodigos)
+        {
+            try
+            {
+                HashSet<string> combos = new HashSet<string>(sinCodigos.Select(f => f.MedidaId + "|" + f.ColorId));
+                foreach (VarianteFila v in obtenerFicha(res.ProductoId).Variantes.Where(v => combos.Contains(v.MedidaId + "|" + v.ColorId)))
+                {
+                    if (string.IsNullOrWhiteSpace(v.CodBarras))
+                        res.Advertencia = "El producto se guardó, pero no se generaron los códigos. " + ClassCodigosBarras.FaltaScript;
+                    else
+                        res.CodigosAsignados.Add(etiqueta(v.MedidaNombre, v.ColorNombre) + ": " + v.CodBarras);
+                }
+            }
+            catch (Exception ex)
+            {
+                res.Advertencia = "El producto se guardó, pero no se pudieron consultar los códigos asignados: " + ex.Message;
+            }
         }
 
         // Modo "todas": sí. "Solo quienes siguen": solo si su valor actual es igual al común anterior. "Ninguna": no.

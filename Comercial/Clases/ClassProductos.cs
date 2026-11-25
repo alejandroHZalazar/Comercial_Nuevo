@@ -658,6 +658,69 @@ namespace Comercial.Clases
             }
         }
 
+        /// <summary>
+        /// Alta de un producto simple sin códigos: la base reserva el código y lo graba como código de barras y de
+        /// proveedor en una sola transacción. Devuelve el id (&lt;= 0 = no se grabó; ver mensaje).
+        /// </summary>
+        public int altaConCodigoAutomatico(int unRubro, string unaDescripcion, int unProveedor, decimal unCosto,
+                                           decimal unPrecio, decimal unStock, decimal unaCantMinima, decimal unPrecioProveedor,
+                                           bool esFraccionado, bool esDolarizado, bool esPromocion,
+                                           decimal? unGanancia, decimal? unDescuento, decimal? unaCantidadMinimaVenta,
+                                           out string codigo, out string mensaje)
+        {
+            codigo = null;
+            mensaje = string.Empty;
+
+            if (!ClassCodigosBarras.procedimientosInstalados())
+            {
+                mensaje = ClassCodigosBarras.FaltaScript;
+                return -1;
+            }
+
+            try
+            {
+                MySqlCommand cmd = new MySqlCommand("sp_ProductosAltaCodigoAutomatico", instDatos.abrirConexion());
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("unRubro", unRubro);
+                cmd.Parameters.AddWithValue("unaDescripcion", unaDescripcion);
+                cmd.Parameters.AddWithValue("unProveedor", unProveedor);
+                cmd.Parameters.AddWithValue("unCosto", unCosto);
+                cmd.Parameters.AddWithValue("unPrecio", unPrecio);
+                cmd.Parameters.AddWithValue("unStock", unStock);
+                cmd.Parameters.AddWithValue("unaCMinima", unaCantMinima);
+                cmd.Parameters.AddWithValue("unPrecioProveedor", unPrecioProveedor);
+                cmd.Parameters.AddWithValue("esFraccionado", esFraccionado);
+                cmd.Parameters.AddWithValue("esDolarizado", esDolarizado);
+                cmd.Parameters.AddWithValue("esUnaPromocion", esPromocion);
+                cmd.Parameters.AddWithValue("unGanancia", unGanancia.HasValue ? (object)unGanancia.Value : DBNull.Value);
+                cmd.Parameters.AddWithValue("unDescuento", unDescuento.HasValue ? (object)unDescuento.Value : DBNull.Value);
+                cmd.Parameters.AddWithValue("unaCantidadMinimaVenta", unaCantidadMinimaVenta.HasValue ? (object)unaCantidadMinimaVenta.Value : DBNull.Value);
+
+                MySqlParameter salida = new MySqlParameter("salida", MySqlDbType.Int32) { Direction = ParameterDirection.Output };
+                MySqlParameter salidaCodigo = new MySqlParameter("unCodigo", MySqlDbType.VarChar, 45) { Direction = ParameterDirection.Output };
+                MySqlParameter salidaMensaje = new MySqlParameter("mensaje", MySqlDbType.VarChar, 500) { Direction = ParameterDirection.Output };
+                cmd.Parameters.Add(salida);
+                cmd.Parameters.Add(salidaCodigo);
+                cmd.Parameters.Add(salidaMensaje);
+
+                cmd.ExecuteNonQuery();
+
+                codigo = salidaCodigo.Value as string;
+                mensaje = salidaMensaje.Value as string ?? string.Empty;
+                return Convert.ToInt32(salida.Value);
+            }
+            catch (MySqlException ex)
+            {
+                mensaje = ex.Message;
+                return -1;
+            }
+            finally
+            {
+                instDatos.cerrarConexion();
+            }
+        }
+
         public DataTable traerProductosProveedores()
         {
             MySqlDataAdapter rows = new MySqlDataAdapter("select p.codProveedor, ppr.precio * 1.10 from Productos as p inner join preciosProveedores as ppr on ppr.fk_producto = p.id where p.fk_proveedor = 7 and p.id > 385 order by p.id", instDatos.abrirConexion());

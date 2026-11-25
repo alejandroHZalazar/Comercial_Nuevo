@@ -26,6 +26,8 @@ namespace Comercial.Formularios.Productos
         private NumericUpDown nudPorc, nudLleva, nudPaga;
         private DateTimePicker dtpDesde, dtpHasta;
         private CheckBox chkActiva;
+        private CheckBox chkAcumula;
+        private ToolTip tip = new ToolTip { AutoPopDelay = 12000 };
         private DataGridView dgv;
         private Label lblCantidad;
         private ErrorProvider errores = new ErrorProvider();
@@ -33,6 +35,7 @@ namespace Comercial.Formularios.Productos
         public frmAltaModifPromocionDescuento()
         {
             Text = "Promoción por cantidad / descuento";
+            Icon = Clases.IconosVariantes.ParaFormulario(Properties.Resources.tag);   // etiqueta de precio
             Font = new Font("Segoe UI", 9F);
             StartPosition = FormStartPosition.CenterParent;
             ClientSize = new Size(860, 600);
@@ -72,6 +75,10 @@ namespace Comercial.Formularios.Productos
             lblPaga = new Label { Text = "Paga", AutoSize = true, Location = new Point(410, 62) };
             nudPaga = new NumericUpDown { Location = new Point(452, 58), Width = 60, Minimum = 1, Maximum = 98, Value = 1 };
             gbDatos.Controls.AddRange(new Control[] { cboTipo, lblPorc, nudPorc, lblLleva, nudLleva, lblPaga, nudPaga });
+
+            // Solo NxM: las cantidades de las variantes de una misma ficha (entre los productos de la lista) se suman
+            chkAcumula = new CheckBox { Text = "Acumular las variantes de una misma ficha", AutoSize = true, Location = new Point(530, 60) };
+            gbDatos.Controls.Add(chkAcumula);
 
             gbDatos.Controls.Add(new Label { Text = "Vigente desde", AutoSize = true, Location = new Point(12, 100) });
             dtpDesde = new DateTimePicker { Location = new Point(100, 96), Width = 160, Format = DateTimePickerFormat.Custom, CustomFormat = "dd/MM/yyyy HH:mm" };
@@ -150,6 +157,16 @@ namespace Comercial.Formularios.Productos
             bool porc = tipoActual == Clases.TipoPromo.Porcentaje;
             lblPorc.Visible = nudPorc.Visible = porc;
             lblLleva.Visible = nudLleva.Visible = lblPaga.Visible = nudPaga.Visible = !porc;
+
+            // Acumular variantes: solo NxM y solo si ya se ejecutó el script de la columna agrupaVariantes
+            bool disponible = Clases.ClassPromocionesDescuentos.agrupaVariantesDisponible();
+            chkAcumula.Visible = !porc;
+            chkAcumula.Enabled = disponible;
+            tip.SetToolTip(chkAcumula, disponible
+                ? "Si está tildado, las unidades de las distintas variantes de una misma ficha (entre los productos de la lista) se suman " +
+                  "para completar el grupo. Ej.: 3x2 con 1 unidad del talle 38, 1 del 40 y 1 del 42 = 1 bonificada.\r\n" +
+                  "Destildado: cada producto se evalúa por separado (comportamiento habitual)."
+                : "Disponible después de ejecutar scripts/promociones_reglas_agrupa_variantes.sql.");
         }
 
         private void cargar()
@@ -173,6 +190,7 @@ namespace Comercial.Formularios.Productos
                 dtpDesde.Value = r.Desde;
                 dtpHasta.Value = r.Hasta;
                 chkActiva.Checked = r.Activa;
+                chkAcumula.Checked = r.AgrupaVariantes;
                 productoIds.AddRange(r.ProductoIds);
             }
             else
@@ -243,6 +261,7 @@ namespace Comercial.Formularios.Productos
                 Desde = dtpDesde.Value,
                 Hasta = dtpHasta.Value,
                 Activa = chkActiva.Checked,
+                AgrupaVariantes = tipoActual == Clases.TipoPromo.NxM && chkAcumula.Checked,
                 ProductoIds = new List<int>(productoIds)
             };
 

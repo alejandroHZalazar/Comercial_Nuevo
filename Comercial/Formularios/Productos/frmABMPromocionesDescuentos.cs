@@ -21,6 +21,7 @@ namespace Comercial.Formularios.Productos
         public frmABMPromocionesDescuentos()
         {
             Text = "Promociones por cantidad / descuento";
+            Icon = Clases.IconosVariantes.ParaFormulario(Properties.Resources.tag);   // etiqueta de precio
             Font = new Font("Segoe UI", 9F);
             StartPosition = FormStartPosition.CenterParent;
             ClientSize = new Size(900, 540);

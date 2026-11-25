@@ -233,6 +233,7 @@
   <ItemGroup>
     <Compile Include="Clases\ClassCaja.cs" />
     <Compile Include="Clases\ClassClientes.cs" />
+    <Compile Include="Clases\ClassCodigosBarras.cs" />
     <Compile Include="Clases\ClassColores.cs" />
     <Compile Include="Clases\ClassConfiguracion.cs" />
     <Compile Include="Clases\classDatos.cs" />

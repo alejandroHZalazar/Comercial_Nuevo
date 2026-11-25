@@ -13,6 +13,10 @@
 --   "codProveedor":"X-1","descripcion":"NOMBRE - M","costo":10,"precio":20,"stock":5,"orden":1}, ...]
 --   productoId = 0 -> variante nueva; > 0 -> variante existente de la ficha.
 --
+-- CODIGOS AUTOMATICOS: con parametros(productos, generaCodigoBarras) = '1', cada variante NUEVA sin codigo de barras
+-- y sin codigo de proveedor recibe uno distinto en ambos (tambien si se crea deshabilitada). La ficha y las variantes
+-- existentes no cambian. Requiere codigo_barras_automatico_escritorio.sql; con el parametro apagado no se usa.
+--
 -- salida: > 0 id de la ficha | -1 error (ver mensaje) | -8 el producto existe pero no es una ficha
 --         -9 se intento cambiar medidas/colores de una ficha que ya tiene variantes
 -- =====================================================================
@@ -61,6 +65,11 @@ proc: BEGIN
     DECLARE cStock   DECIMAL(18,4);
     DECLARE cOrden   INT;
 
+    DECLARE vGenera    TINYINT DEFAULT 0;   -- parametro de codigos automaticos activo y hay variantes que lo necesitan
+    DECLARE vFilas     INT DEFAULT 0;
+    DECLARE vNuevoId   INT;
+    DECLARE vCodigo    VARCHAR(45);
+
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         GET DIAGNOSTICS CONDITION 1 mensaje = MESSAGE_TEXT;
@@ -85,7 +94,8 @@ proc: BEGIN
         costo        DECIMAL(18,4),
         precio       DECIMAL(18,4),
         stock        DECIMAL(18,4),
-        orden        INT
+        orden        INT,
+        nuevoId      INT             -- id asignado a una variante nueva sin codigos
     );
 
     INSERT INTO tmpVariantesGuardar (productoId, medidaId, colorId, habilitada, codBarras, codProveedor, descripcion, costo, precio, stock, orden)
@@ -113,7 +123,20 @@ proc: BEGIN
         LEAVE proc;
     END IF;
 
+    -- El interruptor se consulta ANTES de abrir la transaccion
+    IF EXISTS (SELECT 1 FROM parametros
+                WHERE modulo = 'productos' AND parametro = 'generaCodigoBarras' AND TRIM(valor) = '1') THEN
+        SELECT COUNT(*) > 0 INTO vGenera FROM tmpVariantesGuardar
+         WHERE productoId = 0 AND TRIM(IFNULL(codBarras, '')) = '' AND TRIM(IFNULL(codProveedor, '')) = '';
+    END IF;
+
     START TRANSACTION;
+
+    -- Primera lectura de la transaccion: bloquea el contador de codigos hasta el COMMIT
+    IF vGenera = 1 THEN
+        SELECT COUNT(*) INTO vFilas FROM parametros
+         WHERE modulo = 'productos' AND parametro = 'proximoCodigoBarras' FOR UPDATE;
+    END IF;
 
     -- ---------------------------------------------------------------
     -- 1) Ficha principal
@@ -269,10 +292,32 @@ proc: BEGIN
             INSERT INTO preciosProductos (fk_producto, precio) VALUES (vId, cPrecio);
             INSERT INTO costosProductos (fk_producto, costo) VALUES (vId, cCosto);
             INSERT INTO preciosProveedores (fk_producto, precio) VALUES (vId, cCosto);
+
+            IF vGenera = 1 AND TRIM(IFNULL(cCodB, '')) = '' AND TRIM(IFNULL(cCodP, '')) = '' THEN
+                UPDATE tmpVariantesGuardar SET nuevoId = vId WHERE rn = vRn;
+            END IF;
         END IF;
 
         SET vRn = vRn + 1;
     END WHILE;
+
+    -- ---------------------------------------------------------------
+    -- 5) Codigos automaticos. Se asignan al final para que los escritos a mano en esta misma operacion ya esten
+    --    grabados y queden excluidos.
+    -- ---------------------------------------------------------------
+    IF vGenera = 1 THEN
+        SET vRn = 1;
+        WHILE vRn <= vMax DO
+            SET vNuevoId = (SELECT nuevoId FROM tmpVariantesGuardar WHERE rn = vRn);
+
+            IF vNuevoId IS NOT NULL THEN
+                CALL sp_CodigoBarras_Reservar(vCodigo);
+                UPDATE Productos SET codBarras = vCodigo, codProveedor = vCodigo WHERE id = vNuevoId;
+            END IF;
+
+            SET vRn = vRn + 1;
+        END WHILE;
+    END IF;
 
     COMMIT;
 

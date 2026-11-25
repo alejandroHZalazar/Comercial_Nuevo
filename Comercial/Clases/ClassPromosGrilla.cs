@@ -65,6 +65,7 @@ namespace Comercial.Clases
             public int Producto;
             public decimal Cantidad;      // cantidad lógica (cobradas + bonificadas)
             public decimal Precio;
+            public List<DataGridViewRow> Miembros;   // filas cobradas/bonificadas que forman la línea (null = fila común o con %)
         }
 
         public ClassPromosGrilla(Configuracion c)
@@ -183,15 +184,45 @@ namespace Comercial.Clases
             return descRec(r) != 0m;
         }
 
-        bool elegible(DataGridViewRow r)
+        // Condiciones que no dependen de las marcas de promoción
+        bool elegibleBase(DataGridViewRow r)
         {
-            if (rol(r) == ROL_BON) return false;
             if (verdadero(r.Cells[cfg.ColFraccionado].Value)) return false;
             if (Convert.ToString(r.Tag) == "subtotalManual") return false;
             if (cfg.ColPedido != null && dec(r.Cells[cfg.ColPedido].Value) != 0m) return false;
             if (cant(r) <= 0m || precio(r) <= 0m || producto(r) <= 0) return false;
+            return true;
+        }
+
+        bool elegible(DataGridViewRow r)
+        {
+            if (rol(r) == ROL_BON) return false;
+            if (!elegibleBase(r)) return false;
             if (esManual(r)) return false;       // Desc/Rec manual: gana el manual
             return true;
+        }
+
+        // Las filas cobradas (COB) y bonificadas (BON) de un mismo producto y promoción forman UNA línea lógica:
+        // se evalúan juntas, con la suma de sus cantidades. La fila cobrada es el "ancla" de la línea; si el producto
+        // tiene todas sus unidades bonificadas (caso típico al acumular variantes) el ancla es la primera bonificada.
+        Dictionary<string, List<DataGridViewRow>> cubetas(List<DataGridViewRow> todas)
+        {
+            Dictionary<string, List<DataGridViewRow>> d = new Dictionary<string, List<DataGridViewRow>>();
+            foreach (DataGridViewRow r in todas)
+            {
+                string ro = rol(r);
+                if (ro != ROL_COB && ro != ROL_BON) continue;
+                string k = claveGrupo(producto(r), info(r) == null ? null : info(r).Aplicada);
+                if (!d.ContainsKey(k)) d[k] = new List<DataGridViewRow>();
+                d[k].Add(r);
+            }
+            return d;
+        }
+
+        DataGridViewRow ancla(List<DataGridViewRow> miembros)
+        {
+            foreach (DataGridViewRow m in miembros) if (rol(m) == ROL_COB) return m;
+            return miembros[0];
         }
 
         string firma()
@@ -203,7 +234,7 @@ namespace Comercial.Clases
             return sb.ToString();
         }
 
-        // Líneas lógicas: las bonificadas se suman a su fila cobrada (la promoción se evalúa sobre la cantidad total)
+        // Líneas lógicas: las filas cobradas/bonificadas de un producto se evalúan juntas (con la suma de sus cantidades)
         List<Linea> instantanea()
         {
             List<DataGridViewRow> todas = filas().ToList();
@@ -218,26 +249,31 @@ namespace Comercial.Clases
             }
             finally { escribiendo = previo; }
 
-            Dictionary<string, decimal> bon = new Dictionary<string, decimal>();
-            foreach (DataGridViewRow r in todas)
-                if (rol(r) == ROL_BON)
-                {
-                    string k = claveGrupo(producto(r), info(r) == null ? null : info(r).Aplicada);
-                    bon[k] = (bon.ContainsKey(k) ? bon[k] : 0m) + cant(r);
-                }
+            Dictionary<string, List<DataGridViewRow>> cub = cubetas(todas);
 
             List<Linea> res = new List<Linea>();
-            HashSet<string> consumidas = new HashSet<string>();
+            HashSet<string> emitidas = new HashSet<string>();
             foreach (DataGridViewRow r in todas)
             {
-                if (rol(r) == ROL_BON || !elegible(r)) continue;
-                decimal q = cant(r);
-                if (rol(r) == ROL_COB)
+                string ro = rol(r);
+                if (ro == ROL_COB || ro == ROL_BON)
                 {
                     string k = claveGrupo(producto(r), info(r) == null ? null : info(r).Aplicada);
-                    if (consumidas.Add(k) && bon.ContainsKey(k)) q += bon[k];
+                    if (!emitidas.Add(k)) continue;
+
+                    List<DataGridViewRow> miembros = cub[k];
+                    DataGridViewRow anc = ancla(miembros);
+                    if (!elegibleBase(anc)) continue;      // marcas que ya no corresponden: se limpian al reconstruir
+                    res.Add(new Linea
+                    {
+                        Clave = res.Count, Fila = anc, Producto = producto(anc), Precio = precio(anc),
+                        Cantidad = miembros.Sum(m => cant(m)), Miembros = miembros
+                    });
                 }
-                res.Add(new Linea { Clave = res.Count, Fila = r, Producto = producto(r), Cantidad = q, Precio = precio(r) });
+                else if (elegible(r))
+                {
+                    res.Add(new Linea { Clave = res.Count, Fila = r, Producto = producto(r), Cantidad = cant(r), Precio = precio(r) });
+                }
             }
             return res;
         }
@@ -298,66 +334,34 @@ namespace Comercial.Clases
         {
             Dictionary<int, LineaPromoResultado> porClave = res.Lineas.ToDictionary(r => r.Clave);
 
-            // BON por grupo, para comparar las unidades bonificadas de la línea
-            Dictionary<string, decimal> bon = new Dictionary<string, decimal>();
-            foreach (DataGridViewRow r in filas())
-                if (rol(r) == ROL_BON)
-                {
-                    string k = claveGrupo(producto(r), info(r) == null ? null : info(r).Aplicada);
-                    bon[k] = (bon.ContainsKey(k) ? bon[k] : 0m) + cant(r);
-                }
-
-            // Producto -> regla NxM que le toca (para las filas cobradas sin resultado propio)
-            Dictionary<int, int> reglaNxMPorProducto = new Dictionary<int, int>();
-            foreach (LineaPromoResultado x in res.Lineas)
-                if (x.Tipo == TipoPromo.NxM && !reglaNxMPorProducto.ContainsKey(x.ProductoId)) reglaNxMPorProducto[x.ProductoId] = x.ReglaId;
-
-            HashSet<string> consumidas = new HashSet<string>();
             foreach (Linea l in snap)
             {
                 LineaPromoResultado esperado;
                 porClave.TryGetValue(l.Clave, out esperado);
-                string ro = rol(l.Fila);
-                PromoInfo i = info(l.Fila);
 
                 if (esperado == null)
                 {
-                    if (string.IsNullOrEmpty(ro)) continue;
-
-                    // Fila cobrada de un producto cuya NxM cayó entera en otra fila: queda marcada con la misma regla
-                    int reglaGrupo;
-                    if (ro == ROL_COB && i != null && reglaNxMPorProducto.TryGetValue(l.Producto, out reglaGrupo) && reglaGrupo == i.Aplicada.FkRegla)
-                    {
-                        consumidas.Add(claveGrupo(l.Producto, i.Aplicada));
-                        continue;
-                    }
-                    return false;
+                    // Sin promoción para esta línea: no debe tener marcas
+                    if (l.Miembros != null || !string.IsNullOrEmpty(rol(l.Fila))) return false;
+                    continue;
                 }
+
+                PromoInfo i = info(l.Fila);
                 if (i == null || i.Aplicada.FkRegla != esperado.ReglaId) return false;
 
                 if (esperado.Tipo == TipoPromo.Porcentaje)
                 {
-                    if (ro != ROL_PORC) return false;
+                    if (l.Miembros != null || rol(l.Fila) != ROL_PORC) return false;
                     if (Math.Abs(descRec(l.Fila) - (-esperado.DescuentoPct)) > 0.001m) return false;
                 }
                 else
                 {
-                    string k = claveGrupo(l.Producto, i.Aplicada);
-                    decimal b = 0m;
-                    if (consumidas.Add(k) && bon.ContainsKey(k)) b = bon[k];
-                    // Fila cobrada con sus bonificadas, o fila íntegramente bonificada
-                    if (ro == ROL_COB)
-                    {
-                        if (Math.Abs(b - esperado.CantBonificada) > 0.0001m) return false;
-                        if (esperado.CantBonificada <= 0m) return false;
-                    }
-                    else return false;
+                    // NxM: las unidades bonificadas de la línea deben ser exactamente las que dice el motor
+                    if (l.Miembros == null) return false;
+                    decimal bon = l.Miembros.Where(m => rol(m) == ROL_BON).Sum(m => cant(m));
+                    if (Math.Abs(bon - esperado.CantBonificada) > 0.0001m) return false;
                 }
             }
-
-            // Bonificadas sueltas (sin su fila cobrada): hay que rehacer
-            foreach (string k in bon.Keys)
-                if (!consumidas.Contains(k)) return false;
             return true;
         }
 
@@ -369,36 +373,38 @@ namespace Comercial.Clases
             if (restaurarDescRec) r.Cells[cfg.ColDescRec].Value = cfg.Baseline();
         }
 
-        // Devuelve la grilla a una fila por producto: une las bonificadas con su cobrada y borra las marcas
+        // Devuelve la grilla a una fila por producto: une las cobradas y bonificadas en el ancla (suma de cantidades) y borra
+        // las marcas. Nunca se pierde una unidad: una bonificada sin cobrada pasa a ser una fila común.
         void desagrupar()
         {
             List<DataGridViewRow> todas = filas().ToList();
 
-            Dictionary<string, DataGridViewRow> primeraCob = new Dictionary<string, DataGridViewRow>();
-            foreach (DataGridViewRow r in todas)
-                if (rol(r) == ROL_COB)
-                {
-                    string k = claveGrupo(producto(r), info(r) == null ? null : info(r).Aplicada);
-                    if (!primeraCob.ContainsKey(k)) primeraCob[k] = r;
-                }
-
             List<DataGridViewRow> aBorrar = new List<DataGridViewRow>();
-            foreach (DataGridViewRow r in todas)
-                if (rol(r) == ROL_BON)
-                {
-                    string k = claveGrupo(producto(r), info(r) == null ? null : info(r).Aplicada);
-                    DataGridViewRow cob;
-                    if (primeraCob.TryGetValue(k, out cob))
-                        cob.Cells[cfg.ColCantidad].Value = cant(cob) + cant(r);
-                    aBorrar.Add(r);             // sin cobrada que la acompañe (se borró): se descarta
-                }
+            foreach (List<DataGridViewRow> miembros in cubetas(todas).Values)
+            {
+                DataGridViewRow anc = ancla(miembros);
+                decimal total = miembros.Sum(m => cant(m));
+                bool eraBonificada = rol(anc) == ROL_BON;
+
+                if (miembros.Count > 1 || cant(anc) != total) anc.Cells[cfg.ColCantidad].Value = total;
+                foreach (DataGridViewRow m in miembros) if (m != anc) aBorrar.Add(m);
+
+                limpiarRol(anc, true);
+                if (eraBonificada) desbloquear(anc);
+            }
             foreach (DataGridViewRow b in aBorrar) grid.Rows.Remove(b);
 
             foreach (DataGridViewRow r in filas())
-            {
-                string ro = rol(r);
-                if (ro == ROL_PORC || ro == ROL_COB) limpiarRol(r, true);
-            }
+                if (rol(r) == ROL_PORC) limpiarRol(r, true);
+        }
+
+        // La fila deja de ser "bonificada": vuelve a ser editable como cualquier otra
+        void desbloquear(DataGridViewRow r)
+        {
+            r.Cells[cfg.ColCantidad].ReadOnly = false;
+            r.Cells[cfg.ColPrecioSinIva].ReadOnly = false;
+            r.Cells[cfg.ColDescRec].ReadOnly = false;
+            r.DefaultCellStyle.BackColor = System.Drawing.Color.Empty;
         }
 
         /// <summary>Quita todas las promociones de la grilla (una fila por producto). Usado antes de los combos.</summary>
@@ -498,19 +504,6 @@ namespace Comercial.Clases
                         }
                     }
 
-                    // Producto en varias filas con la NxM caída entera en otra fila: esta fila lleva las unidades cobradas
-                    // (se marca para que sus bonificadas se unan a ella y no se pierdan en la próxima evaluación)
-                    Dictionary<int, LineaPromoResultado> nxmPorProducto = new Dictionary<int, LineaPromoResultado>();
-                    foreach (LineaPromoResultado x in res.Lineas)
-                        if (x.Tipo == TipoPromo.NxM && !nxmPorProducto.ContainsKey(x.ProductoId)) nxmPorProducto[x.ProductoId] = x;
-                    HashSet<int> conResultado = new HashSet<int>(res.Lineas.Select(x => x.Clave));
-                    foreach (Linea l in snap)
-                    {
-                        LineaPromoResultado g;
-                        if (conResultado.Contains(l.Clave) || l.Fila.Index < 0 || !nxmPorProducto.TryGetValue(l.Producto, out g)) continue;
-                        l.Fila.Cells[COL_ROL].Value = ROL_COB;
-                        l.Fila.Cells[COL_INFO].Value = new PromoInfo { Aplicada = copiaAplicada(g, 0m, 0m) };
-                    }
                 }
 
                 actualizarTextos(snap, res);
@@ -525,16 +518,17 @@ namespace Comercial.Clases
             return cambio;
         }
 
-        // Si hay filas con marcas que el motor no conoce (p. ej. una bonificada suelta) hay que rehacer
+        // Si hay filas con marcas que no pertenecen a ninguna línea evaluada, hay que rehacer
         bool hayMarcasSoloDeSnap(List<Linea> snap)
         {
-            HashSet<DataGridViewRow> conocidas = new HashSet<DataGridViewRow>(snap.Select(l => l.Fila));
-            foreach (DataGridViewRow r in filas())
+            HashSet<DataGridViewRow> conocidas = new HashSet<DataGridViewRow>();
+            foreach (Linea l in snap)
             {
-                string ro = rol(r);
-                if (string.IsNullOrEmpty(ro) || ro == ROL_BON) continue;
-                if (!conocidas.Contains(r)) return false;
+                conocidas.Add(l.Fila);
+                if (l.Miembros != null) foreach (DataGridViewRow m in l.Miembros) conocidas.Add(m);
             }
+            foreach (DataGridViewRow r in filas())
+                if (!string.IsNullOrEmpty(rol(r)) && !conocidas.Contains(r)) return false;
             return true;
         }
 

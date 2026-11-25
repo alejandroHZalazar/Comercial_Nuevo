@@ -85,25 +85,42 @@ namespace Comercial.Formularios.Productos
                 ForeColor = Color.White,
                 BackColor = Color.DimGray,
                 TextAlign = ContentAlignment.MiddleLeft,
-                Padding = new Padding(12, 0, 0, 0)
+                Padding = new Padding(52, 0, 0, 0)
             };
+
+            // Imagen descriptiva (etiqueta de producto): en la barra de título y en la cabecera
+            Icon = Clases.IconosVariantes.ParaFormulario(Properties.Resources.tag);
+            lblPaso.Controls.Add(new PictureBox
+            {
+                Image = Properties.Resources.tag,
+                SizeMode = PictureBoxSizeMode.Zoom,
+                BackColor = Color.White,
+                Padding = new Padding(3),
+                Size = new Size(32, 32),
+                Location = new Point(12, 5)
+            });
 
             Panel barra = new Panel { Dock = DockStyle.Bottom, Height = 54, Padding = new Padding(10) };
             btnMaestros = new Button { Text = "Medidas y colores...", Size = new Size(150, 32), Location = new Point(10, 11), Anchor = AnchorStyles.Left | AnchorStyles.Bottom };
             btnCancelar = new Button { Text = "Cancelar", Size = new Size(95, 32), Anchor = AnchorStyles.Right | AnchorStyles.Bottom };
             btnGuardar = new Button { Text = "Guardar", Size = new Size(100, 32), Anchor = AnchorStyles.Right | AnchorStyles.Bottom };
-            btnSiguiente = new Button { Text = "Siguiente >", Size = new Size(100, 32), Anchor = AnchorStyles.Right | AnchorStyles.Bottom };
-            btnAtras = new Button { Text = "< Atrás", Size = new Size(95, 32), Anchor = AnchorStyles.Right | AnchorStyles.Bottom };
+            // Sin "<" ni ">" en el texto: la flecha es el ícono y así el texto entra en una sola línea
+            btnSiguiente = new Button { Text = "Siguiente", Size = new Size(115, 32), Anchor = AnchorStyles.Right | AnchorStyles.Bottom };
+            btnAtras = new Button { Text = "Atrás", Size = new Size(115, 32), Anchor = AnchorStyles.Right | AnchorStyles.Bottom };
             barra.Controls.AddRange(new Control[] { btnMaestros, btnAtras, btnSiguiente, btnGuardar, btnCancelar });
             barra.Resize += (s, e) => ubicarBotones(barra);
             ubicarBotones(barra);
 
             Clases.IconosVariantes.Aplicar(btnMaestros, Properties.Resources.tag);
-            Clases.IconosVariantes.Aplicar(btnAtras, Properties.Resources._return);
+            // "Atrás" usa la misma flecha que "Siguiente", espejada
+            Bitmap flechaAtras = new Bitmap(Properties.Resources.play_button);
+            flechaAtras.RotateFlip(RotateFlipType.RotateNoneFlipX);
+            Clases.IconosVariantes.Aplicar(btnAtras, flechaAtras);
             Clases.IconosVariantes.Aplicar(btnSiguiente, Properties.Resources.play_button);
             Clases.IconosVariantes.Aplicar(btnGuardar, Properties.Resources.save__1_);
             Clases.IconosVariantes.Aplicar(btnCancelar, Properties.Resources.back_arrow);
-            btnSiguiente.ImageAlign = ContentAlignment.MiddleRight;
+            // Texto e ícono centrados como un solo bloque
+            btnAtras.ImageAlign = btnSiguiente.ImageAlign = ContentAlignment.MiddleCenter;
             btnSiguiente.TextImageRelation = TextImageRelation.TextBeforeImage;
 
             btnAtras.Click += (s, e) => irAPaso(paso - 1);
@@ -237,6 +254,20 @@ namespace Comercial.Formularios.Productos
             Clases.IconosVariantes.Aplicar(btnAplicar, Properties.Resources.pencil_edit_button__1_);
             btnCodigos.Click += (s, e) => generarCodigos();
             btnAplicar.Click += (s, e) => aplicarMasivo();
+
+            // Con códigos automáticos, el botón manual se oculta: si cargara el código de proveedor, no se generarían
+            if (Clases.ClassCodigosBarras.habilitado())
+            {
+                btnCodigos.Visible = false;
+                top.Height = 96;
+                top.Controls.Add(new Label
+                {
+                    Text = "Variantes nuevas: " + Clases.ClassCodigosBarras.AvisoPantalla,
+                    AutoSize = true,
+                    ForeColor = Color.DimGray,
+                    Location = new Point(4, 70)
+                });
+            }
 
             dgv = new DataGridView
             {
@@ -660,6 +691,19 @@ namespace Comercial.Formularios.Productos
             }
 
             ficha.ProductoId = res.ProductoId;
+
+            if (res.CodigosAsignados.Count > 0)
+            {
+                // Con muchas variantes se listan las primeras para que el aviso entre en pantalla
+                const int maximo = 25;
+                string lista = string.Join("\r\n• ", res.CodigosAsignados.Take(maximo));
+                if (res.CodigosAsignados.Count > maximo) lista += "\r\n• ... y " + (res.CodigosAsignados.Count - maximo) + " más";
+                MessageBox.Show(this, "Producto grabado. Códigos asignados (barras y proveedor):\r\n\r\n• " + lista,
+                    "Variantes", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            if (res.Advertencia != null)
+                MessageBox.Show(this, res.Advertencia, "Variantes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
             DialogResult = DialogResult.OK;
             Close();
         }
